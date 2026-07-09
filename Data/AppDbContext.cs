@@ -1,15 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using CvManagementSystem.Entities;
 
 namespace CvManagementSystem.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<AttributeDefinition> AttributeDefinitions { get; set; }
         public DbSet<AttributeOption> AttributeOptions { get; set; }
         public DbSet<AttributeValue> AttributeValues { get; set; }
@@ -23,8 +24,17 @@ namespace CvManagementSystem.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Тут будем настраивать составные индексы, ограничения и т.д.
-            // Это наш следующий шаг — пока оставим пустым
+            // Составной уникальный индекс для PositionAttribute
+            // (один атрибут не может быть добавлен к одной позиции дважды)
+            modelBuilder.Entity<PositionAttribute>()
+                .HasIndex(pa => new { pa.PositionId, pa.AttributeDefinitionId })
+                .IsUnique();
+
+            // Составной уникальный индекс для AttributeValue
+            // (у одного кандидата не может быть двух значений одного атрибута)
+            modelBuilder.Entity<AttributeValue>()
+                .HasIndex(av => new { av.CandidateId, av.AttributeDefinitionId })
+                .IsUnique();
         }
     }
 }

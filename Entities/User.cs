@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace CvManagementSystem.Entities
 {
@@ -9,23 +10,14 @@ namespace CvManagementSystem.Entities
         Administrator
     }
 
-    public class User
+    public class User : IdentityUser<Guid>
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-
-        [Required]
-        [MaxLength(256)]
-        public string Email { get; set; } = string.Empty;
-
-        [Required]
-        public string PasswordHash { get; set; } = string.Empty;
-
         [Required]
         [MaxLength(200)]
         public string FullName { get; set; } = string.Empty;
 
         [Required]
-        public UserRole Role { get; set; }
+        public UserRole Role { get; set; } = UserRole.Candidate;
 
         [MaxLength(10)]
         public string PreferredLanguage { get; set; } = "en";
@@ -35,7 +27,7 @@ namespace CvManagementSystem.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Навигационные свойства — обратная сторона связей из других сущностей
+        // Навигационные свойства
         public List<AttributeDefinition> CreatedAttributeDefinitions { get; set; } = new();
         public List<AttributeValue> AttributeValues { get; set; } = new();
         public List<Position> CreatedPositions { get; set; } = new();
