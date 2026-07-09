@@ -5,8 +5,13 @@ namespace CvManagementSystem.Entities
 {
     public enum UserRole
     {
+        [Display(Name = "Кандидат")]
         Candidate,
+
+        [Display(Name = "Рекрутер")]
         Recruiter,
+
+        [Display(Name = "Администратор")]
         Administrator
     }
 
