@@ -1,5 +1,6 @@
 using CvManagementSystem.Data;
 using CvManagementSystem.Entities;
+using CvManagementSystem.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,9 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+// 2.5 Хрень которая синзронизирует роли
+builder.Services.AddScoped<UserService>();
 
 // 3. Настраиваем куки (сессию)
 builder.Services.ConfigureApplicationCookie(options =>

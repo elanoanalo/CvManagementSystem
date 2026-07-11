@@ -1,0 +1,134 @@
+﻿@using CvManagementSystem.Entities
+@model CvManagementSystem.ViewModels.AttributeFormViewModel
+@{
+    ViewData["Title"] = "Редактировать атрибут";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="mb-4">Редактировать атрибут</h2>
+
+                <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Название</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">
+                            Описание (необязательно)
+                        </label>
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Type" class="form-label">Тип атрибута</label>
+                        <select asp-for="Type"
+                                class="form-select"
+                                disabled
+                                asp-items="@Html.GetEnumSelectList(typeof(AttributeType))">
+                        </select>
+                        @* Скрытое поле — отправляет реальное значение типа, потому что disabled поля не отправляются *@
+                        <input type="hidden" asp-for="Type" />
+                        <small class="text-muted">
+                            Тип атрибута нельзя менять после создания
+                        </small>
+                    </div>
+
+                    @if (Model.Type == AttributeType.Dropdown)
+                    {
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Варианты выбора</h5>
+
+                                <div id="optionsList">
+                                    @for (int i = 0; i < Model.Options.Count; i++)
+                                    {
+                                        <div class="input-group mb-2">
+                                            <input type="text"
+                                                   name="Options[@i]"
+                                                   value="@Model.Options[i]"
+                                                   class="form-control" />
+                                            <button type="button"
+                                                    class="btn btn-outline-danger"
+                                                    onclick="this.parentElement.remove()">
+                                                ✕
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="input-group mt-2">
+                                    <input type="text"
+                                           id="newOptionInput"
+                                           class="form-control"
+                                           placeholder="Новый вариант..." />
+                                    <button type="button"
+                                            class="btn btn-outline-primary"
+                                            onclick="addOption()">
+                                        Добавить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (Model.Type == AttributeType.Dropdown)
+    {
+        <script>
+            var optionCount = @Html.Raw(Model.Options.Count);
+
+            function addOption() {
+                var input = document.getElementById('newOptionInput');
+                var value = input.value.trim();
+
+                if (value === '') return;
+
+                var optionsList = document.getElementById('optionsList');
+
+                var div = document.createElement('div');
+                div.className = 'input-group mb-2';
+                div.innerHTML =
+                    '<input type="text" ' +
+                    'name="Options[' + optionCount + ']" ' +
+                    'value="' + value + '" ' +
+                    'class="form-control" />' +
+                    '<button type="button" ' +
+                    'class="btn btn-outline-danger" ' +
+                    'onclick="this.parentElement.remove()">✕</button>';
+
+                optionsList.appendChild(div);
+                optionCount++;
+                input.value = '';
+                input.focus();
+            }
+
+            document.getElementById('newOptionInput')
+                .addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addOption();
+                    }
+                });
+        </script>
+    }
+}

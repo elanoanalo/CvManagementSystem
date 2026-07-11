@@ -4,13 +4,28 @@ namespace CvManagementSystem.Entities
 {
     public enum AttributeType
     {
+        [Display(Name = "Строка")]
         String,
+
+        [Display(Name = "Текст (Markdown)")]
         Text,
+
+        [Display(Name = "Изображение")]
         Image,
+
+        [Display(Name = "Число")]
         Numeric,
+
+        [Display(Name = "Дата")]
         Date,
+
+        [Display(Name = "Период")]
         Period,
+
+        [Display(Name = "Да/Нет")]
         Boolean,
+
+        [Display(Name = "Список вариантов")]
         Dropdown
     }
 

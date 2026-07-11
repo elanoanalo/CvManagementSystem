@@ -1,0 +1,76 @@
+﻿@using CvManagementSystem.ViewModels
+@using CvManagementSystem.Entities
+@model IEnumerable<AttributeListViewModel>
+@{
+    ViewData["Title"] = "Библиотека атрибутов";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Библиотека атрибутов</h2>
+    <a asp-action="Create" class="btn btn-primary">Создать атрибут</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Атрибутов пока нет. Создайте первый!
+    </div>
+}
+else
+{
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Тип</th>
+                <th>Вариантов</th>
+                <th>Создал</th>
+                <th>Дата</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@(item.Description ?? "—")</td>
+                    <td>
+                        <span class="badge bg-secondary">
+                            @item.Type
+                        </span>
+                    </td>
+                    <td>
+                        @if (item.Type == AttributeType.Dropdown)
+                        {
+                            <span>@item.OptionsCount</span>
+                        }
+                        else
+                        {
+                            <span>—</span>
+                        }
+                    </td>
+                    <td>@item.CreatedByName</td>
+                    <td>@item.CreatedAt.ToString("dd.MM.yyyy")</td>
+                    <td>
+                        <a asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           class="btn btn-sm btn-outline-primary">
+                            Редактировать
+                        </a>
+                        <form asp-action="Delete"
+                              asp-route-id="@item.Id"
+                              method="post"
+                              style="display:inline"
+                              onsubmit="return confirm('Удалить атрибут?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Удалить
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

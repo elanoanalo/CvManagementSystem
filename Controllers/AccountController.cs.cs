@@ -1,7 +1,7 @@
 ﻿using CvManagementSystem.Entities;
+using CvManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using CvManagementSystem.ViewModels;
 
 namespace CvManagementSystem.Controllers
 {
@@ -9,28 +9,37 @@ namespace CvManagementSystem.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
         public AccountController(
             UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager,
+            RoleManager<IdentityRole<Guid>> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
-        // GET: /Account/Register
         [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
+        public IActionResult Register() => View();
 
-        // POST: /Account/Register
+        [HttpGet]
+        public IActionResult Login() => View();
+
+        [HttpGet]
+        public IActionResult AccessDenied() => View();
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
+
+            // Создаём роль если её ещё нет в AspNetRoles
+            var roleName = model.Role.ToString();
+            if (!await _roleManager.RoleExistsAsync(roleName))
+                await _roleManager.CreateAsync(new IdentityRole<Guid>(roleName));
 
             var user = new User
             {
@@ -44,6 +53,8 @@ namespace CvManagementSystem.Controllers
 
             if (result.Succeeded)
             {
+                // Добавляем пользователя в роль Identity
+                await _userManager.AddToRoleAsync(user, roleName);
                 await _signInManager.SignInAsync(user, isPersistent: true);
                 return RedirectToAction("Index", "Home");
             }
@@ -54,14 +65,6 @@ namespace CvManagementSystem.Controllers
             return View(model);
         }
 
-        // GET: /Account/Login
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        // POST: /Account/Login
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -81,19 +84,11 @@ namespace CvManagementSystem.Controllers
             return View(model);
         }
 
-        // POST: /Account/Logout
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login");
-        }
-
-        // GET: /Account/AccessDenied
-        [HttpGet]
-        public IActionResult AccessDenied()
-        {
-            return View();
         }
     }
 }
