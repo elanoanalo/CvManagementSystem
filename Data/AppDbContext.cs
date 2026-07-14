@@ -19,6 +19,8 @@ namespace CvManagementSystem.Data
         public DbSet<PositionAttribute> PositionAttributes { get; set; }
         public DbSet<Cv> Cvs { get; set; }
         public DbSet<CvComment> CvComments { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectTag> ProjectTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

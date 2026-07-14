@@ -1,0 +1,435 @@
+﻿@using CvManagementSystem.Entities
+@model CvManagementSystem.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Мой профиль";
+}
+
+@Html.AntiForgeryToken()
+
+<style>
+    .attribute-row .remove-attr-btn {
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .attribute-row:hover .remove-attr-btn {
+        visibility: visible;
+        opacity: 1;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Мой профиль</h2>
+</div>
+
+@* Основная информация *@
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Основная информация</h5>
+        <table class="table table-borderless mb-0">
+            <tr>
+                <th style="width:200px">Имя</th>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="text"
+                               id="fullNameInput"
+                               class="form-control"
+                               value="@Model.FullName"
+                               style="max-width:300px" />
+                        <span id="nameStatus" class="text-muted small"></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>@Model.Email</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+@* Атрибуты профиля *@
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="card-title mb-0">Мои атрибуты</h5>
+
+            @* Кнопка добавления атрибута *@
+            @if (Model.AvailableToAdd.Any())
+            {
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-sm dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown">
+                        + Добавить атрибут
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end"
+                        style="max-height:300px; overflow-y:auto">
+                        @foreach (var attr in Model.AvailableToAdd)
+                        {
+                            <li>
+                                <button class="dropdown-item"
+                                        data-attr-id="@attr.Id"
+                                        data-attr-name="@attr.Name">
+                                    @attr.Name
+                                    <span class="badge bg-secondary ms-1">@attr.Type</span>
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+
+        @if (!Model.AttributeValues.Any())
+        {
+            <div class="alert alert-info" id="emptyMessage">
+                Вы ещё не добавили ни одного атрибута.
+                Нажмите "+ Добавить атрибут" чтобы начать.
+            </div>
+        }
+
+        <div id="attributesList">
+            @foreach (var attr in Model.AttributeValues)
+            {
+                <div class="attribute-row mb-4 pb-3 border-bottom"
+                     data-attribute-id="@attr.AttributeDefinitionId"
+                     data-attribute-type="@((int)attr.AttributeType)">
+
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <label class="form-label fw-bold mb-0">
+                                @attr.AttributeName
+                            </label>
+                            @if (!string.IsNullOrEmpty(attr.AttributeDescription))
+                            {
+                                <div class="text-muted small">@attr.AttributeDescription</div>
+                            }
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-secondary">@attr.AttributeType</span>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger remove-attr-btn"
+                                    data-attr-id="@attr.AttributeDefinitionId"
+                                    data-attr-name="@attr.AttributeName">
+                                Убрать
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (attr.AttributeType == AttributeType.String)
+                    {
+                        <input type="text"
+                               class="form-control attribute-input"
+                               value="@attr.ValueString"
+                               placeholder="Введите текст..." />
+                    }
+                    else if (attr.AttributeType == AttributeType.Text)
+                    {
+                        <textarea class="form-control attribute-input"
+                                  rows="3"
+                                  placeholder="Введите текст...">@attr.ValueString</textarea>
+                    }
+                    else if (attr.AttributeType == AttributeType.Numeric)
+                    {
+                        <input type="number"
+                               class="form-control attribute-input"
+                               value="@attr.ValueNumber"
+                               step="0.01"
+                               placeholder="Введите число..." />
+                    }
+                    else if (attr.AttributeType == AttributeType.Date)
+                    {
+                        <input type="date"
+                               class="form-control attribute-input"
+                               value="@(attr.ValueDate.HasValue ? attr.ValueDate.Value.ToString("yyyy-MM-dd") : "")" />
+                    }
+                    else if (attr.AttributeType == AttributeType.Boolean)
+                    {
+                        <div class="form-check form-switch d-flex align-items-center gap-2">
+                            @if (attr.ValueBoolean == true)
+                            {
+                                <input type="checkbox"
+                                       class="form-check-input attribute-input flex-shrink-0"
+                                       role="switch"
+                                       style="width:3em; height:1.5em; margin-top:0"
+                                       checked />
+                            }
+                            else
+                            {
+                                <input type="checkbox"
+                                       class="form-check-input attribute-input flex-shrink-0"
+                                       role="switch"
+                                       style="width:3em; height:1.5em; margin-top:0" />
+                            }
+                            <label class="form-check-label mb-0">Да / Нет</label>
+                        </div>
+                    }
+                    else if (attr.AttributeType == AttributeType.Period)
+                    {
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="date"
+                                   class="form-control period-start"
+                                   value="@(attr.PeriodStart.HasValue ? attr.PeriodStart.Value.ToString("yyyy-MM-dd") : "")" />
+                            <span class="text-muted">—</span>
+                            <input type="date"
+                                   class="form-control period-end"
+                                   value="@(attr.PeriodEnd.HasValue ? attr.PeriodEnd.Value.ToString("yyyy-MM-dd") : "")" />
+                        </div>
+                    }
+                    else if (attr.AttributeType == AttributeType.Dropdown)
+                    {
+                        <select class="form-select attribute-input">
+                            <option value="">— Выберите —</option>
+                            @foreach (var option in attr.Options)
+                            {
+                                @if (attr.SelectedOptionId == option.Id)
+                                {
+                                    <option value="@option.Id" selected>@option.Value</option>
+                                }
+                                else
+                                {
+                                    <option value="@option.Id">@option.Value</option>
+                                }
+                            }
+                        </select>
+                    }
+                    else if (attr.AttributeType == AttributeType.Image)
+                    {
+                        <div>
+                            @if (!string.IsNullOrEmpty(attr.ValueImageUrl))
+                            {
+                                <img src="@attr.ValueImageUrl"
+                                     class="img-thumbnail mb-2"
+                                     style="max-height:150px" />
+                            }
+                            <input type="text"
+                                   class="form-control attribute-input"
+                                   value="@attr.ValueImageUrl"
+                                   placeholder="URL изображения (Cloudinary)..." />
+                            <small class="text-muted">
+                                Загрузите изображение на Cloudinary и вставьте ссылку
+                            </small>
+                        </div>
+                    }
+
+                    <div class="save-status text-muted small mt-1"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@* Ссылка на проекты *@
+<div class="card shadow mt-4">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="card-title mb-1">Мои проекты</h5>
+            <p class="text-muted small mb-0">
+                Проекты используются при генерации CV
+            </p>
+        </div>
+        <a asp-controller="Projects"
+           asp-action="Index"
+           class="btn btn-outline-primary">
+            Управлять проектами →
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var saveTimers = {};
+
+        // ===== СОХРАНЕНИЕ ИМЕНИ =====
+
+        var nameTimer = null;
+        document.getElementById('fullNameInput')
+            .addEventListener('input', function () {
+                var nameStatus = document.getElementById('nameStatus');
+                nameStatus.textContent = 'Есть изменения...';
+                nameStatus.className = 'text-warning small';
+
+                if (nameTimer) clearTimeout(nameTimer);
+
+                nameTimer = setTimeout(function () {
+                    var value = document.getElementById('fullNameInput').value.trim();
+                    if (value === '') return;
+
+                    nameStatus.textContent = 'Сохранение...';
+                    nameStatus.className = 'text-muted small';
+
+                    fetch('/Profile/UpdateName', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'fullName=' + encodeURIComponent(value) +
+                              '&__RequestVerificationToken=' +
+                              encodeURIComponent(document.querySelector('input[name="__RequestVerificationToken"]').value)
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (result) {
+                        if (result.success) {
+                            nameStatus.textContent = '✓ Сохранено';
+                            nameStatus.className = 'text-success small';
+                            setTimeout(function () { nameStatus.textContent = ''; }, 3000);
+                        } else {
+                            nameStatus.textContent = '✗ ' + (result.error || 'Ошибка');
+                            nameStatus.className = 'text-danger small';
+                        }
+                    });
+                }, 2000);
+            });
+
+        // ===== ДОБАВЛЕНИЕ АТРИБУТА =====
+
+        document.querySelectorAll('.dropdown-item[data-attr-id]')
+            .forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var attrId = this.getAttribute('data-attr-id');
+                    var attrName = this.getAttribute('data-attr-name');
+
+                    fetch('/Profile/AddAttribute', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'attributeDefinitionId=' + attrId +
+                              '&__RequestVerificationToken=' +
+                              encodeURIComponent(document.querySelector('input[name="__RequestVerificationToken"]').value)
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (result) {
+                        if (result.success) {
+                            // Перезагружаем страницу чтобы показать новый атрибут
+                            window.location.reload();
+                        } else {
+                            alert(result.error || 'Ошибка добавления атрибута');
+                        }
+                    });
+                });
+            });
+
+        // ===== УДАЛЕНИЕ АТРИБУТА =====
+
+        document.querySelectorAll('.remove-attr-btn')
+            .forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var attrId = this.getAttribute('data-attr-id');
+                    var attrName = this.getAttribute('data-attr-name');
+
+                    if (!confirm('Убрать атрибут "' + attrName + '" из профиля? Значение будет удалено.'))
+                        return;
+
+                    fetch('/Profile/RemoveAttribute', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'attributeDefinitionId=' + attrId +
+                              '&__RequestVerificationToken=' +
+                              encodeURIComponent(document.querySelector('input[name="__RequestVerificationToken"]').value)
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (result) {
+                        if (result.success) {
+                            window.location.reload();
+                        } else {
+                            alert(result.error || 'Ошибка удаления');
+                        }
+                    });
+                });
+            });
+
+        // ===== AUTO-SAVE АТРИБУТОВ =====
+
+        function saveAttribute(row) {
+            var attributeId = row.getAttribute('data-attribute-id');
+            var attributeType = parseInt(row.getAttribute('data-attribute-type'));
+
+            var data = {
+                AttributeDefinitionId: attributeId,
+                AttributeType: attributeType,
+                ValueString: null,
+                ValueNumber: null,
+                ValueDate: null,
+                ValueBoolean: null,
+                ValueImageUrl: null,
+                PeriodStart: null,
+                PeriodEnd: null,
+                SelectedOptionId: null
+            };
+
+            var input = row.querySelector('.attribute-input');
+
+            if (attributeType === 0 || attributeType === 1) {
+                data.ValueString = input ? input.value : null;
+            } else if (attributeType === 3) {
+                data.ValueNumber = input && input.value !== '' ? parseFloat(input.value) : null;
+            } else if (attributeType === 4) {
+                data.ValueString = input && input.value !== '' ? input.value : null;
+            } else if (attributeType === 6) {
+                data.ValueBoolean = input ? input.checked : false;
+            } else if (attributeType === 2) {
+                data.ValueImageUrl = input ? input.value : null;
+            } else if (attributeType === 5) {
+                var startInput = row.querySelector('.period-start');
+                var endInput = row.querySelector('.period-end');
+                var start = startInput ? startInput.value : '';
+                var end = endInput ? endInput.value : '';
+                if (start !== '' || end !== '') {
+                    data.ValueString = start + '|' + end;
+                }
+            } else if (attributeType === 7) {
+                data.SelectedOptionId = input && input.value !== '' ? input.value : null;
+            }
+
+            var statusDiv = row.querySelector('.save-status');
+            statusDiv.textContent = 'Сохранение...';
+            statusDiv.className = 'save-status text-muted small mt-1';
+
+            fetch('/Profile/SaveAttribute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]') ?
+                        document.querySelector('input[name="__RequestVerificationToken"]').value : ''
+                },
+                body: JSON.stringify(data)
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (result) {
+                if (result.success) {
+                    statusDiv.textContent = '✓ Сохранено';
+                    statusDiv.className = 'save-status text-success small mt-1';
+                    setTimeout(function () { statusDiv.textContent = ''; }, 3000);
+                } else {
+                    statusDiv.textContent = '✗ ' + (result.error || 'Ошибка сохранения');
+                    statusDiv.className = 'save-status text-danger small mt-1';
+                }
+            })
+            .catch(function () {
+                statusDiv.textContent = '✗ Ошибка соединения';
+                statusDiv.className = 'save-status text-danger small mt-1';
+            });
+        }
+
+        function scheduleAutoSave(row) {
+            var attributeId = row.getAttribute('data-attribute-id');
+
+            if (saveTimers[attributeId]) clearTimeout(saveTimers[attributeId]);
+
+            var statusDiv = row.querySelector('.save-status');
+            statusDiv.textContent = 'Есть несохранённые изменения...';
+            statusDiv.className = 'save-status text-warning small mt-1';
+
+            saveTimers[attributeId] = setTimeout(function () {
+                saveAttribute(row);
+            }, 2000);
+        }
+
+        document.querySelectorAll('.attribute-row').forEach(function (row) {
+            var inputs = row.querySelectorAll('.attribute-input, .period-start, .period-end');
+            inputs.forEach(function (input) {
+                input.addEventListener('input', function () { scheduleAutoSave(row); });
+                input.addEventListener('change', function () { scheduleAutoSave(row); });
+            });
+        });
+    </script>
+}

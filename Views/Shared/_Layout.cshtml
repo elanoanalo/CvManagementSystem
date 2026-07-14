@@ -42,22 +42,30 @@
                                 </li>
                             }
 
-                            @if (User.IsInRole("Candidate") || User.IsInRole("Administrator"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       asp-controller="Profile"
-                                       asp-action="Index">
-                                        Мой профиль
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       asp-controller="Cv"
-                                       asp-action="Index">
-                                        Мои CV
-                                    </a>
-                                </li>
+@if (User.IsInRole("Candidate") || User.IsInRole("Administrator"))
+{
+    <li class="nav-item">
+        <a class="nav-link"
+           asp-controller="Profile"
+           asp-action="Index">
+            Мой профиль
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"
+           asp-controller="Projects"
+           asp-action="Index">
+            Мои проекты
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"
+           asp-controller="Cv"
+           asp-action="Index">
+            Мои CV
+        </a>
+    </li>
+}
                             }
                         }
                     </ul>

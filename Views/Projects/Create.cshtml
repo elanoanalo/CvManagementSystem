@@ -1,0 +1,137 @@
+﻿@model CvManagementSystem.ViewModels.ProjectFormViewModel
+@{
+    ViewData["Title"] = "Добавить проект";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="mb-4">Добавить проект</h2>
+
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Название проекта</label>
+                        <input asp-for="Title"
+                               class="form-control"
+                               placeholder="Например: Интернет-магазин на Django" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">
+                            Описание (необязательно)
+                        </label>
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Опишите что делали, какие технологии использовали..."></textarea>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="StartDate" class="form-label">Дата начала</label>
+                            <input asp-for="StartDate"
+                                   type="date"
+                                   class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EndDate" class="form-label">
+                                Дата окончания
+                                <span class="text-muted small">(оставьте пустым если продолжается)</span>
+                            </label>
+                            <input asp-for="EndDate"
+                                   type="date"
+                                   class="form-control" />
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Теги технологий</label>
+                        <div id="tagsList" class="mb-2 d-flex flex-wrap gap-2"></div>
+                        <div class="input-group">
+                            <input type="text"
+                                   id="newTagInput"
+                                   class="form-control"
+                                   placeholder="Python, Django, PostgreSQL..." />
+                            <button type="button"
+                                    id="addTagBtn"
+                                    class="btn btn-outline-primary">
+                                Добавить
+                            </button>
+                        </div>
+                        <small class="text-muted">
+                            Теги используются для фильтрации проектов в CV
+                        </small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        var tagCount = 0;
+
+        function addTag() {
+            var input = document.getElementById('newTagInput');
+            var value = input.value.trim();
+
+            if (value === '') return;
+
+            if (value.length > 50) {
+                alert('Тег не может быть длиннее 50 символов');
+                return;
+            }
+
+            var currentTags = document.querySelectorAll('.tag-item').length;
+            if (currentTags >= 10) {
+                alert('Максимум 10 тегов');
+                return;
+            }
+
+            var tagsList = document.getElementById('tagsList');
+            var div = document.createElement('div');
+            div.className = 'd-inline-flex align-items-center tag-item';
+            div.innerHTML =
+                '<input type="hidden" name="Tags[' + tagCount + ']" value="' + value + '" />' +
+                '<span class="badge bg-info text-dark me-1">' + value +
+                ' <button type="button" class="btn-close btn-close-white ms-1 remove-tag-btn" style="font-size:0.6rem"></button>' +
+                '</span>';
+
+            tagsList.appendChild(div);
+            tagCount++;
+            input.value = '';
+            input.focus();
+        }
+
+        document.getElementById('addTagBtn')
+            .addEventListener('click', function () { addTag(); });
+
+        document.getElementById('newTagInput')
+            .addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag();
+                }
+            });
+
+        document.getElementById('tagsList')
+            .addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-tag-btn') ||
+                    e.target.classList.contains('btn-close')) {
+                    e.target.closest('.tag-item').remove();
+                }
+            });
+    </script>
+}
