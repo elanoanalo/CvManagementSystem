@@ -1,0 +1,224 @@
+﻿@using CvManagementSystem.Extensions
+@model CvManagementSystem.ViewModels.PositionFormViewModel
+@{
+    ViewData["Title"] = "Создать позицию";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-9">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="mb-4">Создать позицию</h2>
+
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Название позиции</label>
+                        <input asp-for="Title" class="form-control"
+                               placeholder="Например: Junior Backend Developer" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">
+                            Описание (необязательно)
+                        </label>
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="3"></textarea>
+                    </div>
+
+
+                    @* Теги *@
+                    <div class="mb-4">
+                        <label class="form-label">Теги</label>
+                        <div id="tagsList" class="mb-2 d-flex flex-wrap gap-2">
+                            @* Теги добавляются через JS *@
+                        </div>
+                        <div class="input-group">
+                            <input type="text"
+                                   id="newTagInput"
+                                   class="form-control"
+                                   placeholder="Например: Python, Backend, Remote..." />
+                            <button type="button"
+                                    class="btn btn-outline-primary"
+                                    onclick="addTag()">
+                                Добавить тег
+                            </button>
+                        </div>
+                    </div>
+
+                    @* Атрибуты позиции *@
+                    <div class="mb-4">
+                        <label class="form-label">Атрибуты позиции</label>
+                        <p class="text-muted small">
+                            Выберите какие атрибуты нужно заполнить кандидату для этой позиции
+                        </p>
+
+                        <div id="selectedAttributes" class="mb-3">
+                            @* Выбранные атрибуты появляются здесь *@
+                        </div>
+
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6>Доступные атрибуты из библиотеки:</h6>
+                                @foreach (var attr in Model.AvailableAttributes)
+                                {
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-secondary me-1 mb-1"
+                                            onclick="addAttribute('@attr.Id', '@attr.Name', '@attr.Type')">
+                                        + @attr.Name
+                                        <span class="badge bg-secondary ms-1">
+                                            @Html.DisplayFor(m => attr.Type)
+                                        </span>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Статус публикации</label>
+    <div class="d-flex align-items-center gap-3 p-3 border rounded">
+        <div class="form-check form-switch mb-0">
+            <input asp-for="IsPublished"
+                   class="form-check-input"
+                   type="checkbox"
+                   role="switch"
+                   id="isPublishedSwitch"
+                   style="width:3em; height:1.5em; cursor:pointer" />
+        </div>
+        <div>
+            <div id="publishLabel" class="fw-bold"></div>
+            <div id="publishDescription" class="text-muted small"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        var tagCount = 0;
+        var attributeCount = 0;
+
+        // ===== ТЕГИ =====
+
+        function addTag() {
+            var input = document.getElementById('newTagInput');
+            var value = input.value.trim();
+
+            if (value === '') return;
+
+            var tagsList = document.getElementById('tagsList');
+
+            var div = document.createElement('div');
+            div.className = 'd-inline-flex align-items-center';
+            div.innerHTML =
+                '<input type="hidden" name="Tags[' + tagCount + ']" value="' + value + '" />' +
+                '<span class="badge bg-info text-dark me-1">' + value +
+                '<button type="button" class="btn-close btn-close-white ms-1" ' +
+                'style="font-size:0.6rem" onclick="this.parentElement.parentElement.remove()"></button>' +
+                '</span>';
+
+            tagsList.appendChild(div);
+            tagCount++;
+            input.value = '';
+            input.focus();
+        }
+
+        document.getElementById('newTagInput')
+            .addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag();
+                }
+            });
+
+        // ===== АТРИБУТЫ =====
+
+        // Хранит ID уже добавленных атрибутов (чтобы не добавить дважды)
+        var addedAttributeIds = [];
+
+        function addAttribute(id, name, type) {
+            // Проверяем не добавлен ли уже этот атрибут
+            if (addedAttributeIds.indexOf(id) !== -1) {
+                alert('Этот атрибут уже добавлен!');
+                return;
+            }
+
+            addedAttributeIds.push(id);
+
+            var container = document.getElementById('selectedAttributes');
+
+            var div = document.createElement('div');
+            div.className = 'card mb-2';
+            div.id = 'attr-' + id;
+            div.innerHTML =
+                '<div class="card-body py-2 d-flex align-items-center gap-3">' +
+                '<input type="hidden" name="Attributes[' + attributeCount + '].AttributeDefinitionId" value="' + id + '" />' +
+                '<span class="fw-bold">' + name + '</span>' +
+                '<span class="badge bg-secondary">' + type + '</span>' +
+                '<div class="form-check ms-2">' +
+                '<input type="checkbox" ' +
+                'name="Attributes[' + attributeCount + '].IsRequired" ' +
+                'value="true" ' +
+                'class="form-check-input" ' +
+                'id="req-' + attributeCount + '" />' +
+                '<label class="form-check-label" for="req-' + attributeCount + '">Обязательный</label>' +
+                '</div>' +
+                '<button type="button" class="btn btn-sm btn-outline-danger ms-auto" ' +
+                'onclick="removeAttribute(this, \'' + id + '\')">Убрать</button>' +
+                '</div>';
+
+            container.appendChild(div);
+            attributeCount++;
+        }
+
+        function removeAttribute(button, id) {
+            // Убираем из списка добавленных
+            var index = addedAttributeIds.indexOf(id);
+            if (index !== -1) {
+                addedAttributeIds.splice(index, 1);
+            }
+
+            // Удаляем карточку из DOM
+            button.closest('.card').remove();
+        }
+
+                // Переключатель публикации
+        var publishSwitch = document.getElementById('isPublishedSwitch');
+        var publishLabel = document.getElementById('publishLabel');
+        var publishDescription = document.getElementById('publishDescription');
+
+        function updatePublishUI() {
+            if (publishSwitch.checked) {
+                publishLabel.textContent = 'Опубликовано';
+                publishLabel.className = 'fw-bold text-success';
+                publishDescription.textContent = 'Позиция видна кандидатам';
+            } else {
+                publishLabel.textContent = 'Черновик';
+                publishLabel.className = 'fw-bold text-warning';
+                publishDescription.textContent = 'Позиция скрыта от кандидатов';
+            }
+        }
+
+        // Инициализируем при загрузке страницы
+        updatePublishUI();
+
+        // Обновляем при переключении
+        publishSwitch.addEventListener('change', function () {
+            updatePublishUI();
+        });
+    </script>
+}

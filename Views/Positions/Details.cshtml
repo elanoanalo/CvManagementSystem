@@ -1,0 +1,117 @@
+﻿
+@model CvManagementSystem.ViewModels.PositionListViewModel
+@{
+    ViewData["Title"] = "Позиция: " + Model.Title;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>@Model.Title</h2>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn btn-primary">
+            Редактировать
+        </a>
+        <form asp-action="Delete"
+              asp-route-id="@Model.Id"
+              method="post"
+              onsubmit="return confirm('Удалить позицию?')">
+            <button type="submit" class="btn btn-danger">
+                Удалить
+            </button>
+        </form>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Назад
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Основная информация</h5>
+                <table class="table table-borderless">
+                    <tr>
+                        <th style="width:200px">Название</th>
+                        <td>@Model.Title</td>
+                    </tr>
+                    <tr>
+                        <th>Описание</th>
+                        <td>@(Model.Description ?? "—")</td>
+                    </tr>
+                    <tr>
+                        <th>Статус</th>
+                        <td>
+                            @if (Model.IsPublished)
+                            {
+                                <span class="badge bg-success">Опубликована</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Черновик</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Теги</th>
+                        <td>
+                            @foreach (var tag in Model.Tags)
+                            {
+                                <span class="badge bg-info text-dark me-1">@tag</span>
+                            }
+                            @if (!Model.Tags.Any())
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Создал</th>
+                        <td>@Model.CreatedByName</td>
+                    </tr>
+                    <tr>
+                        <th>Дата создания</th>
+                        <td>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    </tr>
+                    <tr>
+                        <th>CV создано</th>
+                        <td>@Model.CvsCount</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">Атрибуты позиции</h5>
+                @if (ViewBag.Attributes.Count == 0)
+                {
+                    <p class="text-muted">Атрибуты не добавлены</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var attr in ViewBag.Attributes)
+                        {
+                            <li class="list-group-item px-0">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span>@attr.Name</span>
+                                    <span class="badge bg-secondary">@attr.Type</span>
+                                    @if (attr.IsRequired)
+                                    {
+                                        <span class="badge bg-danger ms-auto">
+                                            Обязательный
+                                        </span>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>

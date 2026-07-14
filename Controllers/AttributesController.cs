@@ -162,6 +162,32 @@ namespace CvManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: /Attributes/Details/id
+        [HttpGet]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var attribute = await _context.AttributeDefinitions
+                .Include(a => a.CreatedByUser)
+                .Include(a => a.Options)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (attribute == null)
+                return NotFound();
+
+            var model = new AttributeListViewModel
+            {
+                Id = attribute.Id,
+                Name = attribute.Name,
+                Description = attribute.Description,
+                Type = attribute.Type,
+                OptionsCount = attribute.Options.Count,
+                CreatedAt = attribute.CreatedAt,
+                CreatedByName = attribute.CreatedByUser!.FullName
+            };
+
+            return View(model);
+        }
+
         // POST: /Attributes/Delete/id
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)

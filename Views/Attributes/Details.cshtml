@@ -1,0 +1,61 @@
+﻿@using CvManagementSystem.Entities
+@model CvManagementSystem.ViewModels.AttributeListViewModel
+@{
+    ViewData["Title"] = "Атрибут: " + Model.Name;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>@Model.Name</h2>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id"
+           class="btn btn-primary">
+            Редактировать
+        </a>
+        <form asp-action="Delete" asp-route-id="@Model.Id"
+              method="post"
+              onsubmit="return confirm('Удалить атрибут?')">
+            <button type="submit" class="btn btn-danger">
+                Удалить
+            </button>
+        </form>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Назад
+        </a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-borderless">
+            <tr>
+                <th style="width:200px">Название</th>
+                <td>@Model.Name</td>
+            </tr>
+            <tr>
+                <th>Описание</th>
+                <td>@(Model.Description ?? "—")</td>
+            </tr>
+            <tr>
+                <th>Тип</th>
+                <td>
+                    <span class="badge bg-secondary">@Model.Type</span>
+                </td>
+            </tr>
+            <tr>
+                <th>Создал</th>
+                <td>@Model.CreatedByName</td>
+            </tr>
+            <tr>
+                <th>Дата создания</th>
+                <td>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+            </tr>
+            @if (Model.Type == AttributeType.Dropdown)
+            {
+                <tr>
+                    <th>Вариантов выбора</th>
+                    <td>@Model.OptionsCount</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
