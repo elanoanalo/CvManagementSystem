@@ -66,14 +66,32 @@
                                 @foreach (var attr in Model.AvailableAttributes)
                                 {
                                     <button type="button"
-                                            class="btn btn-sm btn-outline-secondary me-1 mb-1"
-                                            onclick="addAttribute('@attr.Id', '@attr.Name', '@attr.Type')">
+                                            class="btn btn-sm btn-outline-secondary me-1 mb-1 add-attr-btn"
+                                            data-attr-id="@attr.Id"
+                                            data-attr-name="@attr.Name"
+                                            data-attr-type="@attr.Type">
                                         + @attr.Name
-                                        <span class="badge bg-secondary ms-1">
-                                            @Html.DisplayFor(m => attr.Type)
-                                        </span>
+                                        <span class="badge bg-secondary ms-1">@attr.Type</span>
                                     </button>
                                 }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Статус публикации</label>
+                        <div class="d-flex align-items-center gap-3 p-3 border rounded">
+                            <div class="form-check form-switch mb-0">
+                                <input asp-for="IsPublished"
+                                       class="form-check-input"
+                                       type="checkbox"
+                                       role="switch"
+                                       id="isPublishedSwitch"
+                                       style="width:3em; height:1.5em; cursor:pointer" />
+                            </div>
+                            <div>
+                                <div id="publishLabel" class="fw-bold"></div>
+                                <div id="publishDescription" class="text-muted small"></div>
                             </div>
                         </div>
                     </div>
@@ -88,23 +106,6 @@
     </div>
 </div>
 
-<div class="mb-3">
-    <label class="form-label">Статус публикации</label>
-    <div class="d-flex align-items-center gap-3 p-3 border rounded">
-        <div class="form-check form-switch mb-0">
-            <input asp-for="IsPublished"
-                   class="form-check-input"
-                   type="checkbox"
-                   role="switch"
-                   id="isPublishedSwitch"
-                   style="width:3em; height:1.5em; cursor:pointer" />
-        </div>
-        <div>
-            <div id="publishLabel" class="fw-bold"></div>
-            <div id="publishDescription" class="text-muted small"></div>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -137,6 +138,15 @@
             input.focus();
         }
 
+                document.querySelectorAll('.add-attr-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var id = this.getAttribute('data-attr-id');
+                var name = this.getAttribute('data-attr-name');
+                var type = this.getAttribute('data-attr-type');
+                addAttribute(id, name, type);
+            });
+        });
+        
         document.getElementById('newTagInput')
             .addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {

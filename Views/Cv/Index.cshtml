@@ -1,0 +1,125 @@
+﻿@using CvManagementSystem.ViewModels
+@model IEnumerable<CvListViewModel>
+@{
+    ViewData["Title"] = "Мои CV";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Мои CV</h2>
+    <a asp-action="Positions" class="btn btn-primary">
+        + Создать новое CV
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <h5>У вас пока нет CV</h5>
+        <p class="mb-0">
+            Перейдите в раздел
+            <a asp-action="Positions">доступные позиции</a>
+            и создайте CV для интересующей вас позиции.
+        </p>
+    </div>
+}
+else
+{
+    <div class="mb-2 d-flex gap-2 align-items-center" style="height:36px">
+        <button type="button"
+                id="deleteSelectedBtn"
+                class="btn btn-danger btn-sm"
+                style="visibility:hidden; opacity:0; transition: opacity 0.2s ease;">
+            Удалить выбранные
+        </button>
+        <span id="selectedCount" class="text-muted small"></span>
+    </div>
+
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th style="width:40px">
+                    <input type="checkbox" id="selectAll" class="form-check-input" />
+                </th>
+                <th>Позиция</th>
+                <th>Атрибутов</th>
+                <th>Проектов</th>
+                <th>Дата создания</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cv in Model)
+            {
+                <tr class="clickable-row"
+                    data-href="@Url.Action("ViewCv", new { id = cv.Id })">
+                    <td onclick="event.stopPropagation()">
+                        <input type="checkbox"
+                               class="form-check-input row-checkbox"
+                               value="@cv.Id" />
+                    </td>
+                    <td class="fw-bold">@cv.PositionTitle</td>
+                    <td>@cv.AttributesCount</td>
+                    <td>@cv.ProjectsCount</td>
+                    <td>@cv.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.clickable-row').forEach(function (row) {
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function () {
+                window.location.href = this.getAttribute('data-href');
+            });
+        });
+
+        document.getElementById('selectAll')
+            .addEventListener('change', function () {
+                document.querySelectorAll('.row-checkbox').forEach(function (cb) {
+                    cb.checked = this.checked;
+                }.bind(this));
+                updateToolbar();
+            });
+
+        document.querySelectorAll('.row-checkbox').forEach(function (cb) {
+            cb.addEventListener('change', function () { updateToolbar(); });
+        });
+
+        document.getElementById('deleteSelectedBtn')
+            .addEventListener('click', function () { deleteSelected(); });
+
+        function updateToolbar() {
+            var selected = document.querySelectorAll('.row-checkbox:checked');
+            var deleteBtn = document.getElementById('deleteSelectedBtn');
+            var countSpan = document.getElementById('selectedCount');
+
+            if (selected.length > 0) {
+                deleteBtn.style.visibility = 'visible';
+                deleteBtn.style.opacity = '1';
+                countSpan.textContent = 'Выбрано: ' + selected.length;
+            } else {
+                deleteBtn.style.visibility = 'hidden';
+                deleteBtn.style.opacity = '0';
+                countSpan.textContent = '';
+            }
+        }
+
+        function deleteSelected() {
+            var selected = document.querySelectorAll('.row-checkbox:checked');
+            if (selected.length === 0) return;
+
+            if (!confirm('Удалить выбранные CV (' + selected.length + ' шт.)?'))
+                return;
+
+            selected.forEach(function (cb) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '/Cv/Delete/' + cb.value;
+                document.body.appendChild(form);
+                form.submit();
+            });
+        }
+    </script>
+}

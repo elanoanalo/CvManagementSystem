@@ -22,50 +22,41 @@
 
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto">
+                        @* Позиции видят все — и незалогиненные тоже *@
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Positions" asp-action="Index">
+                                Позиции
+                            </a>
+                        </li>
+
                         @if (User.Identity!.IsAuthenticated)
                         {
                             @if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link"
-                                       asp-controller="Attributes"
-                                       asp-action="Index">
+                                    <a class="nav-link" asp-controller="Attributes" asp-action="Index">
                                         Атрибуты
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       asp-controller="Positions"
-                                       asp-action="Index">
-                                        Позиции
                                     </a>
                                 </li>
                             }
 
-@if (User.IsInRole("Candidate") || User.IsInRole("Administrator"))
-{
-    <li class="nav-item">
-        <a class="nav-link"
-           asp-controller="Profile"
-           asp-action="Index">
-            Мой профиль
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link"
-           asp-controller="Projects"
-           asp-action="Index">
-            Мои проекты
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link"
-           asp-controller="Cv"
-           asp-action="Index">
-            Мои CV
-        </a>
-    </li>
-}
+                            @if (User.IsInRole("Candidate") || User.IsInRole("Administrator"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Profile" asp-action="Index">
+                                        Мой профиль
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Projects" asp-action="Index">
+                                        Мои проекты
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Cv" asp-action="Index">
+                                        Мои CV
+                                    </a>
+                                </li>
                             }
                         }
                     </ul>

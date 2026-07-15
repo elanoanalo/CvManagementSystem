@@ -1,0 +1,181 @@
+﻿@using CvManagementSystem.Entities
+@model CvManagementSystem.ViewModels.CvViewModel
+@{
+    ViewData["Title"] = "CV — " + Model.CandidateFullName;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>CV — @Model.PositionTitle</h2>
+    <div class="d-flex gap-2">
+        @if (User.IsInRole("Candidate") || User.IsInRole("Administrator"))
+        {
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                  onsubmit="return confirm('Удалить это CV?')">
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                    Удалить CV
+                </button>
+            </form>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Назад</a>
+    </div>
+</div>
+
+@* Информация о кандидате *@
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Кандидат</h5>
+        <table class="table table-borderless mb-0">
+            <tr>
+                <th style="width:200px">Имя</th>
+                <td>@Model.CandidateFullName</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>@Model.CandidateEmail</td>
+            </tr>
+            <tr>
+                <th>Позиция</th>
+                <td>@Model.PositionTitle</td>
+            </tr>
+            <tr>
+                <th>CV создано</th>
+                <td>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+@* Атрибуты *@
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-4">Атрибуты</h5>
+
+        @if (!Model.Attributes.Any())
+        {
+            <p class="text-muted">Нет атрибутов</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Атрибут</th>
+                        <th>Значение</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var attr in Model.Attributes)
+                    {
+                        <tr>
+                            <td>
+                                <span class="fw-bold">@attr.Name</span>
+                                @if (attr.IsRequired)
+                                {
+                                    <span class="badge bg-danger ms-1 small">Обязательный</span>
+                                }
+                                @if (!string.IsNullOrEmpty(attr.Description))
+                                {
+                                    <div class="text-muted small">@attr.Description</div>
+                                }
+                            </td>
+                            <td>
+                                @if (attr.Type == AttributeType.Image && attr.HasValue)
+                                {
+                                    <img src="@attr.DisplayValue"
+                                         class="img-thumbnail"
+                                         style="max-height:100px" />
+                                }
+                                else if (attr.HasValue)
+                                {
+                                    @attr.DisplayValue
+                                }
+                                else
+                                {
+                                    @if (User.IsInRole("Candidate") || User.IsInRole("Administrator"))
+                                    {
+                                        <a asp-controller="Profile" asp-action="Index" class="text-warning">
+                                            Не заполнено — заполнить в профиле →
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Не заполнено</span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @if (attr.HasValue)
+                                {
+                                    <span class="badge bg-success">✓</span>
+                                }
+                                else if (attr.IsRequired)
+                                {
+                                    <span class="badge bg-danger">Не заполнено!</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Пусто</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@* Проекты *@
+<div class="card shadow">
+    <div class="card-body">
+        <h5 class="card-title mb-4">
+            Проекты
+            <span class="text-muted small fw-normal">
+                (отфильтровано по тегам позиции)
+            </span>
+        </h5>
+
+        @if (!Model.Projects.Any())
+        {
+            <p class="text-muted">
+                Нет подходящих проектов.
+                @if (User.IsInRole("Candidate"))
+                {
+                    <a asp-controller="Projects" asp-action="Create">
+                        Добавить проект →
+                    </a>
+                }
+            </p>
+        }
+        else
+        {
+            foreach (var project in Model.Projects)
+            {
+                <div class="card mb-3 border-start border-primary border-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="card-title mb-1">@project.Title</h6>
+                            @if (project.StartDate != null || project.EndDate != null)
+                            {
+                                <span class="text-muted small">
+                                    @(project.StartDate ?? "?") — @(project.EndDate ?? "н.в.")
+                                </span>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(project.Description))
+                        {
+                            <p class="card-text text-muted small mb-2">
+                                @project.Description
+                            </p>
+                        }
+                        @foreach (var tag in project.Tags)
+                        {
+                            <span class="badge bg-info text-dark me-1">@tag</span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

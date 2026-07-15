@@ -6,87 +6,112 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Позиции</h2>
-    <a asp-action="Create" class="btn btn-primary">Создать позицию</a>
+    @if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
+    {
+        <a asp-action="Create" class="btn btn-primary">Создать позицию</a>
+    }
 </div>
 
 @if (!Model.Any())
 {
     <div class="alert alert-info">
-        Позиций пока нет. Создайте первую!
+        Позиций пока нет.
     </div>
+}
+else if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
+{
+    @* Таблица С чекбоксами — только для рекрутеров *@
+    <div class="mb-2 d-flex gap-2 align-items-center" style="height:36px">
+        <button type="button"
+                id="deleteSelectedBtn"
+                class="btn btn-danger btn-sm"
+                style="visibility:hidden; opacity:0; transition: opacity 0.2s ease;">
+            Удалить выбранные
+        </button>
+        <span id="selectedCount" class="text-muted small"></span>
+    </div>
+
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th style="width:40px">
+                    <input type="checkbox" id="selectAll" class="form-check-input" />
+                </th>
+                <th>Название</th>
+                <th>Теги</th>
+                <th>Атрибутов</th>
+                <th>CV</th>
+                <th>Статус</th>
+                <th>Создал</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var position in Model)
+            {
+                <tr class="clickable-row"
+                    data-href="@Url.Action("Details", new { id = position.Id })">
+                    <td onclick="event.stopPropagation()">
+                        <input type="checkbox"
+                               class="form-check-input row-checkbox"
+                               value="@position.Id" />
+                    </td>
+                    <td class="fw-bold">@position.Title</td>
+                    <td>
+                        @foreach (var tag in position.Tags)
+                        {
+                            <span class="badge bg-info text-dark me-1">@tag</span>
+                        }
+                    </td>
+                    <td>@position.AttributesCount</td>
+                    <td>@position.CvsCount</td>
+                    <td>
+                        @if (position.IsPublished)
+                        {
+                            <span class="badge bg-success">Опубликована</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Черновик</span>
+                        }
+                    </td>
+                    <td>@position.CreatedByName</td>
+                    <td>@position.CreatedAt.ToString("dd.MM.yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 else
 {
-    <form id="bulkForm" method="post">
-        <div class="mb-2 d-flex gap-2 align-items-center" style="height:36px">
-            <button type="button"
-                    id="deleteSelectedBtn"
-                    class="btn btn-danger btn-sm"
-                    style="visibility:hidden; opacity:0; transition: opacity 0.2s ease;">
-                Удалить выбранные
-            </button>
-            <span id="selectedCount" class="text-muted small"></span>
-        </div>
-
-        <table class="table table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th style="width:40px">
-                        <input type="checkbox"
-                               id="selectAll"
-                               class="form-check-input" />
-                    </th>
-                    <th>Название</th>
-                    <th>Теги</th>
-                    <th>Атрибутов</th>
-                    <th>CV</th>
-                    <th>Статус</th>
-                    <th>Создал</th>
-                    <th>Дата</th>
+    @* Простая таблица БЕЗ чекбоксов — для кандидатов и незалогиненных *@
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Название</th>
+                <th>Теги</th>
+                <th>Атрибутов</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var position in Model)
+            {
+                <tr class="clickable-row"
+                    data-href="@Url.Action("Details", new { id = position.Id })">
+                    <td class="fw-bold">@position.Title</td>
+                    <td>
+                        @foreach (var tag in position.Tags)
+                        {
+                            <span class="badge bg-info text-dark me-1">@tag</span>
+                        }
+                    </td>
+                    <td>@position.AttributesCount</td>
+                    <td>@position.CreatedAt.ToString("dd.MM.yyyy")</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var position in Model)
-                {
-                    <tr class="clickable-row"
-                        data-href="@Url.Action("Details", new { id = position.Id })">
-                        <td onclick="event.stopPropagation()">
-                            <input type="checkbox"
-                                   class="form-check-input row-checkbox"
-                                   value="@position.Id" />
-                        </td>
-                        <td>
-                            <a asp-action="Details"
-                               asp-route-id="@position.Id"
-                               class="text-decoration-none fw-bold">
-                                @position.Title
-                            </a>
-                        </td>
-                        <td>
-                            @foreach (var tag in position.Tags)
-                            {
-                                <span class="badge bg-info text-dark me-1">@tag</span>
-                            }
-                        </td>
-                        <td>@position.AttributesCount</td>
-                        <td>@position.CvsCount</td>
-                        <td>
-                            @if (position.IsPublished)
-                            {
-                                <span class="badge bg-success">Опубликована</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-warning text-dark">Черновик</span>
-                            }
-                        </td>
-                        <td>@position.CreatedByName</td>
-                        <td>@position.CreatedAt.ToString("dd.MM.yyyy")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </form>
+            }
+        </tbody>
+    </table>
 }
 
 @section Scripts {
@@ -98,30 +123,29 @@ else
             });
         });
 
-        document.getElementById('selectAll')
-            .addEventListener('change', function () {
-                var checkboxes = document.querySelectorAll('.row-checkbox');
-                checkboxes.forEach(function (cb) {
+        var deleteBtn = document.getElementById('deleteSelectedBtn');
+        var selectAll = document.getElementById('selectAll');
+
+        // Эти элементы есть только у рекрутеров — проверяем перед использованием
+        if (selectAll) {
+            selectAll.addEventListener('change', function () {
+                document.querySelectorAll('.row-checkbox').forEach(function (cb) {
                     cb.checked = this.checked;
                 }.bind(this));
                 updateToolbar();
             });
+        }
 
         document.querySelectorAll('.row-checkbox').forEach(function (cb) {
-            cb.addEventListener('change', function () {
-                updateToolbar();
-            });
+            cb.addEventListener('change', function () { updateToolbar(); });
         });
 
-                    // САМО УДАЛЕНИЕ ЧЕРЕЗ ЧЕКБОКСЫ
-        document.getElementById('deleteSelectedBtn')
-            .addEventListener('click', function () {
-                deleteSelected();
-            });
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', function () { deleteSelected(); });
+        }
 
         function updateToolbar() {
             var selected = document.querySelectorAll('.row-checkbox:checked');
-            var deleteBtn = document.getElementById('deleteSelectedBtn');
             var countSpan = document.getElementById('selectedCount');
 
             if (selected.length > 0) {

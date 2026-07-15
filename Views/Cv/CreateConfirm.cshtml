@@ -1,0 +1,44 @@
+﻿@model CvManagementSystem.ViewModels.PositionForCandidateViewModel
+@{
+    ViewData["Title"] = "Создать CV";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body p-4 text-center">
+                <h4 class="mb-3">Создать CV для позиции</h4>
+                <h3 class="text-primary mb-3">@Model.Title</h3>
+
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <p class="text-muted mb-3">@Model.Description</p>
+                }
+
+                <div class="mb-3">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <span class="badge bg-info text-dark me-1">@tag</span>
+                    }
+                </div>
+
+                <p class="text-muted small mb-4">
+                    CV будет автоматически сгенерировано из вашего профиля.
+                    Содержит <strong>@Model.AttributesCount</strong> атрибутов.
+                </p>
+
+                <form asp-action="Create" method="post">
+                    <input type="hidden" name="positionId" value="@Model.Id" />
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="submit" class="btn btn-primary">
+                            Создать CV
+                        </button>
+                        <a asp-action="Positions" class="btn btn-outline-secondary">
+                            Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

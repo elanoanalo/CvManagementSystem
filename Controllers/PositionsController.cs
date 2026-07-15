@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CvManagementSystem.Controllers
 {
-    [Authorize(Roles = "Recruiter,Administrator")]
     public class PositionsController : Controller
     {
         private readonly AppDbContext _context;
@@ -20,14 +19,31 @@ namespace CvManagementSystem.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Positions
+        // GET: /Positions — доступно всем
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var positions = await _context.Positions
+            // Проверяем роль ПЕРЕД запросом к БД
+            var isRecruiterOrAdmin = User.IsInRole("Recruiter") ||
+                                     User.IsInRole("Administrator");
+
+            // AsQueryable() — создаём "заготовку" запроса, но НЕ выполняем его ещё
+            var query = _context.Positions
                 .Include(p => p.CreatedByUser)
                 .Include(p => p.PositionAttributes)
                 .Include(p => p.Tags)
                 .Include(p => p.Cvs)
+                .AsQueryable();
+
+            // Незалогиненные и кандидаты видят только опубликованные
+            // Рекрутеры и админы видят все (включая черновики)
+            if (!isRecruiterOrAdmin)
+            {
+                query = query.Where(p => p.IsPublished);
+            }
+
+            // ТОЛЬКО ЗДЕСЬ запрос реально уходит в базу
+            var positions = await query
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
 
@@ -35,7 +51,7 @@ namespace CvManagementSystem.Controllers
 
             foreach (var position in positions)
             {
-                var viewModel = new PositionListViewModel
+                result.Add(new PositionListViewModel
                 {
                     Id = position.Id,
                     Title = position.Title,
@@ -46,192 +62,14 @@ namespace CvManagementSystem.Controllers
                     CreatedAt = position.CreatedAt,
                     CreatedByName = position.CreatedByUser!.FullName,
                     Tags = position.Tags.Select(t => t.Tag).ToList()
-                };
-
-                result.Add(viewModel);
+                });
             }
 
             return View(result);
         }
 
-        // GET: /Positions/Create
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            var model = new PositionFormViewModel();
-
-            // Загружаем все доступные атрибуты из библиотеки
-            var availableAttributes = await _context.AttributeDefinitions
-                .OrderBy(a => a.Name)
-                .ToListAsync();
-
-            foreach (var attribute in availableAttributes)
-            {
-                model.AvailableAttributes.Add(new AttributeSelectionViewModel
-                {
-                    Id = attribute.Id,
-                    Name = attribute.Name,
-                    Type = attribute.Type
-                });
-            }
-
-            return View(model);
-        }
-
-        // POST: /Positions/Create
-        [HttpPost]
-        public async Task<IActionResult> Create(PositionFormViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                await ReloadAvailableAttributes(model);
-                return View(model);
-            }
-
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
-
-            // Создаём позицию
-            var position = new Position
-            {
-                Title = model.Title,
-                Description = model.Description,
-                IsPublished = model.IsPublished,
-                CreatedByUserId = currentUserId
-            };
-
-            _context.Positions.Add(position);
-
-            // Добавляем теги
-            foreach (var tag in model.Tags)
-            {
-                if (string.IsNullOrWhiteSpace(tag))
-                    continue;
-
-                _context.PositionTags.Add(new PositionTag
-                {
-                    PositionId = position.Id,
-                    Tag = tag.Trim()
-                });
-            }
-
-            // Привязываем атрибуты к позиции
-            int order = 0;
-            foreach (var attr in model.Attributes)
-            {
-                _context.PositionAttributes.Add(new PositionAttribute
-                {
-                    PositionId = position.Id,
-                    AttributeDefinitionId = attr.AttributeDefinitionId,
-                    IsRequired = attr.IsRequired,
-                    DisplayOrder = order
-                });
-
-                order++;
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: /Positions/Edit/id
-        [HttpGet]
-        public async Task<IActionResult> Edit(Guid id)
-        {
-            var position = await _context.Positions
-                .Include(p => p.Tags)
-                .Include(p => p.PositionAttributes)
-                    .ThenInclude(pa => pa.AttributeDefinition)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (position == null)
-                return NotFound();
-
-            var model = new PositionFormViewModel
-            {
-                Id = position.Id,
-                Title = position.Title,
-                Description = position.Description,
-                IsPublished = position.IsPublished,
-                Tags = position.Tags.Select(t => t.Tag).ToList()
-            };
-
-            // Заполняем привязанные атрибуты
-            foreach (var pa in position.PositionAttributes.OrderBy(pa => pa.DisplayOrder))
-            {
-                model.Attributes.Add(new PositionAttributeViewModel
-                {
-                    AttributeDefinitionId = pa.AttributeDefinitionId,
-                    AttributeName = pa.AttributeDefinition!.Name,
-                    AttributeType = pa.AttributeDefinition.Type,
-                    IsRequired = pa.IsRequired,
-                    DisplayOrder = pa.DisplayOrder
-                });
-            }
-
-            await ReloadAvailableAttributes(model);
-            return View(model);
-        }
-
-        // POST: /Positions/Edit/id
-        [HttpPost]
-        public async Task<IActionResult> Edit(Guid id, PositionFormViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                await ReloadAvailableAttributes(model);
-                return View(model);
-            }
-
-            var position = await _context.Positions
-                .Include(p => p.Tags)
-                .Include(p => p.PositionAttributes)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (position == null)
-                return NotFound();
-
-            // Обновляем основные поля
-            position.Title = model.Title;
-            position.Description = model.Description;
-            position.IsPublished = model.IsPublished;
-
-            // Пересоздаём теги
-            _context.PositionTags.RemoveRange(position.Tags);
-
-            foreach (var tag in model.Tags)
-            {
-                if (string.IsNullOrWhiteSpace(tag))
-                    continue;
-
-                _context.PositionTags.Add(new PositionTag
-                {
-                    PositionId = position.Id,
-                    Tag = tag.Trim()
-                });
-            }
-
-            // Пересоздаём привязанные атрибуты
-            _context.PositionAttributes.RemoveRange(position.PositionAttributes);
-
-            int order = 0;
-            foreach (var attr in model.Attributes)
-            {
-                _context.PositionAttributes.Add(new PositionAttribute
-                {
-                    PositionId = position.Id,
-                    AttributeDefinitionId = attr.AttributeDefinitionId,
-                    IsRequired = attr.IsRequired,
-                    DisplayOrder = order
-                });
-
-                order++;
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: /Positions/Details/id
+        // GET: /Positions/Details/id — доступно всем
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
@@ -259,7 +97,6 @@ namespace CvManagementSystem.Controllers
                 Tags = position.Tags.Select(t => t.Tag).ToList()
             };
 
-            // Передаём атрибуты позиции через ViewBag
             ViewBag.Attributes = position.PositionAttributes
                 .OrderBy(pa => pa.DisplayOrder)
                 .Select(pa => new
@@ -273,7 +110,163 @@ namespace CvManagementSystem.Controllers
             return View(model);
         }
 
-        // POST: /Positions/Delete/id
+        // GET: /Positions/Create — только рекрутерам
+        [Authorize(Roles = "Recruiter,Administrator")]
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = new PositionFormViewModel();
+            await ReloadAvailableAttributes(model);
+            return View(model);
+        }
+
+        // POST: /Positions/Create — только рекрутерам
+        [Authorize(Roles = "Recruiter,Administrator")]
+        [HttpPost]
+        public async Task<IActionResult> Create(PositionFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                await ReloadAvailableAttributes(model);
+                return View(model);
+            }
+
+            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+
+            var position = new Position
+            {
+                Title = model.Title,
+                Description = model.Description,
+                IsPublished = model.IsPublished,
+                CreatedByUserId = currentUserId
+            };
+
+            _context.Positions.Add(position);
+
+            foreach (var tag in model.Tags)
+            {
+                if (string.IsNullOrWhiteSpace(tag)) continue;
+
+                _context.PositionTags.Add(new PositionTag
+                {
+                    PositionId = position.Id,
+                    Tag = tag.Trim()
+                });
+            }
+
+            int order = 0;
+            foreach (var attr in model.Attributes)
+            {
+                _context.PositionAttributes.Add(new PositionAttribute
+                {
+                    PositionId = position.Id,
+                    AttributeDefinitionId = attr.AttributeDefinitionId,
+                    IsRequired = attr.IsRequired,
+                    DisplayOrder = order
+                });
+                order++;
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: /Positions/Edit/id — только рекрутерам
+        [Authorize(Roles = "Recruiter,Administrator")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var position = await _context.Positions
+                .Include(p => p.Tags)
+                .Include(p => p.PositionAttributes)
+                    .ThenInclude(pa => pa.AttributeDefinition)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (position == null)
+                return NotFound();
+
+            var model = new PositionFormViewModel
+            {
+                Id = position.Id,
+                Title = position.Title,
+                Description = position.Description,
+                IsPublished = position.IsPublished,
+                Tags = position.Tags.Select(t => t.Tag).ToList()
+            };
+
+            foreach (var pa in position.PositionAttributes.OrderBy(pa => pa.DisplayOrder))
+            {
+                model.Attributes.Add(new PositionAttributeViewModel
+                {
+                    AttributeDefinitionId = pa.AttributeDefinitionId,
+                    AttributeName = pa.AttributeDefinition!.Name,
+                    AttributeType = pa.AttributeDefinition.Type,
+                    IsRequired = pa.IsRequired,
+                    DisplayOrder = pa.DisplayOrder
+                });
+            }
+
+            await ReloadAvailableAttributes(model);
+            return View(model);
+        }
+
+        // POST: /Positions/Edit/id — только рекрутерам
+        [Authorize(Roles = "Recruiter,Administrator")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(Guid id, PositionFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                await ReloadAvailableAttributes(model);
+                return View(model);
+            }
+
+            var position = await _context.Positions
+                .Include(p => p.Tags)
+                .Include(p => p.PositionAttributes)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (position == null)
+                return NotFound();
+
+            position.Title = model.Title;
+            position.Description = model.Description;
+            position.IsPublished = model.IsPublished;
+
+            _context.PositionTags.RemoveRange(position.Tags);
+
+            foreach (var tag in model.Tags)
+            {
+                if (string.IsNullOrWhiteSpace(tag)) continue;
+
+                _context.PositionTags.Add(new PositionTag
+                {
+                    PositionId = position.Id,
+                    Tag = tag.Trim()
+                });
+            }
+
+            _context.PositionAttributes.RemoveRange(position.PositionAttributes);
+
+            int order = 0;
+            foreach (var attr in model.Attributes)
+            {
+                _context.PositionAttributes.Add(new PositionAttribute
+                {
+                    PositionId = position.Id,
+                    AttributeDefinitionId = attr.AttributeDefinitionId,
+                    IsRequired = attr.IsRequired,
+                    DisplayOrder = order
+                });
+                order++;
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: /Positions/Delete/id — только рекрутерам
+        [Authorize(Roles = "Recruiter,Administrator")]
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -293,8 +286,44 @@ namespace CvManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Вспомогательный метод — загружает список доступных атрибутов
-        // Используется и в Create и в Edit чтобы не дублировать код
+        // GET: /Positions/Candidates/id — только рекрутерам
+        [Authorize(Roles = "Recruiter,Administrator")]
+        [HttpGet]
+        public async Task<IActionResult> Candidates(Guid id)
+        {
+            var position = await _context.Positions
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (position == null)
+                return NotFound();
+
+            var cvs = await _context.Cvs
+                .Include(cv => cv.Candidate)
+                .Where(cv => cv.PositionId == id)
+                .OrderByDescending(cv => cv.CreatedAt)
+                .ToListAsync();
+
+            ViewBag.PositionTitle = position.Title;
+            ViewBag.PositionId = id;
+
+            var result = new List<CvListViewModel>();
+
+            foreach (var cv in cvs)
+            {
+                result.Add(new CvListViewModel
+                {
+                    Id = cv.Id,
+                    PositionTitle = cv.Candidate!.FullName,
+                    CreatedAt = cv.CreatedAt,
+                    AttributesCount = 0,
+                    ProjectsCount = 0
+                });
+            }
+
+            return View(result);
+        }
+
+        // Приватный метод — загружает список атрибутов для формы
         private async Task ReloadAvailableAttributes(PositionFormViewModel model)
         {
             model.AvailableAttributes.Clear();

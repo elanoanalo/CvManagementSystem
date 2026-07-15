@@ -1,0 +1,79 @@
+﻿@using CvManagementSystem.ViewModels
+@model IEnumerable<PositionForCandidateViewModel>
+@{
+    ViewData["Title"] = "Доступные позиции";
+}
+
+<h2 class="mb-4">Доступные позиции</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Пока нет доступных позиций. Загляните позже!
+    </div>
+}
+else
+{
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Теги</th>
+                <th>Атрибутов</th>
+                <th>Статус CV</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var position in Model)
+            {
+                <tr class="clickable-row"
+                    data-href="@(position.AlreadyHasCv
+                                            ? Url.Action("ViewCv", new { id = position.ExistingCvId })
+                                        : Url.Action("CreateConfirm", new { positionId = position.Id }))">
+                    <td class="fw-bold">@position.Title</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(position.Description))
+                        {
+                            @(position.Description.Length > 60
+                                ? position.Description.Substring(0, 60) + "..."
+                                : position.Description)
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td>
+                        @foreach (var tag in position.Tags)
+                        {
+                            <span class="badge bg-info text-dark me-1">@tag</span>
+                        }
+                    </td>
+                    <td>@position.AttributesCount</td>
+                    <td>
+                        @if (position.AlreadyHasCv)
+                        {
+                            <span class="badge bg-success">CV создано</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Нет CV</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.clickable-row').forEach(function (row) {
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function () {
+                window.location.href = this.getAttribute('data-href');
+            });
+        });
+    </script>
+}
