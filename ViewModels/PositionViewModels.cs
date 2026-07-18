@@ -24,6 +24,9 @@ namespace CvManagementSystem.ViewModels
 
         // Все доступные атрибуты из библиотеки (для выбора)
         public List<AttributeSelectionViewModel> AvailableAttributes { get; set; } = new();
+
+        // Для Optimistic Locking — версия записи
+        public string? RowVersion { get; set; }
     }
 
     public class PositionAttributeViewModel

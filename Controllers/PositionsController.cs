@@ -191,7 +191,11 @@ namespace CvManagementSystem.Controllers
                 Title = position.Title,
                 Description = position.Description,
                 IsPublished = position.IsPublished,
-                Tags = position.Tags.Select(t => t.Tag).ToList()
+                Tags = position.Tags.Select(t => t.Tag).ToList(),
+                // Конвертируем byte[] в Base64 строку для передачи через форму
+                RowVersion = position.RowVersion != null
+                    ? Convert.ToBase64String(position.RowVersion)
+                    : null
             };
 
             foreach (var pa in position.PositionAttributes.OrderBy(pa => pa.DisplayOrder))
@@ -229,6 +233,12 @@ namespace CvManagementSystem.Controllers
             if (position == null)
                 return NotFound();
 
+            // Optimistic Locking — проверяем версию записи
+            if (!string.IsNullOrEmpty(model.RowVersion))
+            {
+                position.RowVersion = Convert.FromBase64String(model.RowVersion);
+            }
+
             position.Title = model.Title;
             position.Description = model.Description;
             position.IsPublished = model.IsPublished;
@@ -238,7 +248,6 @@ namespace CvManagementSystem.Controllers
             foreach (var tag in model.Tags)
             {
                 if (string.IsNullOrWhiteSpace(tag)) continue;
-
                 _context.PositionTags.Add(new PositionTag
                 {
                     PositionId = position.Id,
@@ -261,8 +270,75 @@ namespace CvManagementSystem.Controllers
                 order++;
             }
 
+            try
+            {
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Кто-то другой изменил эту запись пока мы редактировали
+                ModelState.AddModelError(string.Empty,
+                    "Эта позиция была изменена другим пользователем пока вы редактировали. " +
+                    "Пожалуйста, перезагрузите страницу и попробуйте снова.");
+
+                await ReloadAvailableAttributes(model);
+                return View(model);
+            }
+        }
+
+        // POST: /Positions/Duplicate/id
+        [Authorize(Roles = "Recruiter,Administrator")]
+        [HttpPost]
+        public async Task<IActionResult> Duplicate(Guid id)
+        {
+            var position = await _context.Positions
+                .Include(p => p.Tags)
+                .Include(p => p.PositionAttributes)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (position == null)
+                return NotFound();
+
+            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+
+            // Создаём копию позиции
+            var duplicate = new Position
+            {
+                Title = position.Title + " (копия)",
+                Description = position.Description,
+                IsPublished = false, // копия всегда черновик
+                CreatedByUserId = currentUserId
+            };
+
+            _context.Positions.Add(duplicate);
+
+            // Копируем теги
+            foreach (var tag in position.Tags)
+            {
+                _context.PositionTags.Add(new PositionTag
+                {
+                    PositionId = duplicate.Id,
+                    Tag = tag.Tag
+                });
+            }
+
+            // Копируем атрибуты
+            foreach (var attr in position.PositionAttributes)
+            {
+                _context.PositionAttributes.Add(new PositionAttribute
+                {
+                    PositionId = duplicate.Id,
+                    AttributeDefinitionId = attr.AttributeDefinitionId,
+                    IsRequired = attr.IsRequired,
+                    DisplayOrder = attr.DisplayOrder
+                });
+            }
+
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            // Перенаправляем на редактирование копии
+            return RedirectToAction(nameof(Edit), new { id = duplicate.Id });
         }
 
         // POST: /Positions/Delete/id — только рекрутерам

@@ -42,6 +42,17 @@ builder.Services.ConfigureApplicationCookie(options =>
 // 4. Подключаем MVC
 builder.Services.AddControllersWithViews();
 
+// Локализация
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { "en", "ru" };
+    options.SetDefaultCulture("en")
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
+});
+
 var app = builder.Build();
 
 // 5. Middleware pipeline
@@ -54,6 +65,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseRequestLocalization();
 
 // ВАЖНО: порядок этих двух строк критичен!
 app.UseAuthentication();

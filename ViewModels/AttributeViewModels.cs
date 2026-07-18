@@ -22,6 +22,9 @@ namespace CvManagementSystem.ViewModels
 
         // Это поле для новых вариантов которые вводит пользователь
         public string? NewOption { get; set; }
+
+        // Для Optimistic Locking
+        public string? RowVersion { get; set; }
     }
 
     public class AttributeListViewModel

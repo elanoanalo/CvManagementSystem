@@ -1,6 +1,50 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
+
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="card shadow mt-3">
+    <div class="card-body">
+        <h4>We collect your data</h4>
+        <p>
+            Yes, we collect your name, email, GPA, English level, marital status,
+            and literally everything else you put in your profile.
+            We promise not to sell it. Probably.
+        </p>
+
+        <h4>Cookies</h4>
+        <p>
+            We use cookies. Not the chocolate chip kind, unfortunately.
+            Just the boring authentication kind that keeps you logged in.
+        </p>
+
+        <h4>Your rights</h4>
+        <p>
+            You have the right to remain silent.
+            Anything you type into your profile can and will be used
+            against you in a CV review.
+        </p>
+
+        <h4>Security</h4>
+        <p>
+            Your password is hashed with a secure algorithm.
+            We have no idea what your password is.
+            Neither does anyone else. Including you, probably.
+        </p>
+
+        <h4>Contact</h4>
+        <p>
+            If you have any concerns about your privacy,
+            please write them on a piece of paper and throw it away.
+            Or email us. We might respond.
+        </p>
+
+        <hr />
+        <p class="text-muted small">
+            Last updated: never. This policy is eternal and immutable,
+            like the laws of physics, but less reliable.
+            &copy; @DateTime.Now.Year Abay Tolegen. No rights reserved whatsoever.
+        </p>
+    </div>
+</div>

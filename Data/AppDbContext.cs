@@ -27,16 +27,35 @@ namespace CvManagementSystem.Data
             base.OnModelCreating(modelBuilder);
 
             // Составной уникальный индекс для PositionAttribute
-            // (один атрибут не может быть добавлен к одной позиции дважды)
             modelBuilder.Entity<PositionAttribute>()
                 .HasIndex(pa => new { pa.PositionId, pa.AttributeDefinitionId })
                 .IsUnique();
 
             // Составной уникальный индекс для AttributeValue
-            // (у одного кандидата не может быть двух значений одного атрибута)
             modelBuilder.Entity<AttributeValue>()
                 .HasIndex(av => new { av.CandidateId, av.AttributeDefinitionId })
                 .IsUnique();
+
+            // Настройка RowVersion для Optimistic Locking
+            modelBuilder.Entity<AttributeDefinition>()
+                .Property(a => a.RowVersion)
+                .IsRowVersion();
+
+            modelBuilder.Entity<Position>()
+                .Property(p => p.RowVersion)
+                .IsRowVersion();
+
+            modelBuilder.Entity<AttributeValue>()
+                .Property(av => av.RowVersion)
+                .IsRowVersion();
+
+            modelBuilder.Entity<Cv>()
+                .Property(cv => cv.RowVersion)
+                .IsRowVersion();
+
+            modelBuilder.Entity<Project>()
+                .Property(p => p.RowVersion)
+                .IsRowVersion();
         }
     }
 }

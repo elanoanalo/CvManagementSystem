@@ -110,7 +110,11 @@ namespace CvManagementSystem.Controllers
                 Name = attribute.Name,
                 Description = attribute.Description,
                 Type = attribute.Type,
-                Options = attribute.Options.Select(o => o.Value).ToList()
+                Options = attribute.Options.Select(o => o.Value).ToList(),
+                // Конвертируем byte[] в Base64 для передачи через форму
+                RowVersion = attribute.RowVersion != null
+                    ? Convert.ToBase64String(attribute.RowVersion)
+                    : null
             };
 
             return View(model);
@@ -130,22 +134,23 @@ namespace CvManagementSystem.Controllers
             if (attribute == null)
                 return NotFound();
 
-            // Обновляем основные поля
+            // Optimistic Locking — устанавливаем версию
+            if (!string.IsNullOrEmpty(model.RowVersion))
+            {
+                attribute.RowVersion = Convert.FromBase64String(model.RowVersion);
+            }
+
             attribute.Name = model.Name;
             attribute.Description = model.Description;
 
-            // Если Dropdown — пересоздаём варианты
             if (model.Type == AttributeType.Dropdown)
             {
-                // Удаляем все старые варианты
                 _context.AttributeOptions.RemoveRange(attribute.Options);
 
-                // Добавляем новые через foreach — так же как в Create
                 int order = 0;
                 foreach (var option in model.Options)
                 {
-                    if (string.IsNullOrWhiteSpace(option))
-                        continue;
+                    if (string.IsNullOrWhiteSpace(option)) continue;
 
                     _context.AttributeOptions.Add(new AttributeOption
                     {
@@ -153,13 +158,22 @@ namespace CvManagementSystem.Controllers
                         Value = option.Trim(),
                         DisplayOrder = order
                     });
-
                     order++;
                 }
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "Этот атрибут был изменён другим пользователем пока вы редактировали. " +
+                    "Пожалуйста, перезагрузите страницу и попробуйте снова.");
+                return View(model);
+            }
         }
 
         // GET: /Attributes/Details/id

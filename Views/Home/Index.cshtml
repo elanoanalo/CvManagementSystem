@@ -1,8 +1,169 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "CV Management — Главная";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@* Статистика *@
+<div class="row g-3 mb-4">
+    <div class="col-md-4 col-sm-6">
+        <div class="card shadow text-center h-100">
+            <div class="card-body">
+                <div class="display-4 fw-bold text-primary">
+                    @ViewBag.TotalPositions
+                </div>
+                <div class="text-muted">Открытых позиций</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="card shadow text-center h-100">
+            <div class="card-body">
+                <div class="display-4 fw-bold text-success">
+                    @ViewBag.TotalCvs
+                </div>
+                <div class="text-muted">CV создано всего</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="card shadow text-center h-100">
+            <div class="card-body">
+                <div class="display-4 fw-bold text-warning">
+                    @ViewBag.NewCvsLast24Hours
+                </div>
+                <div class="text-muted">Новых CV за 24 часа</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="card shadow text-center h-100">
+            <div class="card-body">
+                <div class="display-4 fw-bold text-info">
+                    @ViewBag.TotalCandidates
+                </div>
+                <div class="text-muted">Кандидатов</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="card shadow text-center h-100">
+            <div class="card-body">
+                <div class="display-4 fw-bold text-secondary">
+                    @ViewBag.TotalRecruiters
+                </div>
+                <div class="text-muted">Рекрутеров</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="card shadow text-center h-100">
+            <div class="card-body">
+                <div class="display-4 fw-bold text-danger">
+                    @ViewBag.TotalAttributes
+                </div>
+                <div class="text-muted">Атрибутов в библиотеке</div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div class="row g-4">
+    @* Последние позиции *@
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Последние позиции</h5>
+                @if (ViewBag.RecentPositions.Count == 0)
+                {
+                    <p class="text-muted">Позиций пока нет</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var position in ViewBag.RecentPositions)
+                        {
+                            <li class="list-group-item px-0">
+                                <a asp-controller="Positions"
+                                   asp-action="Details"
+                                   asp-route-id="@position.Id"
+                                   class="text-decoration-none fw-bold">
+                                    @position.Title
+                                </a>
+                                <div class="mt-1">
+                                    @foreach (var tag in position.Tags)
+                                    {
+                                        <span class="badge bg-info text-dark me-1">
+                                            @tag.Tag
+                                        </span>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                    <div class="mt-2">
+                        <a asp-controller="Positions"
+                           asp-action="Index"
+                           class="btn btn-outline-primary btn-sm">
+                            Все позиции →
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Tag Cloud *@
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Популярные теги</h5>
+                @if (ViewBag.PositionTags.Count == 0)
+                {
+                    <p class="text-muted">Тегов пока нет</p>
+                }
+                else
+                {
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var tagItem in ViewBag.PositionTags)
+                        {
+                            @* Размер тега зависит от количества использований *@
+                            var fontSize = tagItem.Count == 1 ? "0.8rem" :
+                                          tagItem.Count == 2 ? "1rem" :
+                                          tagItem.Count <= 4 ? "1.2rem" : "1.5rem";
+
+                            <a asp-controller="Positions"
+                               asp-action="Index"
+                               class="badge bg-info text-dark text-decoration-none"
+                               style="font-size:@fontSize">
+                                @tagItem.Tag
+                                <span class="ms-1 opacity-75">(@tagItem.Count)</span>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Призыв к действию для незалогиненных *@
+@if (!User.Identity!.IsAuthenticated)
+{
+    <div class="card shadow mt-4 border-primary">
+        <div class="card-body text-center p-4">
+            <h4>Готовы начать?</h4>
+            <p class="text-muted">
+                Зарегистрируйтесь как кандидат и создайте CV для интересующих вас позиций
+            </p>
+            <a asp-controller="Account"
+               asp-action="Register"
+               class="btn btn-primary me-2">
+                Зарегистрироваться
+            </a>
+            <a asp-controller="Positions"
+               asp-action="Index"
+               class="btn btn-outline-primary">
+                Смотреть позиции
+            </a>
+        </div>
+    </div>
+}

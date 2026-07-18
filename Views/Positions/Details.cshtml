@@ -1,5 +1,4 @@
-﻿
-@model CvManagementSystem.ViewModels.PositionListViewModel
+﻿@model CvManagementSystem.ViewModels.PositionListViewModel
 @{
     ViewData["Title"] = "Позиция: " + Model.Title;
 }
@@ -14,6 +13,13 @@
                class="btn btn-primary">
                 Редактировать
             </a>
+            <form asp-action="Duplicate"
+                  asp-route-id="@Model.Id"
+                  method="post">
+                <button type="submit" class="btn btn-outline-primary">
+                    Дублировать
+                </button>
+            </form>
             <a asp-action="Candidates"
                asp-route-id="@Model.Id"
                class="btn btn-success">
@@ -30,7 +36,7 @@
         }
         <a asp-action="Index" class="btn btn-outline-secondary">Назад</a>
     </div>
-</div>
+</div>    @* ← ВОТ ЭТОТ ЗАКРЫВАЮЩИЙ DIV БЫЛ ПРОПУЩЕН! *@
 
 <div class="row">
     <div class="col-md-8">
