@@ -40,7 +40,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // 4. Подключаем MVC
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
 
 // Локализация
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -64,8 +66,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
 app.UseRequestLocalization();
+app.UseRouting();
+
 
 // ВАЖНО: порядок этих двух строк критичен!
 app.UseAuthentication();

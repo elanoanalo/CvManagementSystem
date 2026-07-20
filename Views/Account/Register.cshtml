@@ -1,54 +1,58 @@
 ﻿@model CvManagementSystem.ViewModels.RegisterViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @{
-    ViewData["Title"] = "Регистрация";
+    ViewData["Title"] = L["RegisterTitle"];
 }
 
 <div class="row justify-content-center mt-5">
     <div class="col-md-6">
         <div class="card shadow">
             <div class="card-body p-4">
-                <h2 class="card-title text-center mb-4">Регистрация</h2>
+                <h2 class="card-title text-center mb-4">@L["RegisterTitle"]</h2>
 
                 <form asp-action="Register" method="post">
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
                     <div class="mb-3">
-                        <label asp-for="FullName" class="form-label">Полное имя</label>
-                        <input asp-for="FullName" class="form-control" placeholder="Иван Иванов" />
+                        <label asp-for="FullName" class="form-label">@L["FullNameLabel"]</label>
+                        <input asp-for="FullName" class="form-control" placeholder="@L["FullNamePlaceholder"]" />
                         <span asp-validation-for="FullName" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Email" class="form-label">Email</label>
-                        <input asp-for="Email" class="form-control" placeholder="example@mail.com" />
+                        <input asp-for="Email" class="form-control" placeholder="Email" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Пароль</label>
+                        <label asp-for="Password" class="form-label">@L["PasswordLabel"]</label>
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="ConfirmPassword" class="form-label">Подтвердите пароль</label>
+                        <label asp-for="ConfirmPassword" class="form-label">@L["ConfirmPasswordLabel"]</label>
                         <input asp-for="ConfirmPassword" class="form-control" />
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
 
                     <div class="mb-4">
-                        <label asp-for="Role" class="form-label">Я регистрируюсь как</label>
-                        <select asp-for="Role" class="form-select"
-                                asp-items="Html.GetEnumSelectList<CvManagementSystem.Entities.UserRole>()">
+                        <label asp-for="Role" class="form-label">@L["RegisterAsLabel"]</label>
+                        <select asp-for="Role" class="form-select">
+                            <option value="@CvManagementSystem.Entities.UserRole.Candidate">@L["UserRole_Candidate"]</option>
+                            <option value="@CvManagementSystem.Entities.UserRole.Recruiter">@L["UserRole_Recruiter"]</option>
+                            <option value="@CvManagementSystem.Entities.UserRole.Administrator">@L["UserRole_Administrator"]</option>
                         </select>
                         <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                    <button type="submit" class="btn btn-primary w-100">@L["RegisterButton"]</button>
                 </form>
 
                 <div class="text-center mt-3">
-                    <a asp-action="Login">Уже есть аккаунт? Войти</a>
+                    <a asp-action="Login">@L["AlreadyHaveAccountPrompt"]</a>
                 </div>
             </div>
         </div>

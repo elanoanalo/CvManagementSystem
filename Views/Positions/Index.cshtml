@@ -1,21 +1,23 @@
 ﻿@using CvManagementSystem.ViewModels
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @model IEnumerable<PositionListViewModel>
 @{
-    ViewData["Title"] = "Позиции";
+    ViewData["Title"] = L["PositionsIndexTitle"];
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Позиции</h2>
+    <h2>@L["PositionsIndexTitle"]</h2>
     @if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
     {
-        <a asp-action="Create" class="btn btn-primary">Создать позицию</a>
+        <a asp-action="Create" class="btn btn-primary">@L["CreatePositionBtn"]</a>
     }
 </div>
 
 @if (!Model.Any())
 {
     <div class="alert alert-info">
-        Позиций пока нет.
+        @L["NoPositionsAlert"]
     </div>
 }
 else if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
@@ -26,7 +28,7 @@ else if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
                 id="deleteSelectedBtn"
                 class="btn btn-danger btn-sm"
                 style="visibility:hidden; opacity:0; transition: opacity 0.2s ease;">
-            Удалить выбранные
+            @L["DeleteSelected"]
         </button>
         <span id="selectedCount" class="text-muted small"></span>
     </div>
@@ -37,13 +39,13 @@ else if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
                 <th style="width:40px">
                     <input type="checkbox" id="selectAll" class="form-check-input" />
                 </th>
-                <th>Название</th>
-                <th>Теги</th>
-                <th>Атрибутов</th>
-                <th>CV</th>
-                <th>Статус</th>
-                <th>Создал</th>
-                <th>Дата</th>
+                <th>@L["NameLabel"]</th>
+                <th>@L["TagsHeader"]</th>
+                <th>@L["AttributesHeader"]</th>
+                <th>@L["CvsCountColumn"]</th>
+                <th>@L["StatusColumnLabel"]</th>
+                <th>@L["CreatedByLabel"]</th>
+                <th>@L["DateColumn"]</th>
             </tr>
         </thead>
         <tbody>
@@ -68,11 +70,11 @@ else if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
                     <td>
                         @if (position.IsPublished)
                         {
-                            <span class="badge bg-success">Опубликована</span>
+                            <span class="badge bg-success">@L["PublishedState"]</span>
                         }
                         else
                         {
-                            <span class="badge bg-warning text-dark">Черновик</span>
+                            <span class="badge bg-warning text-dark">@L["DraftState"]</span>
                         }
                     </td>
                     <td>@position.CreatedByName</td>
@@ -88,10 +90,10 @@ else
     <table class="table table-hover">
         <thead class="table-dark">
             <tr>
-                <th>Название</th>
-                <th>Теги</th>
-                <th>Атрибутов</th>
-                <th>Дата</th>
+                <th>@L["NameLabel"]</th>
+                <th>@L["TagsHeader"]</th>
+                <th>@L["AttributesHeader"]</th>
+                <th>@L["DateColumn"]</th>
             </tr>
         </thead>
         <tbody>
@@ -116,9 +118,9 @@ else
 
 @section Scripts {
     <script>
-        document.querySelectorAll('.clickable-row').forEach(function (row) {
+        document.querySelectorAll('.clickable-row').forEach(function(row) {
             row.style.cursor = 'pointer';
-            row.addEventListener('click', function () {
+            row.addEventListener('click', function() {
                 window.location.href = this.getAttribute('data-href');
             });
         });
@@ -126,22 +128,21 @@ else
         var deleteBtn = document.getElementById('deleteSelectedBtn');
         var selectAll = document.getElementById('selectAll');
 
-        // Эти элементы есть только у рекрутеров — проверяем перед использованием
         if (selectAll) {
-            selectAll.addEventListener('change', function () {
-                document.querySelectorAll('.row-checkbox').forEach(function (cb) {
+            selectAll.addEventListener('change', function() {
+                document.querySelectorAll('.row-checkbox').forEach(function(cb) {
                     cb.checked = this.checked;
                 }.bind(this));
                 updateToolbar();
             });
         }
 
-        document.querySelectorAll('.row-checkbox').forEach(function (cb) {
-            cb.addEventListener('change', function () { updateToolbar(); });
+        document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+            cb.addEventListener('change', function() { updateToolbar(); });
         });
 
         if (deleteBtn) {
-            deleteBtn.addEventListener('click', function () { deleteSelected(); });
+            deleteBtn.addEventListener('click', function() { deleteSelected(); });
         }
 
         function updateToolbar() {
@@ -151,7 +152,7 @@ else
             if (selected.length > 0) {
                 deleteBtn.style.visibility = 'visible';
                 deleteBtn.style.opacity = '1';
-                countSpan.textContent = 'Выбрано: ' + selected.length;
+                countSpan.textContent = '@Html.Raw(L["SelectedCount"].Value)'.replace('{0}', selected.length);
             } else {
                 deleteBtn.style.visibility = 'hidden';
                 deleteBtn.style.opacity = '0';
@@ -163,16 +164,24 @@ else
             var selected = document.querySelectorAll('.row-checkbox:checked');
             if (selected.length === 0) return;
 
-            if (!confirm('Удалить выбранные позиции (' + selected.length + ' шт.)?'))
-                return;
+            var confirmMsg = '@Html.Raw(L["DeleteConfirmBulkPositions"].Value)'.replace('{0}', selected.length);
+            if (!confirm(confirmMsg)) return;
 
-            selected.forEach(function (cb) {
-                var form = document.createElement('form');
-                form.method = 'post';
-                form.action = '/Positions/Delete/' + cb.value;
-                document.body.appendChild(form);
-                form.submit();
+            // Одна форма со всеми ID — отправляется один раз
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/Positions/DeleteMultiple';
+
+            selected.forEach(function(cb) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ids';
+                input.value = cb.value;
+                form.appendChild(input);
             });
+
+            document.body.appendChild(form);
+            form.submit();
         }
     </script>
 }

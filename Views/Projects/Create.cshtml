@@ -1,46 +1,48 @@
-﻿@model CvManagementSystem.ViewModels.ProjectFormViewModel
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
+@model CvManagementSystem.ViewModels.ProjectFormViewModel
 @{
-    ViewData["Title"] = "Добавить проект";
+    ViewData["Title"] = L["CreateProjectTitle"];
 }
 
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow">
             <div class="card-body p-4">
-                <h2 class="mb-4">Добавить проект</h2>
+                <h2 class="mb-4">@L["CreateProjectHeader"]</h2>
 
                 <form asp-action="Create" method="post">
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
                     <div class="mb-3">
-                        <label asp-for="Title" class="form-label">Название проекта</label>
+                        <label asp-for="Title" class="form-label">@L["ProjectTitleLabel"]</label>
                         <input asp-for="Title"
                                class="form-control"
-                               placeholder="Например: Интернет-магазин на Django" />
+                               placeholder="@L["ProjectTitlePlaceholder"]" />
                         <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label">
-                            Описание (необязательно)
+                            @L["ProjectDescriptionLabel"]
                         </label>
                         <textarea asp-for="Description"
                                   class="form-control"
                                   rows="4"
-                                  placeholder="Опишите что делали, какие технологии использовали..."></textarea>
+                                  placeholder="@L["ProjectDescriptionPlaceholder"]"></textarea>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label asp-for="StartDate" class="form-label">Дата начала</label>
+                            <label asp-for="StartDate" class="form-label">@L["StartDateLabel"]</label>
                             <input asp-for="StartDate"
                                    type="date"
                                    class="form-control" />
                         </div>
                         <div class="col-md-6">
                             <label asp-for="EndDate" class="form-label">
-                                Дата окончания
-                                <span class="text-muted small">(оставьте пустым если продолжается)</span>
+                                @L["EndDateLabel"]
+                                <span class="text-muted small">@L["EndDateHint"]</span>
                             </label>
                             <input asp-for="EndDate"
                                    type="date"
@@ -50,27 +52,27 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label">Теги технологий</label>
+                        <label class="form-label">@L["TechnologyTagsLabel"]</label>
                         <div id="tagsList" class="mb-2 d-flex flex-wrap gap-2"></div>
                         <div class="input-group">
                             <input type="text"
                                    id="newTagInput"
                                    class="form-control"
-                                   placeholder="Python, Django, PostgreSQL..." />
+                                   placeholder="@L["NewTagPlaceholder"]" />
                             <button type="button"
                                     id="addTagBtn"
                                     class="btn btn-outline-primary">
-                                Добавить
+                                @L["AddTagBtn"]
                             </button>
                         </div>
                         <small class="text-muted">
-                            Теги используются для фильтрации проектов в CV
+                            @L["TagsHint"]
                         </small>
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
-                        <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+                        <button type="submit" class="btn btn-primary">@L["SaveBtn"]</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">@L["CancelBtn"]</a>
                     </div>
                 </form>
             </div>
@@ -83,6 +85,10 @@
     <script>
         var tagCount = 0;
 
+        // Локализованные строки для JavaScript
+        var jsTagLengthError = @Json.Serialize(L["JsTagLengthError"].Value);
+        var jsMaxTagsError = @Json.Serialize(L["JsMaxTagsError"].Value);
+
         function addTag() {
             var input = document.getElementById('newTagInput');
             var value = input.value.trim();
@@ -90,13 +96,13 @@
             if (value === '') return;
 
             if (value.length > 50) {
-                alert('Тег не может быть длиннее 50 символов');
+                alert(jsTagLengthError);
                 return;
             }
 
             var currentTags = document.querySelectorAll('.tag-item').length;
             if (currentTags >= 10) {
-                alert('Максимум 10 тегов');
+                alert(jsMaxTagsError);
                 return;
             }
 
@@ -116,10 +122,10 @@
         }
 
         document.getElementById('addTagBtn')
-            .addEventListener('click', function () { addTag(); });
+            .addEventListener('click', function() { addTag(); });
 
         document.getElementById('newTagInput')
-            .addEventListener('keypress', function (e) {
+            .addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     addTag();
@@ -127,7 +133,7 @@
             });
 
         document.getElementById('tagsList')
-            .addEventListener('click', function (e) {
+            .addEventListener('click', function(e) {
                 if (e.target.classList.contains('remove-tag-btn') ||
                     e.target.classList.contains('btn-close')) {
                     e.target.closest('.tag-item').remove();

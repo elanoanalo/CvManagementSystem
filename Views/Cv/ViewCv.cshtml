@@ -1,67 +1,69 @@
 ﻿@using CvManagementSystem.Entities
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @model CvManagementSystem.ViewModels.CvViewModel
 @{
-    ViewData["Title"] = "CV — " + Model.CandidateFullName;
+    ViewData["Title"] = L["CreateCvTitle"] + " — " + Model.CandidateFullName;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>CV — @Model.PositionTitle</h2>
+    <h2>@L["CreateCvTitle"] — @Model.PositionTitle</h2>
     <div class="d-flex gap-2">
         @if (User.IsInRole("Candidate") || User.IsInRole("Administrator"))
         {
+            @* Безопасное экранирование строки для JavaScript confirm *@
             <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
-                  onsubmit="return confirm('Удалить это CV?')">
+                  onsubmit="return confirm(@Json.Serialize(L["DeleteCvConfirm"].Value))">
                 <button type="submit" class="btn btn-outline-danger btn-sm">
-                    Удалить CV
+                    @L["DeleteCvButtonText"]
                 </button>
             </form>
         }
-        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Назад</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">@L["BackButton"]</a>
     </div>
 </div>
 
-@* Информация о кандидате *@
 <div class="card shadow mb-4">
     <div class="card-body">
-        <h5 class="card-title">Кандидат</h5>
+        <h5 class="card-title">@L["CandidateSection"]</h5>
         <table class="table table-borderless mb-0">
             <tr>
-                <th style="width:200px">Имя</th>
+                <th style="width:200px">@L["NameRow"]</th>
                 <td>@Model.CandidateFullName</td>
             </tr>
             <tr>
-                <th>Email</th>
+                <th>@L["EmailRow"]</th>
                 <td>@Model.CandidateEmail</td>
             </tr>
             <tr>
-                <th>Позиция</th>
+                <th>@L["PositionHeader"]</th>
                 <td>@Model.PositionTitle</td>
             </tr>
             <tr>
-                <th>CV создано</th>
-                <td>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                <th>@L["CvCreatedRow"]</th>
+                @* Динамический формат даты под язык пользователя *@
+                <td>@Model.CreatedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture)</td>
             </tr>
         </table>
     </div>
 </div>
 
-@* Атрибуты *@
 <div class="card shadow mb-4">
     <div class="card-body">
-        <h5 class="card-title mb-4">Атрибуты</h5>
+        <h5 class="card-title mb-4">@L["AttributesHeader"]</h5>
 
         @if (!Model.Attributes.Any())
         {
-            <p class="text-muted">Нет атрибутов</p>
+            <p class="text-muted">@L["NoAttributes"]</p>
         }
         else
         {
             <table class="table">
                 <thead class="table-light">
                     <tr>
-                        <th>Атрибут</th>
-                        <th>Значение</th>
-                        <th>Статус</th>
+                        <th>@L["AttributeColumn"]</th>
+                        <th>@L["ValueColumn"]</th>
+                        <th>@L["StatusColumn"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,7 +74,7 @@
                                 <span class="fw-bold">@attr.Name</span>
                                 @if (attr.IsRequired)
                                 {
-                                    <span class="badge bg-danger ms-1 small">Обязательный</span>
+                                    <span class="badge bg-danger ms-1 small">@L["RequiredBadge"]</span>
                                 }
                                 @if (!string.IsNullOrEmpty(attr.Description))
                                 {
@@ -86,7 +88,7 @@
                                          class="img-thumbnail"
                                          style="max-height:100px" />
                                 }
-                                else if (attr.HasValue)
+                                @if (attr.HasValue)
                                 {
                                     @attr.DisplayValue
                                 }
@@ -95,12 +97,12 @@
                                     @if (User.IsInRole("Candidate") || User.IsInRole("Administrator"))
                                     {
                                         <a asp-controller="Profile" asp-action="Index" class="text-warning">
-                                            Не заполнено — заполнить в профиле →
+                                            @L["NotFilledFillInProfile"]
                                         </a>
                                     }
                                     else
                                     {
-                                        <span class="text-muted">Не заполнено</span>
+                                        <span class="text-muted">@L["NotFilled"]</span>
                                     }
                                 }
                             </td>
@@ -111,11 +113,11 @@
                                 }
                                 else if (attr.IsRequired)
                                 {
-                                    <span class="badge bg-danger">Не заполнено!</span>
+                                    <span class="badge bg-danger">@L["StatusNotFilledWarning"]</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-secondary">Пусто</span>
+                                    <span class="badge bg-secondary">@L["StatusEmpty"]</span>
                                 }
                             </td>
                         </tr>
@@ -126,24 +128,23 @@
     </div>
 </div>
 
-@* Проекты *@
 <div class="card shadow">
     <div class="card-body">
         <h5 class="card-title mb-4">
-            Проекты
+            @L["ProjectsSection"]
             <span class="text-muted small fw-normal">
-                (отфильтровано по тегам позиции)
+                @L["FilteredByTags"]
             </span>
         </h5>
 
         @if (!Model.Projects.Any())
         {
             <p class="text-muted">
-                Нет подходящих проектов.
+                @L["NoMatchingProjects"]
                 @if (User.IsInRole("Candidate"))
                 {
                     <a asp-controller="Projects" asp-action="Create">
-                        Добавить проект →
+                        @L["AddProjectLink"]
                     </a>
                 }
             </p>
@@ -159,7 +160,7 @@
                             @if (project.StartDate != null || project.EndDate != null)
                             {
                                 <span class="text-muted small">
-                                    @(project.StartDate ?? "?") — @(project.EndDate ?? "н.в.")
+                                    @(project.StartDate ?? "?") — @(project.EndDate ?? L["PresentTime"].Value)
                                 </span>
                             }
                         </div>

@@ -1,15 +1,16 @@
 ﻿@using CvManagementSystem.ViewModels
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @model IEnumerable<PositionForCandidateViewModel>
 @{
-    ViewData["Title"] = "Доступные позиции";
+    ViewData["Title"] = L["AvailablePositionsTitle"];
 }
-
-<h2 class="mb-4">Доступные позиции</h2>
+<h2 class="mb-4">@L["AvailablePositionsTitle"]</h2>
 
 @if (!Model.Any())
 {
     <div class="alert alert-info">
-        Пока нет доступных позиций. Загляните позже!
+        @L["NoPositionsAvailable"]
     </div>
 }
 else
@@ -17,11 +18,11 @@ else
     <table class="table table-hover">
         <thead class="table-dark">
             <tr>
-                <th>Название</th>
-                <th>Описание</th>
-                <th>Теги</th>
-                <th>Атрибутов</th>
-                <th>Статус CV</th>
+                <th>@L["NameLabel"]</th>
+                <th>@L["DescriptionHeader"]</th>
+                <th>@L["TagsHeader"]</th>
+                <th>@L["AttributesHeader"]</th>
+                <th>@L["CvStatusHeader"]</th>
             </tr>
         </thead>
         <tbody>
@@ -29,8 +30,8 @@ else
             {
                 <tr class="clickable-row"
                     data-href="@(position.AlreadyHasCv
-                                            ? Url.Action("ViewCv", new { id = position.ExistingCvId })
-                                        : Url.Action("CreateConfirm", new { positionId = position.Id }))">
+                                                                ? Url.Action("ViewCv", new { id = position.ExistingCvId })
+                                                        : Url.Action("CreateConfirm", new { positionId = position.Id }))">
                     <td class="fw-bold">@position.Title</td>
                     <td>
                         @if (!string.IsNullOrEmpty(position.Description))
@@ -54,11 +55,11 @@ else
                     <td>
                         @if (position.AlreadyHasCv)
                         {
-                            <span class="badge bg-success">CV создано</span>
+                            <span class="badge bg-success">@L["CvCreatedBadge"]</span>
                         }
                         else
                         {
-                            <span class="badge bg-secondary">Нет CV</span>
+                            <span class="badge bg-secondary">@L["NoCvBadge"]</span>
                         }
                     </td>
                 </tr>
@@ -69,9 +70,9 @@ else
 
 @section Scripts {
     <script>
-        document.querySelectorAll('.clickable-row').forEach(function (row) {
+        document.querySelectorAll('.clickable-row').forEach(function(row) {
             row.style.cursor = 'pointer';
-            row.addEventListener('click', function () {
+            row.addEventListener('click', function() {
                 window.location.href = this.getAttribute('data-href');
             });
         });

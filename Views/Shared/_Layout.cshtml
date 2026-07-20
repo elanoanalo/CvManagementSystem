@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
+@{
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+<!DOCTYPE html>
 <html lang="@System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName" id="htmlRoot">
 <head>
     <meta charset="utf-8" />
@@ -33,7 +38,7 @@
                         @* Позиции видят все — и незалогиненные тоже *@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Positions" asp-action="Index">
-                                Позиции
+                                @L["Positions"]
                             </a>
                         </li>
 
@@ -43,7 +48,7 @@
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Attributes" asp-action="Index">
-                                        Атрибуты
+                                        @L["Attributes"]
                                     </a>
                                 </li>
                             }
@@ -52,17 +57,17 @@
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Profile" asp-action="Index">
-                                        Мой профиль
+                                        @L["MyProfile"]
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Projects" asp-action="Index">
-                                        Мои проекты
+                                        @L["MyProjects"]
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Cv" asp-action="Index">
-                                        Мои CV
+                                        @L["MyCVs"]
                                     </a>
                                 </li>
                             }
@@ -92,7 +97,7 @@
                                            asp-controller="Account"
                                            asp-action="SetLanguage"
                                            asp-route-culture="en"
-                                           asp-route-returnUrl="@Context.Request.Path">
+                                           asp-route-returnUrl="@returnUrl">
                                             🇬🇧 English
                                         </a>
                                     </li>
@@ -101,7 +106,7 @@
                                            asp-controller="Account"
                                            asp-action="SetLanguage"
                                            asp-route-culture="ru"
-                                           asp-route-returnUrl="@Context.Request.Path">
+                                           asp-route-returnUrl="@returnUrl">
                                             🇷🇺 Русский
                                         </a>
                                     </li>
@@ -122,7 +127,7 @@
                                       method="post">
                                     <button type="submit"
                                             class="btn btn-outline-light btn-sm mt-1">
-                                        Выйти
+                                        @L["Logout"]
                                     </button>
                                 </form>
                             </li>
@@ -133,14 +138,14 @@
                                 <a class="nav-link"
                                    asp-controller="Account"
                                    asp-action="Login">
-                                    Войти
+                                    @L["Login"]
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link"
                                    asp-controller="Account"
                                    asp-action="Register">
-                                    Регистрация
+                                    @L["Register"]
                                 </a>
                             </li>
                         }
@@ -160,12 +165,12 @@
         <div class="container text-center">
             <span>CV Management System &copy; @DateTime.Now.Year</span>
             <span class="mx-2">|</span>
-            <span>Developed by Abay Tolegen</span>
+            <span>@L["DevelopedBy"] Abay Tolegen</span>
             <span class="mx-2">|</span>
-            <span>No rights reserved whatsoever 🙂</span>
+            <span>@L["NoRightsReserved"] 🙂</span>
             <span class="mx-2">|</span>
             <a asp-controller="Home" asp-action="Privacy" class="text-muted">
-                Privacy Policy
+                @L["PrivacyPolicy"]
             </a>
         </div>
     </footer>

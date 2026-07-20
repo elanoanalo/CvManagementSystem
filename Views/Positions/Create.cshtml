@@ -1,77 +1,119 @@
-﻿@using CvManagementSystem.Extensions
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @model CvManagementSystem.ViewModels.PositionFormViewModel
 @{
-    ViewData["Title"] = "Создать позицию";
+    ViewData["Title"] = L["CreatePositionTitle"];
 }
 
 <div class="row justify-content-center">
     <div class="col-md-9">
         <div class="card shadow">
             <div class="card-body p-4">
-                <h2 class="mb-4">Создать позицию</h2>
+                <h2 class="mb-4">@L["CreatePositionTitle"]</h2>
 
                 <form asp-action="Create" method="post">
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
                     <div class="mb-3">
-                        <label asp-for="Title" class="form-label">Название позиции</label>
+                        <label asp-for="Title" class="form-label">@L["PositionTitleLabel"]</label>
                         <input asp-for="Title" class="form-control"
-                               placeholder="Например: Junior Backend Developer" />
+                               placeholder="@L["PositionTitlePlaceholder"]" />
                         <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label">
-                            Описание (необязательно)
+                            @L["DescriptionOptional"]
                         </label>
                         <textarea asp-for="Description"
                                   class="form-control"
                                   rows="3"></textarea>
                     </div>
 
-
-                    @* Теги *@
+                    @* Теги — при дубликате приходят уже заполненными *@
                     <div class="mb-4">
-                        <label class="form-label">Теги</label>
+                        <label class="form-label">@L["TagsLabel"]</label>
                         <div id="tagsList" class="mb-2 d-flex flex-wrap gap-2">
-                            @* Теги добавляются через JS *@
+                            @for (int i = 0; i < Model.Tags.Count; i++)
+                            {
+                                <div class="d-inline-flex align-items-center tag-item">
+                                    <input type="hidden" name="Tags[@i]" value="@Model.Tags[i]" />
+                                    <span class="badge bg-info text-dark me-1">
+                                        @Model.Tags[i]
+                                        <button type="button"
+                                                class="btn-close btn-close-white ms-1 remove-tag-btn"
+                                                style="font-size:0.6rem"></button>
+                                    </span>
+                                </div>
+                            }
                         </div>
                         <div class="input-group">
                             <input type="text"
                                    id="newTagInput"
                                    class="form-control"
-                                   placeholder="Например: Python, Backend, Remote..." />
+                                   placeholder="@L["AddTagPlaceholder"]" />
                             <button type="button"
-                                    class="btn btn-outline-primary"
-                                    onclick="addTag()">
-                                Добавить тег
+                                    id="addTagBtn"
+                                    class="btn btn-outline-primary">
+                                @L["AddTagBtn"]
                             </button>
                         </div>
                     </div>
 
                     @* Атрибуты позиции *@
                     <div class="mb-4">
-                        <label class="form-label">Атрибуты позиции</label>
+                        <label class="form-label">@L["PositionAttributesLabel"]</label>
                         <p class="text-muted small">
-                            Выберите какие атрибуты нужно заполнить кандидату для этой позиции
+                            @L["PositionAttributesHelpText"]
                         </p>
 
                         <div id="selectedAttributes" class="mb-3">
-                            @* Выбранные атрибуты появляются здесь *@
+                            @* При дубликате — уже выбранные атрибуты *@
+                            @for (int i = 0; i < Model.Attributes.Count; i++)
+                            {
+                                var attr = Model.Attributes[i];
+                                <div class="card mb-2 attr-card" data-attr-id="@attr.AttributeDefinitionId">
+                                    <div class="card-body py-2 d-flex align-items-center gap-3">
+                                        <input type="hidden"
+                                               name="Attributes[@i].AttributeDefinitionId"
+                                               value="@attr.AttributeDefinitionId" />
+                                        <input type="hidden"
+                                               name="Attributes[@i].DisplayOrder"
+                                               value="@i" />
+                                        <span class="fw-bold">@attr.AttributeName</span>
+                                        <span class="badge bg-secondary">@L[$"AttributeType_{attr.AttributeType}"]</span>
+                                        <div class="form-check ms-2">
+                                            <input type="checkbox"
+                                                   name="Attributes[@i].IsRequired"
+                                                   value="true"
+                                                   class="form-check-input"
+                                                   id="req-@i"
+                                            @(attr.IsRequired ? "checked" : "") />
+                                            <label class="form-check-label" for="req-@i">
+                                                @L["RequiredAttributeBadge"]
+                                            </label>
+                                        </div>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger ms-auto remove-attr-btn">
+                                            @L["RemoveAttributeBtn"]
+                                        </button>
+                                    </div>
+                                </div>
+                            }
                         </div>
 
                         <div class="card bg-light">
                             <div class="card-body">
-                                <h6>Доступные атрибуты из библиотеки:</h6>
+                                <h6>@L["AvailableAttributesHeader"]</h6>
                                 @foreach (var attr in Model.AvailableAttributes)
                                 {
                                     <button type="button"
                                             class="btn btn-sm btn-outline-secondary me-1 mb-1 add-attr-btn"
                                             data-attr-id="@attr.Id"
                                             data-attr-name="@attr.Name"
-                                            data-attr-type="@attr.Type">
+                                            data-attr-typename="@L[$"AttributeType_{attr.Type}"]">
                                         + @attr.Name
-                                        <span class="badge bg-secondary ms-1">@attr.Type</span>
+                                        <span class="badge bg-secondary ms-1">@L[$"AttributeType_{attr.Type}"]</span>
                                     </button>
                                 }
                             </div>
@@ -79,7 +121,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Статус публикации</label>
+                        <label class="form-label">@L["PublicationStatusLabel"]</label>
                         <div class="d-flex align-items-center gap-3 p-3 border rounded">
                             <div class="form-check form-switch mb-0">
                                 <input asp-for="IsPublished"
@@ -97,8 +139,8 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Создать</button>
-                        <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+                        <button type="submit" class="btn btn-primary">@L["CreateButton"]</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">@L["CancelButton"]</a>
                     </div>
                 </form>
             </div>
@@ -106,30 +148,43 @@
     </div>
 </div>
 
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        var tagCount = 0;
-        var attributeCount = 0;
+        // Переводы для JS
+        var i18n = {
+            required: '@Html.Raw(L["RequiredAttributeBadge"].Value)',
+            remove: '@Html.Raw(L["RemoveAttributeBtn"].Value)',
+            alreadyAdded: '@Html.Raw(L["AttrAlreadyAddedAlert"].Value)',
+            published: '@Html.Raw(L["PublishedState"].Value)',
+            draft: '@Html.Raw(L["DraftState"].Value)',
+            publishedDesc: '@Html.Raw(L["PublishedDescription"].Value)',
+            draftDesc: '@Html.Raw(L["DraftDescription"].Value)'
+        };
+
+        // Счётчики продолжают с уже заполненных (важно для дубликата)
+        var tagCount = @Model.Tags.Count;
+        var attributeCount = @Model.Attributes.Count;
+
+        var addedAttributeIds = [];
+        document.querySelectorAll('.attr-card').forEach(function(card) {
+            addedAttributeIds.push(card.getAttribute('data-attr-id'));
+        });
 
         // ===== ТЕГИ =====
 
         function addTag() {
             var input = document.getElementById('newTagInput');
             var value = input.value.trim();
-
             if (value === '') return;
 
             var tagsList = document.getElementById('tagsList');
-
             var div = document.createElement('div');
-            div.className = 'd-inline-flex align-items-center';
+            div.className = 'd-inline-flex align-items-center tag-item';
             div.innerHTML =
                 '<input type="hidden" name="Tags[' + tagCount + ']" value="' + value + '" />' +
                 '<span class="badge bg-info text-dark me-1">' + value +
-                '<button type="button" class="btn-close btn-close-white ms-1" ' +
-                'style="font-size:0.6rem" onclick="this.parentElement.parentElement.remove()"></button>' +
+                ' <button type="button" class="btn-close btn-close-white ms-1 remove-tag-btn" style="font-size:0.6rem"></button>' +
                 '</span>';
 
             tagsList.appendChild(div);
@@ -138,97 +193,90 @@
             input.focus();
         }
 
-                document.querySelectorAll('.add-attr-btn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var id = this.getAttribute('data-attr-id');
-                var name = this.getAttribute('data-attr-name');
-                var type = this.getAttribute('data-attr-type');
-                addAttribute(id, name, type);
-            });
+        document.getElementById('addTagBtn').addEventListener('click', addTag);
+
+        document.getElementById('newTagInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }
         });
-        
-        document.getElementById('newTagInput')
-            .addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addTag();
-                }
-            });
+
+        document.getElementById('tagsList').addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-tag-btn') ||
+                e.target.classList.contains('btn-close')) {
+                e.target.closest('.tag-item').remove();
+            }
+        });
 
         // ===== АТРИБУТЫ =====
 
-        // Хранит ID уже добавленных атрибутов (чтобы не добавить дважды)
-        var addedAttributeIds = [];
-
-        function addAttribute(id, name, type) {
-            // Проверяем не добавлен ли уже этот атрибут
+        function addAttribute(id, name, typeName) {
             if (addedAttributeIds.indexOf(id) !== -1) {
-                alert('Этот атрибут уже добавлен!');
+                alert(i18n.alreadyAdded);
                 return;
             }
-
             addedAttributeIds.push(id);
 
             var container = document.getElementById('selectedAttributes');
-
             var div = document.createElement('div');
-            div.className = 'card mb-2';
-            div.id = 'attr-' + id;
+            div.className = 'card mb-2 attr-card';
+            div.setAttribute('data-attr-id', id);
             div.innerHTML =
                 '<div class="card-body py-2 d-flex align-items-center gap-3">' +
                 '<input type="hidden" name="Attributes[' + attributeCount + '].AttributeDefinitionId" value="' + id + '" />' +
+                '<input type="hidden" name="Attributes[' + attributeCount + '].DisplayOrder" value="' + attributeCount + '" />' +
                 '<span class="fw-bold">' + name + '</span>' +
-                '<span class="badge bg-secondary">' + type + '</span>' +
+                '<span class="badge bg-secondary">' + typeName + '</span>' +
                 '<div class="form-check ms-2">' +
-                '<input type="checkbox" ' +
-                'name="Attributes[' + attributeCount + '].IsRequired" ' +
-                'value="true" ' +
-                'class="form-check-input" ' +
-                'id="req-' + attributeCount + '" />' +
-                '<label class="form-check-label" for="req-' + attributeCount + '">Обязательный</label>' +
+                '<input type="checkbox" name="Attributes[' + attributeCount + '].IsRequired" value="true" class="form-check-input" id="req-' + attributeCount + '" />' +
+                '<label class="form-check-label" for="req-' + attributeCount + '">' + i18n.required + '</label>' +
                 '</div>' +
-                '<button type="button" class="btn btn-sm btn-outline-danger ms-auto" ' +
-                'onclick="removeAttribute(this, \'' + id + '\')">Убрать</button>' +
+                '<button type="button" class="btn btn-sm btn-outline-danger ms-auto remove-attr-btn">' + i18n.remove + '</button>' +
                 '</div>';
 
             container.appendChild(div);
             attributeCount++;
         }
 
-        function removeAttribute(button, id) {
-            // Убираем из списка добавленных
-            var index = addedAttributeIds.indexOf(id);
-            if (index !== -1) {
-                addedAttributeIds.splice(index, 1);
+        document.querySelectorAll('.add-attr-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id = this.getAttribute('data-attr-id');
+                var name = this.getAttribute('data-attr-name');
+                var typeName = this.getAttribute('data-attr-typename');
+                addAttribute(id, name, typeName);
+            });
+        });
+
+        document.getElementById('selectedAttributes').addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-attr-btn')) {
+                var card = e.target.closest('.attr-card');
+                var id = card.getAttribute('data-attr-id');
+                var index = addedAttributeIds.indexOf(id);
+                if (index !== -1) addedAttributeIds.splice(index, 1);
+                card.remove();
             }
+        });
 
-            // Удаляем карточку из DOM
-            button.closest('.card').remove();
-        }
+        // ===== ПУБЛИКАЦИЯ =====
 
-                // Переключатель публикации
         var publishSwitch = document.getElementById('isPublishedSwitch');
         var publishLabel = document.getElementById('publishLabel');
         var publishDescription = document.getElementById('publishDescription');
 
         function updatePublishUI() {
             if (publishSwitch.checked) {
-                publishLabel.textContent = 'Опубликовано';
+                publishLabel.textContent = i18n.published;
                 publishLabel.className = 'fw-bold text-success';
-                publishDescription.textContent = 'Позиция видна кандидатам';
+                publishDescription.textContent = i18n.publishedDesc;
             } else {
-                publishLabel.textContent = 'Черновик';
+                publishLabel.textContent = i18n.draft;
                 publishLabel.className = 'fw-bold text-warning';
-                publishDescription.textContent = 'Позиция скрыта от кандидатов';
+                publishDescription.textContent = i18n.draftDesc;
             }
         }
 
-        // Инициализируем при загрузке страницы
         updatePublishUI();
-
-        // Обновляем при переключении
-        publishSwitch.addEventListener('change', function () {
-            updatePublishUI();
-        });
+        publishSwitch.addEventListener('change', updatePublishUI);
     </script>
 }

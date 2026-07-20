@@ -287,58 +287,49 @@ namespace CvManagementSystem.Controllers
             }
         }
 
-        // POST: /Positions/Duplicate/id
+        // GET: /Positions/Duplicate/id — открывает форму создания с данными оригинала
         [Authorize(Roles = "Recruiter,Administrator")]
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Duplicate(Guid id)
         {
             var position = await _context.Positions
                 .Include(p => p.Tags)
                 .Include(p => p.PositionAttributes)
+                    .ThenInclude(pa => pa.AttributeDefinition)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (position == null)
                 return NotFound();
 
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
-
-            // Создаём копию позиции
-            var duplicate = new Position
+            // Готовим модель для формы Create — с данными оригинала, но БЕЗ сохранения в базу
+            var model = new PositionFormViewModel
             {
+                // Id НЕ задаём — это новая позиция, не редактирование
                 Title = position.Title + " (копия)",
                 Description = position.Description,
                 IsPublished = false, // копия всегда черновик
-                CreatedByUserId = currentUserId
+                Tags = position.Tags.Select(t => t.Tag).ToList()
             };
 
-            _context.Positions.Add(duplicate);
-
-            // Копируем теги
-            foreach (var tag in position.Tags)
+            // Копируем привязанные атрибуты
+            foreach (var pa in position.PositionAttributes.OrderBy(pa => pa.DisplayOrder))
             {
-                _context.PositionTags.Add(new PositionTag
+                model.Attributes.Add(new PositionAttributeViewModel
                 {
-                    PositionId = duplicate.Id,
-                    Tag = tag.Tag
+                    AttributeDefinitionId = pa.AttributeDefinitionId,
+                    AttributeName = pa.AttributeDefinition!.Name,
+                    AttributeType = pa.AttributeDefinition.Type,
+                    IsRequired = pa.IsRequired,
+                    DisplayOrder = pa.DisplayOrder
                 });
             }
 
-            // Копируем атрибуты
-            foreach (var attr in position.PositionAttributes)
-            {
-                _context.PositionAttributes.Add(new PositionAttribute
-                {
-                    PositionId = duplicate.Id,
-                    AttributeDefinitionId = attr.AttributeDefinitionId,
-                    IsRequired = attr.IsRequired,
-                    DisplayOrder = attr.DisplayOrder
-                });
-            }
+            // Загружаем список доступных атрибутов для формы
+            await ReloadAvailableAttributes(model);
 
-            await _context.SaveChangesAsync();
-
-            // Перенаправляем на редактирование копии
-            return RedirectToAction(nameof(Edit), new { id = duplicate.Id });
+            // Возвращаем ПРЕДСТАВЛЕНИЕ Create (не Duplicate!) с заполненной моделью
+            // Пользователь увидит форму создания с данными. Ничего пока не в базе.
+            return View("Create", model);
         }
 
         // POST: /Positions/Delete/id — только рекрутерам
@@ -359,6 +350,31 @@ namespace CvManagementSystem.Controllers
             _context.Positions.Remove(position);
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Recruiter,Administrator")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteMultiple(List<Guid> ids)
+        {
+            if (ids == null || ids.Count == 0)
+                return RedirectToAction(nameof(Index));
+
+            var positions = await _context.Positions
+                .Include(p => p.Tags)
+                .Include(p => p.PositionAttributes)
+                .Where(p => ids.Contains(p.Id))
+                .ToListAsync();
+
+            foreach (var position in positions)
+            {
+                _context.PositionTags.RemoveRange(position.Tags);
+                _context.PositionAttributes.RemoveRange(position.PositionAttributes);
+            }
+
+            _context.Positions.RemoveRange(positions);
+            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

@@ -1,28 +1,30 @@
 ﻿@using CvManagementSystem.Entities
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @model CvManagementSystem.ViewModels.AttributeFormViewModel
 @{
-    ViewData["Title"] = "Редактировать атрибут";
+    ViewData["Title"] = L["EditAttribute"];
 }
 
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow">
             <div class="card-body p-4">
-                <h2 class="mb-4">Редактировать атрибут</h2>
+                <h2 class="mb-4">@L["EditAttribute"]</h2>
 
                 <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
                     <input type="hidden" asp-for="RowVersion" />
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
                     <div class="mb-3">
-                        <label asp-for="Name" class="form-label">Название</label>
+                        <label asp-for="Name" class="form-label">@L["NameLabel"]</label>
                         <input asp-for="Name" class="form-control" />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label">
-                            Описание (необязательно)
+                            @L["DescriptionOptional"]
                         </label>
                         <textarea asp-for="Description"
                                   class="form-control"
@@ -30,16 +32,16 @@
                     </div>
 
                     <div class="mb-4">
-                        <label asp-for="Type" class="form-label">Тип атрибута</label>
+                        <label asp-for="Type" class="form-label">@L["AttributeTypeLabel"]</label>
                         <select asp-for="Type"
                                 class="form-select"
                                 disabled
-                                asp-items="@Html.GetEnumSelectList(typeof(AttributeType))">
+                                asp-items="@(Enum.GetValues<AttributeType>().Select(t => new SelectListItem { Value = ((int)t).ToString(), Text = L[$"AttributeType_{t}"] }))">
                         </select>
-                        @* Скрытое поле — отправляет реальное значение типа, потому что disabled поля не отправляются *@
+                        @* Скрытое поле — disabled поля не отправляются, поэтому дублируем значение *@
                         <input type="hidden" asp-for="Type" />
                         <small class="text-muted">
-                            Тип атрибута нельзя менять после создания
+                            @L["TypeChangeWarning"]
                         </small>
                     </div>
 
@@ -47,7 +49,7 @@
                     {
                         <div class="card bg-light mb-3">
                             <div class="card-body">
-                                <h5 class="card-title">Варианты выбора</h5>
+                                <h5 class="card-title">@L["DropdownOptions"]</h5>
 
                                 <div id="optionsList">
                                     @for (int i = 0; i < Model.Options.Count; i++)
@@ -69,11 +71,11 @@
                                     <input type="text"
                                            id="newOptionInput"
                                            class="form-control"
-                                           placeholder="Новый вариант..." />
+                                           placeholder="@L["NewOptionPlaceholder"]" />
                                     <button type="button"
                                             id="addOptionBtn"
                                             class="btn btn-outline-primary">
-                                        Добавить
+                                        @L["AddButton"]
                                     </button>
                                 </div>
                             </div>
@@ -81,8 +83,8 @@
                     }
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
-                        <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+                        <button type="submit" class="btn btn-primary">@L["SaveButton"]</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">@L["CancelButton"]</a>
                     </div>
                 </form>
             </div>
@@ -121,24 +123,21 @@
                 input.focus();
             }
 
-            // Кнопка "Добавить"
             document.getElementById('addOptionBtn')
-                .addEventListener('click', function () {
+                .addEventListener('click', function() {
                     addOption();
                 });
 
-            // Enter в поле ввода
             document.getElementById('newOptionInput')
-                .addEventListener('keypress', function (e) {
+                .addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         addOption();
                     }
                 });
 
-            // Удаление варианта — делегирование событий
             document.getElementById('optionsList')
-                .addEventListener('click', function (e) {
+                .addEventListener('click', function(e) {
                     if (e.target.classList.contains('remove-option-btn')) {
                         e.target.closest('.option-item').remove();
                     }

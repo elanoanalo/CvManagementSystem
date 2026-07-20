@@ -1,6 +1,10 @@
-﻿@model CvManagementSystem.ViewModels.PositionListViewModel
+﻿@using Microsoft.Extensions.Localization
+@using System.Text.Encodings.Web
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
+@inject HtmlEncoder Encoder
+@model CvManagementSystem.ViewModels.PositionListViewModel
 @{
-    ViewData["Title"] = "Позиция: " + Model.Title;
+    ViewData["Title"] = L["PositionTitlePrefix", Model.Title];
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -8,65 +12,53 @@
     <div class="d-flex gap-2">
         @if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
         {
-            <a asp-action="Edit"
-               asp-route-id="@Model.Id"
-               class="btn btn-primary">
-                Редактировать
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">@L["EditBtn"]</a>
+            <a asp-action="Duplicate" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+                @L["DuplicateBtn"]
             </a>
-            <form asp-action="Duplicate"
-                  asp-route-id="@Model.Id"
-                  method="post">
-                <button type="submit" class="btn btn-outline-primary">
-                    Дублировать
-                </button>
-            </form>
-            <a asp-action="Candidates"
-               asp-route-id="@Model.Id"
-               class="btn btn-success">
-                Смотреть CV (@Model.CvsCount)
+            <a asp-action="Candidates" asp-route-id="@Model.Id" class="btn btn-success">
+                @L["ViewCvsCountBtn", Model.CvsCount]
             </a>
             <form asp-action="Delete"
                   asp-route-id="@Model.Id"
                   method="post"
-                  onsubmit="return confirm('Удалить позицию?')">
-                <button type="submit" class="btn btn-danger">
-                    Удалить
-                </button>
+                  onsubmit="return confirm('@Json.Serialize(L["DeletePositionConfirm"].Value)')">
+                <button type="submit" class="btn btn-danger">@L["DeleteBtn"]</button>
             </form>
         }
-        <a asp-action="Index" class="btn btn-outline-secondary">Назад</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">@L["CancelButton"]</a>
     </div>
-</div>    @* ← ВОТ ЭТОТ ЗАКРЫВАЮЩИЙ DIV БЫЛ ПРОПУЩЕН! *@
+</div>
 
 <div class="row">
     <div class="col-md-8">
         <div class="card shadow mb-3">
             <div class="card-body">
-                <h5 class="card-title">Основная информация</h5>
+                <h5 class="card-title">@L["GeneralInfoTitle"]</h5>
                 <table class="table table-borderless">
                     <tr>
-                        <th style="width:200px">Название</th>
+                        <th style="width:200px">@L["TitleColumnLabel"]</th>
                         <td>@Model.Title</td>
                     </tr>
                     <tr>
-                        <th>Описание</th>
-                        <td>@(Model.Description ?? "—")</td>
+                        <th>@L["DescriptionColumnLabel"]</th>
+                        <td>@(Model.Description ?? @L["EmptyValue"])</td>
                     </tr>
                     <tr>
-                        <th>Статус</th>
+                        <th>@L["StatusColumnLabel"]</th>
                         <td>
                             @if (Model.IsPublished)
                             {
-                                <span class="badge bg-success">Опубликована</span>
+                                <span class="badge bg-success">@L["PublishedState"]</span>
                             }
                             else
                             {
-                                <span class="badge bg-warning text-dark">Черновик</span>
+                                <span class="badge bg-warning text-dark">@L["DraftState"]</span>
                             }
                         </td>
                     </tr>
                     <tr>
-                        <th>Теги</th>
+                        <th>@L["TagsLabel"]</th>
                         <td>
                             @foreach (var tag in Model.Tags)
                             {
@@ -74,20 +66,20 @@
                             }
                             @if (!Model.Tags.Any())
                             {
-                                <span class="text-muted">—</span>
+                                <span class="text-muted">@L["EmptyValue"]</span>
                             }
                         </td>
                     </tr>
                     <tr>
-                        <th>Создал</th>
+                        <th>@L["CreatedByColumnLabel"]</th>
                         <td>@Model.CreatedByName</td>
                     </tr>
                     <tr>
-                        <th>Дата создания</th>
-                        <td>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                        <th>@L["CreationDateColumnLabel"]</th>
+                        <td>@Model.CreatedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture)</td>
                     </tr>
                     <tr>
-                        <th>CV создано</th>
+                        <th>@L["CvCreatedCountLabel"]</th>
                         <td>@Model.CvsCount</td>
                     </tr>
                 </table>
@@ -98,10 +90,10 @@
     <div class="col-md-4">
         <div class="card shadow">
             <div class="card-body">
-                <h5 class="card-title">Атрибуты позиции</h5>
+                <h5 class="card-title">@L["PositionAttributesLabel"]</h5>
                 @if (ViewBag.Attributes.Count == 0)
                 {
-                    <p class="text-muted">Атрибуты не добавлены</p>
+                    <p class="text-muted">@L["NoAttributesAlert"]</p>
                 }
                 else
                 {
@@ -111,12 +103,11 @@
                             <li class="list-group-item px-0">
                                 <div class="d-flex align-items-center gap-2">
                                     <span>@attr.Name</span>
-                                    <span class="badge bg-secondary">@attr.Type</span>
+                                    @* Локализуем тип атрибута *@
+                                    <span class="badge bg-secondary">@L[$"AttributeType_{attr.Type}"]</span>
                                     @if (attr.IsRequired)
                                     {
-                                        <span class="badge bg-danger ms-auto">
-                                            Обязательный
-                                        </span>
+                                        <span class="badge bg-danger ms-auto">@L["RequiredAttributeBadge"]</span>
                                     }
                                 </div>
                             </li>

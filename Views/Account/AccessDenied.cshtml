@@ -1,14 +1,16 @@
-﻿@{
-    ViewData["Title"] = "Доступ запрещён";
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
+@{
+    ViewData["Title"] = L["AccessDeniedTitle"];
 }
 
 <div class="row justify-content-center mt-5">
     <div class="col-md-6 text-center">
         <h1 class="display-1 text-danger">403</h1>
-        <h2>Доступ запрещён</h2>
-        <p class="text-muted">У вас нет прав для просмотра этой страницы.</p>
+        <h2>@L["AccessDeniedTitle"]</h2>
+        <p class="text-muted">@L["AccessDeniedMessage"]</p>
         <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
-            На главную
+            @L["BackToHome"]
         </a>
     </div>
 </div>

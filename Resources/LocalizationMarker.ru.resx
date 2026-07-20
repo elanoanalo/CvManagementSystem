@@ -1,0 +1,876 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Attributes" xml:space="preserve">
+    <value>Атрибуты</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Главная</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
+  <data name="MyCVs" xml:space="preserve">
+    <value>Мои CV</value>
+  </data>
+  <data name="MyProfile" xml:space="preserve">
+    <value>Мой профиль</value>
+  </data>
+  <data name="MyProjects" xml:space="preserve">
+    <value>Мои проекты</value>
+  </data>
+  <data name="OpenPositions" xml:space="preserve">
+    <value>Открытых позиций</value>
+  </data>
+  <data name="Positions" xml:space="preserve">
+    <value>Позиции</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Регистрация</value>
+  </data>
+  <data name="AddButton" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="CreateButton" xml:space="preserve">
+    <value>Создать</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Редактировать</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="RemoveBtn" xml:space="preserve">
+    <value>Убрать</value>
+  </data>
+  <data name="CVsCreatedTotal" xml:space="preserve">
+    <value>CV создано всего</value>
+  </data>
+  <data name="NewCVs24h" xml:space="preserve">
+    <value>Новых CV за 24 часа</value>
+  </data>
+  <data name="Candidates" xml:space="preserve">
+    <value>Кандидатов</value>
+  </data>
+  <data name="Recruiters" xml:space="preserve">
+    <value>Рекрутеров</value>
+  </data>
+  <data name="AttributesInLibrary" xml:space="preserve">
+    <value>Атрибутов в библиотеке</value>
+  </data>
+  <data name="RecentPositions" xml:space="preserve">
+    <value>Последние позиции</value>
+  </data>
+  <data name="PopularTags" xml:space="preserve">
+    <value>Популярные теги</value>
+  </data>
+  <data name="AllPositions" xml:space="preserve">
+    <value>Все позиции</value>
+  </data>
+  <data name="ReadyToStart" xml:space="preserve">
+    <value>Готовы начать?</value>
+  </data>
+  <data name="RegisterPrompt" xml:space="preserve">
+    <value>Зарегистрируйтесь как кандидат и создайте CV для интересующих вас позиций</value>
+  </data>
+  <data name="BrowsePositions" xml:space="preserve">
+    <value>Смотреть позиции</value>
+  </data>
+  <data name="DevelopedBy" xml:space="preserve">
+    <value>Разработано</value>
+  </data>
+  <data name="NoRightsReserved" xml:space="preserve">
+    <value>Все права не защищены 🙂</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Политика конфиденциальности</value>
+  </data>
+  <data name="AccessDeniedTitle" xml:space="preserve">
+    <value>Доступ запрещён</value>
+  </data>
+  <data name="AccessDeniedMessage" xml:space="preserve">
+    <value>У вас нет прав для просмотра этой страницы.</value>
+  </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>На главную</value>
+  </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="PasswordLabel" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="NoAccountPrompt" xml:space="preserve">
+    <value>Нет аккаунта? Зарегистрироваться</value>
+  </data>
+  <data name="RegisterTitle" xml:space="preserve">
+    <value>Регистрация</value>
+  </data>
+  <data name="FullNameLabel" xml:space="preserve">
+    <value>Полное имя</value>
+  </data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve">
+    <value>Подтвердите пароль</value>
+  </data>
+  <data name="RegisterAsLabel" xml:space="preserve">
+    <value>Я регистрируюсь как</value>
+  </data>
+  <data name="AlreadyHaveAccountPrompt" xml:space="preserve">
+    <value>Уже есть аккаунт? Войти</value>
+  </data>
+  <data name="CreateAttribute" xml:space="preserve">
+    <value>Создать атрибут</value>
+  </data>
+  <data name="EditAttribute" xml:space="preserve">
+    <value>Редактировать атрибут</value>
+  </data>
+  <data name="AttributeLibrary" xml:space="preserve">
+    <value>Библиотека атрибутов</value>
+  </data>
+  <data name="AttributeDetails" xml:space="preserve">
+    <value>Атрибут: {0}</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="DescriptionOptional" xml:space="preserve">
+    <value>Описание (необязательно)</value>
+  </data>
+  <data name="AttributeTypeLabel" xml:space="preserve">
+    <value>Тип атрибута</value>
+  </data>
+  <data name="DropdownOptions" xml:space="preserve">
+    <value>Варианты выбора</value>
+  </data>
+  <data name="AddOptionPrompt" xml:space="preserve">
+    <value>Добавьте варианты которые увидит кандидат</value>
+  </data>
+  <data name="EnterOptionPlaceholder" xml:space="preserve">
+    <value>Введите вариант...</value>
+  </data>
+  <data name="NewOptionPlaceholder" xml:space="preserve">
+    <value>Новый вариант...</value>
+  </data>
+  <data name="CreatedByLabel" xml:space="preserve">
+    <value>Создал</value>
+  </data>
+  <data name="CreatedAtLabel" xml:space="preserve">
+    <value>Дата создания</value>
+  </data>
+  <data name="OptionsCountLabel" xml:space="preserve">
+    <value>Вариантов выбора</value>
+  </data>
+  <data name="TypeChangeWarning" xml:space="preserve">
+    <value>Тип атрибута нельзя менять после создания</value>
+  </data>
+  <data name="NoAttributesYet" xml:space="preserve">
+    <value>Атрибутов пока нет. Создайте первый!</value>
+  </data>
+  <data name="DeleteSelected" xml:space="preserve">
+    <value>Удалить выбранные</value>
+  </data>
+  <data name="SelectedCount" xml:space="preserve">
+    <value>Выбрано: {0}</value>
+  </data>
+  <data name="DeleteConfirmSingle" xml:space="preserve">
+    <value>Удалить атрибут?</value>
+  </data>
+  <data name="DeleteConfirmBulk" xml:space="preserve">
+    <value>Удалить выбранные атрибуты ({0} шт.)?</value>
+  </data>
+  <data name="CreateCvTitle" xml:space="preserve">
+    <value>Создать CV</value>
+  </data>
+  <data name="CreateCvForPosition" xml:space="preserve">
+    <value>Создать CV для позиции</value>
+  </data>
+  <data name="CvAutoGenerationWarning" xml:space="preserve">
+    <value>CV будет автоматически сгенерировано из вашего профиля. Содержит &lt;strong&gt;{0}&lt;/strong&gt; атрибутов.</value>
+  </data>
+  <data name="MyCvsTitle" xml:space="preserve">
+    <value>Мои CV</value>
+  </data>
+  <data name="CreateNewCvBtn" xml:space="preserve">
+    <value>+ Создать новое CV</value>
+  </data>
+  <data name="NoCvsYetTitle" xml:space="preserve">
+    <value>У вас пока нет CV</value>
+  </data>
+  <data name="NoCvsYetMessage" xml:space="preserve">
+    <value>Перейдите в раздел и создайте CV для интересующей вас позиции.</value>
+  </data>
+  <data name="AvailablePositionsLink" xml:space="preserve">
+    <value>доступные позиции</value>
+  </data>
+  <data name="PositionHeader" xml:space="preserve">
+    <value>Позиция</value>
+  </data>
+  <data name="AttributesHeader" xml:space="preserve">
+    <value>Атрибутов</value>
+  </data>
+  <data name="ProjectsHeader" xml:space="preserve">
+    <value>Проектов</value>
+  </data>
+  <data name="CreatedAtHeader" xml:space="preserve">
+    <value>Дата создания</value>
+  </data>
+  <data name="AvailablePositionsTitle" xml:space="preserve">
+    <value>Доступные позиции</value>
+  </data>
+  <data name="NoPositionsAvailable" xml:space="preserve">
+    <value>Пока нет доступных позиций. Загляните позже!</value>
+  </data>
+  <data name="DescriptionHeader" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="TagsHeader" xml:space="preserve">
+    <value>Теги</value>
+  </data>
+  <data name="CvStatusHeader" xml:space="preserve">
+    <value>Статус CV</value>
+  </data>
+  <data name="CvCreatedBadge" xml:space="preserve">
+    <value>CV создано</value>
+  </data>
+  <data name="NoCvBadge" xml:space="preserve">
+    <value>Нет CV</value>
+  </data>
+  <data name="CandidateSection" xml:space="preserve">
+    <value>Кандидат</value>
+  </data>
+  <data name="NameRow" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="CvCreatedRow" xml:space="preserve">
+    <value>CV создано</value>
+  </data>
+  <data name="AttributeColumn" xml:space="preserve">
+    <value>Атрибут</value>
+  </data>
+  <data name="ValueColumn" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="RequiredBadge" xml:space="preserve">
+    <value>Обязательный</value>
+  </data>
+  <data name="NoAttributes" xml:space="preserve">
+    <value>Нет атрибутов</value>
+  </data>
+  <data name="NotFilledFillInProfile" xml:space="preserve">
+    <value>Не заполнено — заполнить в профиле →</value>
+  </data>
+  <data name="NotFilled" xml:space="preserve">
+    <value>Не заполнено</value>
+  </data>
+  <data name="StatusEmpty" xml:space="preserve">
+    <value>Пусто</value>
+  </data>
+  <data name="StatusNotFilledWarning" xml:space="preserve">
+    <value>Не заполнено!</value>
+  </data>
+  <data name="ProjectsSection" xml:space="preserve">
+    <value>Проекты</value>
+  </data>
+  <data name="FilteredByTags" xml:space="preserve">
+    <value>(отфильтровано по тегам позиции)</value>
+  </data>
+  <data name="NoMatchingProjects" xml:space="preserve">
+    <value>Нет подходящих проектов.</value>
+  </data>
+  <data name="AddProjectLink" xml:space="preserve">
+    <value>Добавить проект →</value>
+  </data>
+  <data name="PresentTime" xml:space="preserve">
+    <value>н.в.</value>
+  </data>
+  <data name="DeleteCvConfirm" xml:space="preserve">
+    <value>Удалить это CV?</value>
+  </data>
+  <data name="HomeTitle" xml:space="preserve">
+    <value>CV Management — Главная</value>
+  </data>
+  <data name="OpenPositionsStat" xml:space="preserve">
+    <value>Открытых позиций</value>
+  </data>
+  <data name="TotalCvsStat" xml:space="preserve">
+    <value>CV создано всего</value>
+  </data>
+  <data name="NewCvs24hStat" xml:space="preserve">
+    <value>Новых CV за 24 часа</value>
+  </data>
+  <data name="CandidatesStat" xml:space="preserve">
+    <value>Кандидатов</value>
+  </data>
+  <data name="RecruitersStat" xml:space="preserve">
+    <value>Рекрутеров</value>
+  </data>
+  <data name="LibraryAttributesStat" xml:space="preserve">
+    <value>Атрибутов в библиотеке</value>
+  </data>
+  <data name="RecentPositionsHeader" xml:space="preserve">
+    <value>Последние позиции</value>
+  </data>
+  <data name="NoPositionsYet" xml:space="preserve">
+    <value>Позиций пока нет</value>
+  </data>
+  <data name="AllPositionsBtn" xml:space="preserve">
+    <value>Все позиции →</value>
+  </data>
+  <data name="PopularTagsHeader" xml:space="preserve">
+    <value>Популярные теги</value>
+  </data>
+  <data name="NoTagsYet" xml:space="preserve">
+    <value>Тегов пока нет</value>
+  </data>
+  <data name="ReadyToStartHeader" xml:space="preserve">
+    <value>Готовы начать?</value>
+  </data>
+  <data name="ReadyToStartText" xml:space="preserve">
+    <value>Зарегистрируйтесь как кандидат и создайте CV для интересующих вас позиций</value>
+  </data>
+  <data name="ViewPositionsBtn" xml:space="preserve">
+    <value>Смотреть позиции</value>
+  </data>
+  <data name="PrivacyPolicyTitle" xml:space="preserve">
+    <value>Политика конфиденциальности</value>
+  </data>
+  <data name="PrivacyCollectTitle" xml:space="preserve">
+    <value>Мы собираем ваши данные</value>
+  </data>
+  <data name="PrivacyCollectText" xml:space="preserve">
+    <value>Да, мы собираем ваше имя, email, GPA, уровень английского, семейное положение и буквально всё остальное, что вы указываете в профиле. Мы обещаем не продавать их. Наверное.</value>
+  </data>
+  <data name="PrivacyCookiesTitle" xml:space="preserve">
+    <value>Файлы cookies</value>
+  </data>
+  <data name="PrivacyCookiesText" xml:space="preserve">
+    <value>Мы используем файлы cookie. К сожалению, не шоколадное печенье. Просто скучный тип аутентификации, который поддерживает ваш вход в систему.</value>
+  </data>
+  <data name="PrivacyRightsTitle" xml:space="preserve">
+    <value>Ваши права</value>
+  </data>
+  <data name="PrivacyRightsText" xml:space="preserve">
+    <value>Вы имеете право хранить молчание. Всё, что вы вводите в свой профиль, может и будет использовано против вас во время код-ревью или оценки резюме.</value>
+  </data>
+  <data name="PrivacySecurityTitle" xml:space="preserve">
+    <value>Безопасность</value>
+  </data>
+  <data name="PrivacySecurityText" xml:space="preserve">
+    <value>Ваш пароль хэшируется безопасным алгоритмом. Мы понятия не имеем, какой у вас пароль. Никто другой тоже не знает. Включая вас, скорее всего.</value>
+  </data>
+  <data name="PrivacyContactTitle" xml:space="preserve">
+    <value>Контакты</value>
+  </data>
+  <data name="PrivacyContactText" xml:space="preserve">
+    <value>Если у вас есть какие-либо опасения по поводу вашей конфиденциальности, напишите их на листке бумаги и выбросьте его. Или напишите нам на email. Возможно, мы ответим.</value>
+  </data>
+  <data name="PrivacyFooterText" xml:space="preserve">
+    <value>Последнее обновление: никогда. Эта политика вечна и неизменна, как законы физики, но менее надежна. © {0} Abay Tolegen. Вообще никаких прав не защищено.</value>
+  </data>
+  <data name="CandidatesCvsTitle" xml:space="preserve">
+    <value>CV кандидатов — {0}</value>
+  </data>
+  <data name="CvsForPositionHeader" xml:space="preserve">
+    <value>CV для позиции: {0}</value>
+  </data>
+  <data name="BackToPositionBtn" xml:space="preserve">
+    <value>← Назад к позиции</value>
+  </data>
+  <data name="NoCvsForPositionAlert" xml:space="preserve">
+    <value>Пока ни один кандидат не создал CV для этой позиции.</value>
+  </data>
+  <data name="CandidateColumn" xml:space="preserve">
+    <value>Кандидат</value>
+  </data>
+  <data name="CvCreationDateColumn" xml:space="preserve">
+    <value>Дата создания CV</value>
+  </data>
+  <data name="CreatePositionTitle" xml:space="preserve">
+    <value>Создать позицию</value>
+  </data>
+  <data name="PositionTitleLabel" xml:space="preserve">
+    <value>Название позиции</value>
+  </data>
+  <data name="PositionTitlePlaceholder" xml:space="preserve">
+    <value>Например: Junior Backend Developer</value>
+  </data>
+  <data name="DescriptionOptionalLabel" xml:space="preserve">
+    <value>Описание (необязательно)</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Теги</value>
+  </data>
+  <data name="AddTagPlaceholder" xml:space="preserve">
+    <value>Например: Python, Backend, Remote...</value>
+  </data>
+  <data name="AddTagBtn" xml:space="preserve">
+    <value>Добавить тег</value>
+  </data>
+  <data name="PositionAttributesLabel" xml:space="preserve">
+    <value>Атрибуты позиции</value>
+  </data>
+  <data name="PositionAttributesHelpText" xml:space="preserve">
+    <value>Выберите какие атрибуты нужно заполнить кандидату для этой позиции</value>
+  </data>
+  <data name="AvailableAttributesHeader" xml:space="preserve">
+    <value>Доступные атрибуты из библиотеки:</value>
+  </data>
+  <data name="PublicationStatusLabel" xml:space="preserve">
+    <value>Статус публикации</value>
+  </data>
+  <data name="PublishedState" xml:space="preserve">
+    <value>Опубликовано</value>
+  </data>
+  <data name="DraftState" xml:space="preserve">
+    <value>Черновик</value>
+  </data>
+  <data name="PublishedDescription" xml:space="preserve">
+    <value>Позиция видна кандидатам</value>
+  </data>
+  <data name="DraftDescription" xml:space="preserve">
+    <value>Позиция скрыта от кандидатов</value>
+  </data>
+  <data name="AttrAlreadyAddedAlert" xml:space="preserve">
+    <value>Этот атрибут уже добавлен!</value>
+  </data>
+  <data name="PositionTitlePrefix" xml:space="preserve">
+    <value>Позиция: {0}</value>
+  </data>
+  <data name="DuplicateBtn" xml:space="preserve">
+    <value>Дублировать</value>
+  </data>
+  <data name="ViewCvsCountBtn" xml:space="preserve">
+    <value>Смотреть CV ({0})</value>
+  </data>
+  <data name="DeletePositionConfirm" xml:space="preserve">
+    <value>Удалить позицию?</value>
+  </data>
+  <data name="GeneralInfoTitle" xml:space="preserve">
+    <value>Основная информация</value>
+  </data>
+  <data name="TitleColumnLabel" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="DescriptionColumnLabel" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="StatusColumnLabel" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="CreatedByColumnLabel" xml:space="preserve">
+    <value>Создал</value>
+  </data>
+  <data name="CreationDateColumnLabel" xml:space="preserve">
+    <value>Дата создания</value>
+  </data>
+  <data name="CvCreatedCountLabel" xml:space="preserve">
+    <value>CV создано</value>
+  </data>
+  <data name="NoAttributesAlert" xml:space="preserve">
+    <value>Атрибуты не добавлены</value>
+  </data>
+  <data name="RequiredAttributeBadge" xml:space="preserve">
+    <value>Обязательный</value>
+  </data>
+  <data name="EditPositionTitle" xml:space="preserve">
+    <value>Редактировать позицию</value>
+  </data>
+  <data name="PositionsIndexTitle" xml:space="preserve">
+    <value>Позиции</value>
+  </data>
+  <data name="CreatePositionBtn" xml:space="preserve">
+    <value>Создать позицию</value>
+  </data>
+  <data name="NoPositionsAlert" xml:space="preserve">
+    <value>Позиций пока нет.</value>
+  </data>
+  <data name="DeleteSelectedBtn" xml:space="preserve">
+    <value>Удалить выбранные</value>
+  </data>
+  <data name="SelectedCountText" xml:space="preserve">
+    <value>Выбрано: {0}</value>
+  </data>
+  <data name="AttributesCountColumn" xml:space="preserve">
+    <value>Атрибутов</value>
+  </data>
+  <data name="CvsCountColumn" xml:space="preserve">
+    <value>CV</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="DeleteSelectedConfirm" xml:space="preserve">
+    <value>Удалить выбранные позиции ({0} шт.)?</value>
+  </data>
+  <data name="ProfileTitle" xml:space="preserve">
+    <value>Мой профиль</value>
+  </data>
+  <data name="ProfileHeader" xml:space="preserve">
+    <value>Мой профиль</value>
+  </data>
+  <data name="MainInfoSectionTitle" xml:space="preserve">
+    <value>Основная информация</value>
+  </data>
+  <data name="NameFieldLabel" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="EmailFieldLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="MyAttributesSectionTitle" xml:space="preserve">
+    <value>Мои атрибуты</value>
+  </data>
+  <data name="AddAttributeBtn" xml:space="preserve">
+    <value>Добавить атрибут</value>
+  </data>
+  <data name="NoAttributesAlertText" xml:space="preserve">
+    <value>Вы ещё не добавили ни одного атрибута. Нажмите "+ Добавить атрибут" чтобы начать.</value>
+  </data>
+  <data name="InputPlaceholderText" xml:space="preserve">
+    <value>Введите текст...</value>
+  </data>
+  <data name="InputPlaceholderNumber" xml:space="preserve">
+    <value>Введите число...</value>
+  </data>
+  <data name="BooleanSwitchLabel" xml:space="preserve">
+    <value>Да / Нет</value>
+  </data>
+  <data name="DropdownSelectPlaceholder" xml:space="preserve">
+    <value>Выберите</value>
+  </data>
+  <data name="ImagePlaceholderUrl" xml:space="preserve">
+    <value>URL изображения (Cloudinary)...</value>
+  </data>
+  <data name="ImageCloudinaryHint" xml:space="preserve">
+    <value>Загрузите изображение на Cloudinary и вставьте ссылку</value>
+  </data>
+  <data name="MyProjectsSectionTitle" xml:space="preserve">
+    <value>Мои проекты</value>
+  </data>
+  <data name="MyProjectsSectionHint" xml:space="preserve">
+    <value>Проекты используются при генерации CV</value>
+  </data>
+  <data name="ManageProjectsBtn" xml:space="preserve">
+    <value>Управлять проектами</value>
+  </data>
+  <data name="JsChangesDetected" xml:space="preserve">
+    <value>Есть изменения...</value>
+  </data>
+  <data name="JsSaving" xml:space="preserve">
+    <value>Сохранение...</value>
+  </data>
+  <data name="JsSaved" xml:space="preserve">
+    <value>Сохранено</value>
+  </data>
+  <data name="JsError" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="JsRemoveConfirm" xml:space="preserve">
+    <value>Убрать атрибут "{0}" из профиля? Значение будет удалено.</value>
+  </data>
+  <data name="JsRemoveError" xml:space="preserve">
+    <value>Ошибка удаления</value>
+  </data>
+  <data name="JsAddAttrError" xml:space="preserve">
+    <value>Ошибка добавления атрибута</value>
+  </data>
+  <data name="JsNetworkError" xml:space="preserve">
+    <value>Ошибка соединения</value>
+  </data>
+  <data name="MyProjectsTitle" xml:space="preserve">
+    <value>Мои проекты</value>
+  </data>
+  <data name="MyProjectsHeader" xml:space="preserve">
+    <value>Мои проекты</value>
+  </data>
+  <data name="AddProjectBtn" xml:space="preserve">
+    <value>+ Добавить проект</value>
+  </data>
+  <data name="TitleColumn" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="DescriptionColumn" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="PeriodColumn" xml:space="preserve">
+    <value>Период</value>
+  </data>
+  <data name="TagsColumn" xml:space="preserve">
+    <value>Теги</value>
+  </data>
+  <data name="PresentTimeValue" xml:space="preserve">
+    <value>н.в.</value>
+  </data>
+  <data name="JsSelectedPrefix" xml:space="preserve">
+    <value>Выбрано: </value>
+  </data>
+  <data name="JsConfirmDeleteStart" xml:space="preserve">
+    <value>Удалить выбранные проекты (</value>
+  </data>
+  <data name="JsConfirmDeletePcs" xml:space="preserve">
+    <value> шт.</value>
+  </data>
+  <data name="JsConfirmDeleteEnd" xml:space="preserve">
+    <value>)?</value>
+  </data>
+  <data name="EditProjectTitle" xml:space="preserve">
+    <value>Редактировать проект</value>
+  </data>
+  <data name="EditProjectHeader" xml:space="preserve">
+    <value>Редактировать проект</value>
+  </data>
+  <data name="ProjectTitleLabel" xml:space="preserve">
+    <value>Название проекта</value>
+  </data>
+  <data name="ProjectDescriptionLabel" xml:space="preserve">
+    <value>Описание (необязательно)</value>
+  </data>
+  <data name="StartDateLabel" xml:space="preserve">
+    <value>Дата начала</value>
+  </data>
+  <data name="EndDateLabel" xml:space="preserve">
+    <value>Дата окончания</value>
+  </data>
+  <data name="EndDateHint" xml:space="preserve">
+    <value>(оставьте пустым если продолжается)</value>
+  </data>
+  <data name="TechnologyTagsLabel" xml:space="preserve">
+    <value>Теги технологий</value>
+  </data>
+  <data name="NewTagPlaceholder" xml:space="preserve">
+    <value>Python, Django, PostgreSQL...</value>
+  </data>
+  <data name="JsTagLengthError" xml:space="preserve">
+    <value>Тег не может быть длиннее 50 символов</value>
+  </data>
+  <data name="JsMaxTagsError" xml:space="preserve">
+    <value>Максимум 10 тегов</value>
+  </data>
+  <data name="CreateProjectTitle" xml:space="preserve">
+    <value>Добавить проект</value>
+  </data>
+  <data name="CreateProjectHeader" xml:space="preserve">
+    <value>Добавить проект</value>
+  </data>
+  <data name="ProjectTitlePlaceholder" xml:space="preserve">
+    <value>Например: Интернет-магазин на Django</value>
+  </data>
+  <data name="ProjectDescriptionPlaceholder" xml:space="preserve">
+    <value>Опишите что делали, какие технологии использовали...</value>
+  </data>
+  <data name="TagsHint" xml:space="preserve">
+    <value>Теги используются для фильтрации проектов в CV</value>
+  </data>
+  <data name="RegisterButton" xml:space="preserve">
+    <value>Зарегистрироваться</value>
+  </data>
+  <data name="CreateCvButton" xml:space="preserve">
+    <value>Создать CV</value>
+  </data>
+  <data name="EditBtn" xml:space="preserve">
+    <value>Редактировать</value>
+  </data>
+  <data name="DeleteBtn" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="RemoveAttributeBtn" xml:space="preserve">
+    <value>Убрать</value>
+  </data>
+  <data name="NoProjectsAlert" xml:space="preserve">
+    <value>Проектов пока нет. Добавьте первый!</value>
+  </data>
+  <data name="SaveBtn" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="CancelBtn" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="FullNamePlaceholder" xml:space="preserve">
+    <value>Иван Иванов</value>
+  </data>
+  <data name="UserRole_Candidate" xml:space="preserve">
+    <value>Кандидат</value>
+  </data>
+  <data name="UserRole_Recruiter" xml:space="preserve">
+    <value>Рекрутер</value>
+  </data>
+  <data name="UserRole_Administrator" xml:space="preserve">
+    <value>Администратор</value>
+  </data>
+  <data name="AttributeNamePlaceholder" xml:space="preserve">
+    <value>Например: GPA, English Level</value>
+  </data>
+  <data name="AttributeType_String" xml:space="preserve">
+    <value>Строка</value>
+  </data>
+  <data name="AttributeType_Text" xml:space="preserve">
+    <value>Текст (Markdown)</value>
+  </data>
+  <data name="AttributeType_Image" xml:space="preserve">
+    <value>Изображение</value>
+  </data>
+  <data name="AttributeType_Numeric" xml:space="preserve">
+    <value>Число</value>
+  </data>
+  <data name="AttributeType_Date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="AttributeType_Period" xml:space="preserve">
+    <value>Период</value>
+  </data>
+  <data name="AttributeType_Boolean" xml:space="preserve">
+    <value>Да/Нет</value>
+  </data>
+  <data name="AttributeType_Dropdown" xml:space="preserve">
+    <value>Список вариантов</value>
+  </data>
+  <data name="EmptyValue" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="DeleteConfirmBulkPositions" xml:space="preserve">
+    <value>Удалить выбранные позиции ({0} шт.)?</value>
+  </data>
+  <data name="DeleteCvButtonText" xml:space="preserve">
+    <value>Удалить CV</value>
+  </data>
+</root>

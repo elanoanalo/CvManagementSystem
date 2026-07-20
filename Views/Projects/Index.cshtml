@@ -1,18 +1,20 @@
 ﻿@using CvManagementSystem.ViewModels
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @model IEnumerable<ProjectListViewModel>
 @{
-    ViewData["Title"] = "Мои проекты";
+    ViewData["Title"] = L["MyProjectsTitle"];
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Мои проекты</h2>
-    <a asp-action="Create" class="btn btn-primary">+ Добавить проект</a>
+    <h2>@L["MyProjectsHeader"]</h2>
+    <a asp-action="Create" class="btn btn-primary">@L["AddProjectBtn"]</a>
 </div>
 
 @if (!Model.Any())
 {
     <div class="alert alert-info">
-        Проектов пока нет. Добавьте первый!
+        @L["NoProjectsAlert"]
     </div>
 }
 else
@@ -22,7 +24,7 @@ else
                 id="deleteSelectedBtn"
                 class="btn btn-danger btn-sm"
                 style="visibility:hidden; opacity:0; transition: opacity 0.2s ease;">
-            Удалить выбранные
+            @L["DeleteSelectedBtn"]
         </button>
         <span id="selectedCount" class="text-muted small"></span>
     </div>
@@ -33,10 +35,10 @@ else
                 <th style="width:40px">
                     <input type="checkbox" id="selectAll" class="form-check-input" />
                 </th>
-                <th>Название</th>
-                <th>Описание</th>
-                <th>Период</th>
-                <th>Теги</th>
+                <th>@L["TitleColumn"]</th>
+                <th>@L["DescriptionColumn"]</th>
+                <th>@L["PeriodColumn"]</th>
+                <th>@L["TagsColumn"]</th>
             </tr>
         </thead>
         <tbody>
@@ -65,7 +67,7 @@ else
                     <td>
                         @if (project.StartDate != null || project.EndDate != null)
                         {
-                            <span>@(project.StartDate ?? "?") — @(project.EndDate ?? "н.в.")</span>
+                            <span>@(project.StartDate ?? "?") — @(project.EndDate ?? L["PresentTimeValue"].Value)</span>
                         }
                         else
                         {
@@ -86,29 +88,35 @@ else
 
 @section Scripts {
     <script>
-        document.querySelectorAll('.clickable-row').forEach(function (row) {
+        // Передаем локализованные строки в JS переменные
+        var jsSelectedPrefix = @Json.Serialize(L["JsSelectedPrefix"].Value);
+        var jsConfirmDeleteStart = @Json.Serialize(L["JsConfirmDeleteStart"].Value);
+        var jsConfirmDeletePcs = @Json.Serialize(L["JsConfirmDeletePcs"].Value);
+        var jsConfirmDeleteEnd = @Json.Serialize(L["JsConfirmDeleteEnd"].Value);
+
+        document.querySelectorAll('.clickable-row').forEach(function(row) {
             row.style.cursor = 'pointer';
-            row.addEventListener('click', function () {
+            row.addEventListener('click', function() {
                 window.location.href = this.getAttribute('data-href');
             });
         });
 
         document.getElementById('selectAll')
-            .addEventListener('change', function () {
-                document.querySelectorAll('.row-checkbox').forEach(function (cb) {
+            .addEventListener('change', function() {
+                document.querySelectorAll('.row-checkbox').forEach(function(cb) {
                     cb.checked = this.checked;
                 }.bind(this));
                 updateToolbar();
             });
 
-        document.querySelectorAll('.row-checkbox').forEach(function (cb) {
-            cb.addEventListener('change', function () {
+        document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+            cb.addEventListener('change', function() {
                 updateToolbar();
             });
         });
 
         document.getElementById('deleteSelectedBtn')
-            .addEventListener('click', function () {
+            .addEventListener('click', function() {
                 deleteSelected();
             });
 
@@ -120,7 +128,7 @@ else
             if (selected.length > 0) {
                 deleteBtn.style.visibility = 'visible';
                 deleteBtn.style.opacity = '1';
-                countSpan.textContent = 'Выбрано: ' + selected.length;
+                countSpan.textContent = jsSelectedPrefix + selected.length;
             } else {
                 deleteBtn.style.visibility = 'hidden';
                 deleteBtn.style.opacity = '0';
@@ -132,16 +140,23 @@ else
             var selected = document.querySelectorAll('.row-checkbox:checked');
             if (selected.length === 0) return;
 
-            if (!confirm('Удалить выбранные проекты (' + selected.length + ' шт.)?'))
+            if (!confirm(jsConfirmDeleteStart + selected.length + jsConfirmDeletePcs + jsConfirmDeleteEnd))
                 return;
 
-            selected.forEach(function (cb) {
-                var form = document.createElement('form');
-                form.method = 'post';
-                form.action = '/Projects/Delete/' + cb.value;
-                document.body.appendChild(form);
-                form.submit();
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/Projects/DeleteMultiple';
+
+            selected.forEach(function(cb) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ids';
+                input.value = cb.value;
+                form.appendChild(input);
             });
+
+            document.body.appendChild(form);
+            form.submit();
         }
     </script>
 }

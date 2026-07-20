@@ -1,13 +1,15 @@
-﻿@model CvManagementSystem.ViewModels.PositionForCandidateViewModel
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
+@model CvManagementSystem.ViewModels.PositionForCandidateViewModel
 @{
-    ViewData["Title"] = "Создать CV";
+    ViewData["Title"] = L["CreateCvTitle"];
 }
 
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card shadow">
             <div class="card-body p-4 text-center">
-                <h4 class="mb-3">Создать CV для позиции</h4>
+                <h4 class="mb-3">@L["CreateCvForPosition"]</h4>
                 <h3 class="text-primary mb-3">@Model.Title</h3>
 
                 @if (!string.IsNullOrEmpty(Model.Description))
@@ -23,18 +25,18 @@
                 </div>
 
                 <p class="text-muted small mb-4">
-                    CV будет автоматически сгенерировано из вашего профиля.
-                    Содержит <strong>@Model.AttributesCount</strong> атрибутов.
+                    @* Исправлено на безопасное форматирование локализатора *@
+                    @Html.Raw(L["CvAutoGenerationWarning", Model.AttributesCount])
                 </p>
 
                 <form asp-action="Create" method="post">
                     <input type="hidden" name="positionId" value="@Model.Id" />
                     <div class="d-flex gap-2 justify-content-center">
                         <button type="submit" class="btn btn-primary">
-                            Создать CV
+                            @L["CreateCvButton"]
                         </button>
                         <a asp-action="Positions" class="btn btn-outline-secondary">
-                            Отмена
+                            @L["CancelButton"]
                         </a>
                     </div>
                 </form>

@@ -1,24 +1,23 @@
 ﻿@using CvManagementSystem.ViewModels
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @model IEnumerable<CvListViewModel>
 @{
-    ViewData["Title"] = "Мои CV";
+    ViewData["Title"] = L["MyCvsTitle"];
 }
-
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Мои CV</h2>
+    <h2>@L["MyCvsTitle"]</h2>
     <a asp-action="Positions" class="btn btn-primary">
-        + Создать новое CV
+        @L["CreateNewCvBtn"]
     </a>
 </div>
 
 @if (!Model.Any())
 {
     <div class="alert alert-info">
-        <h5>У вас пока нет CV</h5>
+        <h5>@L["NoCvsYetTitle"]</h5>
         <p class="mb-0">
-            Перейдите в раздел
-            <a asp-action="Positions">доступные позиции</a>
-            и создайте CV для интересующей вас позиции.
+            @Html.Raw(string.Format(L["NoCvsYetMessage"].Value, $"<a href=\"{Url.Action("Positions")}\">{L["AvailablePositionsLink"]}</a>"))
         </p>
     </div>
 }
@@ -29,7 +28,7 @@ else
                 id="deleteSelectedBtn"
                 class="btn btn-danger btn-sm"
                 style="visibility:hidden; opacity:0; transition: opacity 0.2s ease;">
-            Удалить выбранные
+            @L["DeleteSelected"]
         </button>
         <span id="selectedCount" class="text-muted small"></span>
     </div>
@@ -40,10 +39,10 @@ else
                 <th style="width:40px">
                     <input type="checkbox" id="selectAll" class="form-check-input" />
                 </th>
-                <th>Позиция</th>
-                <th>Атрибутов</th>
-                <th>Проектов</th>
-                <th>Дата создания</th>
+                <th>@L["PositionHeader"]</th>
+                <th>@L["AttributesHeader"]</th>
+                <th>@L["ProjectsHeader"]</th>
+                <th>@L["CreatedAtHeader"]</th>
             </tr>
         </thead>
         <tbody>
@@ -68,27 +67,25 @@ else
 
 @section Scripts {
     <script>
-        document.querySelectorAll('.clickable-row').forEach(function (row) {
+        document.querySelectorAll('.clickable-row').forEach(function(row) {
             row.style.cursor = 'pointer';
-            row.addEventListener('click', function () {
+            row.addEventListener('click', function() {
                 window.location.href = this.getAttribute('data-href');
             });
         });
 
-        document.getElementById('selectAll')
-            .addEventListener('change', function () {
-                document.querySelectorAll('.row-checkbox').forEach(function (cb) {
-                    cb.checked = this.checked;
-                }.bind(this));
-                updateToolbar();
-            });
-
-        document.querySelectorAll('.row-checkbox').forEach(function (cb) {
-            cb.addEventListener('change', function () { updateToolbar(); });
+        document.getElementById('selectAll').addEventListener('change', function() {
+            document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+                cb.checked = this.checked;
+            }.bind(this));
+            updateToolbar();
         });
 
-        document.getElementById('deleteSelectedBtn')
-            .addEventListener('click', function () { deleteSelected(); });
+        document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+            cb.addEventListener('change', updateToolbar);
+        });
+
+        document.getElementById('deleteSelectedBtn').addEventListener('click', deleteSelected);
 
         function updateToolbar() {
             var selected = document.querySelectorAll('.row-checkbox:checked');
@@ -98,7 +95,7 @@ else
             if (selected.length > 0) {
                 deleteBtn.style.visibility = 'visible';
                 deleteBtn.style.opacity = '1';
-                countSpan.textContent = 'Выбрано: ' + selected.length;
+                countSpan.textContent = '@Html.Raw(L["SelectedCount"].Value)'.replace('{0}', selected.length);
             } else {
                 deleteBtn.style.visibility = 'hidden';
                 deleteBtn.style.opacity = '0';
@@ -110,16 +107,24 @@ else
             var selected = document.querySelectorAll('.row-checkbox:checked');
             if (selected.length === 0) return;
 
-            if (!confirm('Удалить выбранные CV (' + selected.length + ' шт.)?'))
-                return;
+            var confirmMsg = '@Html.Raw(L["DeleteConfirmBulk"].Value)'.replace('{0}', selected.length);
+            if (!confirm(confirmMsg)) return;
 
-            selected.forEach(function (cb) {
-                var form = document.createElement('form');
-                form.method = 'post';
-                form.action = '/Cv/Delete/' + cb.value;
-                document.body.appendChild(form);
-                form.submit();
+            // Одна форма со всеми ID
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/Cv/DeleteMultiple';
+
+            selected.forEach(function(cb) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ids';
+                input.value = cb.value;
+                form.appendChild(input);
             });
+
+            document.body.appendChild(form);
+            form.submit();
         }
     </script>
 }

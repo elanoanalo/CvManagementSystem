@@ -1,13 +1,15 @@
 ﻿@model CvManagementSystem.ViewModels.LoginViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @{
-    ViewData["Title"] = "Вход";
+    ViewData["Title"] = L["LoginTitle"];
 }
 
 <div class="row justify-content-center mt-5">
     <div class="col-md-5">
         <div class="card shadow">
             <div class="card-body p-4">
-                <h2 class="card-title text-center mb-4">Вход</h2>
+                <h2 class="card-title text-center mb-4">@L["LoginTitle"]</h2>
 
                 <form asp-action="Login" method="post">
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
@@ -19,16 +21,16 @@
                     </div>
 
                     <div class="mb-4">
-                        <label asp-for="Password" class="form-label">Пароль</label>
+                        <label asp-for="Password" class="form-label">@L["PasswordLabel"]</label>
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Войти</button>
+                    <button type="submit" class="btn btn-primary w-100">@L["LoginButton"]</button>
                 </form>
 
                 <div class="text-center mt-3">
-                    <a asp-action="Register">Нет аккаунта? Зарегистрироваться</a>
+                    <a asp-action="Register">@L["NoAccountPrompt"]</a>
                 </div>
             </div>
         </div>

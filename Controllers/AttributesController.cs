@@ -134,7 +134,6 @@ namespace CvManagementSystem.Controllers
             if (attribute == null)
                 return NotFound();
 
-            // Optimistic Locking — устанавливаем версию
             if (!string.IsNullOrEmpty(model.RowVersion))
             {
                 attribute.RowVersion = Convert.FromBase64String(model.RowVersion);
@@ -145,20 +144,45 @@ namespace CvManagementSystem.Controllers
 
             if (model.Type == AttributeType.Dropdown)
             {
-                _context.AttributeOptions.RemoveRange(attribute.Options);
+                var newOptions = model.Options
+                    .Where(o => !string.IsNullOrWhiteSpace(o))
+                    .Select(o => o.Trim())
+                    .ToList();
 
-                int order = 0;
-                foreach (var option in model.Options)
+                var existingOptions = attribute.Options.OrderBy(o => o.DisplayOrder).ToList();
+
+                for (int i = 0; i < newOptions.Count; i++)
                 {
-                    if (string.IsNullOrWhiteSpace(option)) continue;
-
-                    _context.AttributeOptions.Add(new AttributeOption
+                    if (i < existingOptions.Count)
                     {
-                        AttributeDefinitionId = attribute.Id,
-                        Value = option.Trim(),
-                        DisplayOrder = order
-                    });
-                    order++;
+                        existingOptions[i].Value = newOptions[i];
+                        existingOptions[i].DisplayOrder = i;
+                    }
+                    else
+                    {
+                        _context.AttributeOptions.Add(new AttributeOption
+                        {
+                            AttributeDefinitionId = attribute.Id,
+                            Value = newOptions[i],
+                            DisplayOrder = i
+                        });
+                    }
+                }
+
+                if (existingOptions.Count > newOptions.Count)
+                {
+                    for (int i = newOptions.Count; i < existingOptions.Count; i++)
+                    {
+                        var optionToRemove = existingOptions[i];
+
+                        var isUsed = await _context.AttributeValues
+                            .AnyAsync(av => av.SelectedOptionId == optionToRemove.Id);
+
+                        if (!isUsed)
+                        {
+                            _context.AttributeOptions.Remove(optionToRemove);
+                        }
+                    }
                 }
             }
 
@@ -215,6 +239,26 @@ namespace CvManagementSystem.Controllers
 
             _context.AttributeOptions.RemoveRange(attribute.Options);
             _context.AttributeDefinitions.Remove(attribute);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteMultiple(List<Guid> ids)
+        {
+            if (ids == null || ids.Count == 0)
+                return RedirectToAction(nameof(Index));
+
+            var attributes = await _context.AttributeDefinitions
+                .Include(a => a.Options)
+                .Where(a => ids.Contains(a.Id))
+                .ToListAsync();
+
+            foreach (var attribute in attributes)
+                _context.AttributeOptions.RemoveRange(attribute.Options);
+
+            _context.AttributeDefinitions.RemoveRange(attributes);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));

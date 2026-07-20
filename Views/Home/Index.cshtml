@@ -1,8 +1,9 @@
-﻿@{
-    ViewData["Title"] = "CV Management — Главная";
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
+@{
+    ViewData["Title"] = L["HomeTitle"];
 }
 
-@* Статистика *@
 <div class="row g-3 mb-4">
     <div class="col-md-4 col-sm-6">
         <div class="card shadow text-center h-100">
@@ -10,7 +11,7 @@
                 <div class="display-4 fw-bold text-primary">
                     @ViewBag.TotalPositions
                 </div>
-                <div class="text-muted">Открытых позиций</div>
+                <div class="text-muted">@L["OpenPositionsStat"]</div>
             </div>
         </div>
     </div>
@@ -20,7 +21,7 @@
                 <div class="display-4 fw-bold text-success">
                     @ViewBag.TotalCvs
                 </div>
-                <div class="text-muted">CV создано всего</div>
+                <div class="text-muted">@L["TotalCvsStat"]</div>
             </div>
         </div>
     </div>
@@ -30,7 +31,7 @@
                 <div class="display-4 fw-bold text-warning">
                     @ViewBag.NewCvsLast24Hours
                 </div>
-                <div class="text-muted">Новых CV за 24 часа</div>
+                <div class="text-muted">@L["NewCvs24hStat"]</div>
             </div>
         </div>
     </div>
@@ -40,7 +41,7 @@
                 <div class="display-4 fw-bold text-info">
                     @ViewBag.TotalCandidates
                 </div>
-                <div class="text-muted">Кандидатов</div>
+                <div class="text-muted">@L["CandidatesStat"]</div>
             </div>
         </div>
     </div>
@@ -50,7 +51,7 @@
                 <div class="display-4 fw-bold text-secondary">
                     @ViewBag.TotalRecruiters
                 </div>
-                <div class="text-muted">Рекрутеров</div>
+                <div class="text-muted">@L["RecruitersStat"]</div>
             </div>
         </div>
     </div>
@@ -60,21 +61,20 @@
                 <div class="display-4 fw-bold text-danger">
                     @ViewBag.TotalAttributes
                 </div>
-                <div class="text-muted">Атрибутов в библиотеке</div>
+                <div class="text-muted">@L["LibraryAttributesStat"]</div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="row g-4">
-    @* Последние позиции *@
     <div class="col-md-6">
         <div class="card shadow">
             <div class="card-body">
-                <h5 class="card-title mb-3">Последние позиции</h5>
+                <h5 class="card-title mb-3">@L["RecentPositionsHeader"]</h5>
                 @if (ViewBag.RecentPositions.Count == 0)
                 {
-                    <p class="text-muted">Позиций пока нет</p>
+                    <p class="text-muted">@L["NoPositionsYet"]</p>
                 }
                 else
                 {
@@ -103,7 +103,7 @@
                         <a asp-controller="Positions"
                            asp-action="Index"
                            class="btn btn-outline-primary btn-sm">
-                            Все позиции →
+                            @L["AllPositionsBtn"]
                         </a>
                     </div>
                 }
@@ -111,21 +111,19 @@
         </div>
     </div>
 
-    @* Tag Cloud *@
     <div class="col-md-6">
         <div class="card shadow">
             <div class="card-body">
-                <h5 class="card-title mb-3">Популярные теги</h5>
+                <h5 class="card-title mb-3">@L["PopularTagsHeader"]</h5>
                 @if (ViewBag.PositionTags.Count == 0)
                 {
-                    <p class="text-muted">Тегов пока нет</p>
+                    <p class="text-muted">@L["NoTagsYet"]</p>
                 }
                 else
                 {
                     <div class="d-flex flex-wrap gap-2">
                         @foreach (var tagItem in ViewBag.PositionTags)
                         {
-                            @* Размер тега зависит от количества использований *@
                             var fontSize = tagItem.Count == 1 ? "0.8rem" :
                                           tagItem.Count == 2 ? "1rem" :
                                           tagItem.Count <= 4 ? "1.2rem" : "1.5rem";
@@ -145,24 +143,23 @@
     </div>
 </div>
 
-@* Призыв к действию для незалогиненных *@
 @if (!User.Identity!.IsAuthenticated)
 {
     <div class="card shadow mt-4 border-primary">
         <div class="card-body text-center p-4">
-            <h4>Готовы начать?</h4>
+            <h4>@L["ReadyToStartHeader"]</h4>
             <p class="text-muted">
-                Зарегистрируйтесь как кандидат и создайте CV для интересующих вас позиций
+                @L["ReadyToStartText"]
             </p>
             <a asp-controller="Account"
                asp-action="Register"
                class="btn btn-primary me-2">
-                Зарегистрироваться
+                @L["RegisterButton"]
             </a>
             <a asp-controller="Positions"
                asp-action="Index"
                class="btn btn-outline-primary">
-                Смотреть позиции
+                @L["ViewPositionsBtn"]
             </a>
         </div>
     </div>

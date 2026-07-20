@@ -209,6 +209,29 @@ namespace CvManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteMultiple(List<Guid> ids)
+        {
+            if (ids == null || ids.Count == 0)
+                return RedirectToAction(nameof(Index));
+
+            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+
+            // Только свои проекты (security by ownership)
+            var projects = await _context.Projects
+                .Include(p => p.Tags)
+                .Where(p => ids.Contains(p.Id) && p.CandidateId == currentUserId)
+                .ToListAsync();
+
+            foreach (var project in projects)
+                _context.ProjectTags.RemoveRange(project.Tags);
+
+            _context.Projects.RemoveRange(projects);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         // POST: /Projects/Delete/id
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)

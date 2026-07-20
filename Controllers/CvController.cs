@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace CvManagementSystem.Controllers
 {
@@ -13,11 +14,13 @@ namespace CvManagementSystem.Controllers
     {
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IStringLocalizer<CvManagementSystem.LocalizationMarker> _L;
 
-        public CvController(AppDbContext context, UserManager<User> userManager)
+        public CvController(AppDbContext context, UserManager<User> userManager, IStringLocalizer<CvManagementSystem.LocalizationMarker> localizer)
         {
             _context = context;
             _userManager = userManager;
+            _L = localizer;
         }
 
         // GET: /Cv — список CV кандидата
@@ -25,30 +28,31 @@ namespace CvManagementSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var result = new List<CvListViewModel>();
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+            var userIdString = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userIdString)) return Challenge();
 
-            // Загружаем всё что нужно ДО цикла — один раз!
+            var currentUserId = Guid.Parse(userIdString);
+
             var cvs = await _context.Cvs
                 .Include(cv => cv.Position)
-                    .ThenInclude(p => p.PositionAttributes)
+                    .ThenInclude(p => p!.PositionAttributes)
                 .Include(cv => cv.Position)
-                    .ThenInclude(p => p.Tags)
+                    .ThenInclude(p => p!.Tags)
                 .Where(cv => cv.CandidateId == currentUserId)
                 .OrderByDescending(cv => cv.CreatedAt)
                 .ToListAsync();
 
-            // Загружаем ВСЕ проекты кандидата с тегами — один запрос
             var allProjects = await _context.Projects
                 .Include(p => p.Tags)
                 .Where(p => p.CandidateId == currentUserId)
                 .ToListAsync();
 
-            // Теперь цикл — никаких запросов к БД внутри!
             foreach (var cv in cvs)
             {
-                var positionTags = cv.Position.Tags
+                // Защита от null, если Position вдруг не загрузился
+                var positionTags = cv.Position?.Tags?
                     .Select(t => t.Tag)
-                    .ToList();
+                    .ToList() ?? new List<string>();
 
                 int projectsCount;
 
@@ -61,7 +65,7 @@ namespace CvManagementSystem.Controllers
                     projectsCount = 0;
                     foreach (var project in allProjects)
                     {
-                        var projectTags = project.Tags.Select(t => t.Tag).ToList();
+                        var projectTags = project.Tags?.Select(t => t.Tag).ToList() ?? new List<string>();
                         var hasMatch = projectTags.Any(pt => positionTags.Contains(pt));
                         if (hasMatch) projectsCount++;
                     }
@@ -71,9 +75,9 @@ namespace CvManagementSystem.Controllers
                 result.Add(new CvListViewModel
                 {
                     Id = cv.Id,
-                    PositionTitle = cv.Position.Title,
+                    PositionTitle = cv.Position?.Title ?? "Без названия",
                     CreatedAt = cv.CreatedAt,
-                    AttributesCount = cv.Position.PositionAttributes.Count,
+                    AttributesCount = cv.Position?.PositionAttributes?.Count ?? 0,
                     ProjectsCount = projectsCount
                 });
             }
@@ -84,9 +88,11 @@ namespace CvManagementSystem.Controllers
         [Authorize(Roles = "Candidate,Administrator")]
         public async Task<IActionResult> Positions()
         {
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+            var userIdString = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userIdString)) return Challenge();
 
-            // Загружаем опубликованные позиции
+            var currentUserId = Guid.Parse(userIdString);
+
             var positions = await _context.Positions
                 .Include(p => p.Tags)
                 .Include(p => p.PositionAttributes)
@@ -94,7 +100,6 @@ namespace CvManagementSystem.Controllers
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
 
-            // Загружаем CV кандидата чтобы знать для каких позиций уже есть CV
             var existingCvs = await _context.Cvs
                 .Where(cv => cv.CandidateId == currentUserId)
                 .ToListAsync();
@@ -111,8 +116,8 @@ namespace CvManagementSystem.Controllers
                     Id = position.Id,
                     Title = position.Title,
                     Description = position.Description,
-                    Tags = position.Tags.Select(t => t.Tag).ToList(),
-                    AttributesCount = position.PositionAttributes.Count,
+                    Tags = position.Tags?.Select(t => t.Tag).ToList() ?? new List<string>(),
+                    AttributesCount = position.PositionAttributes?.Count ?? 0,
                     AlreadyHasCv = existingCv != null,
                     ExistingCvId = existingCv?.Id
                 });
@@ -126,25 +131,25 @@ namespace CvManagementSystem.Controllers
         [Authorize(Roles = "Candidate,Administrator")]
         public async Task<IActionResult> Create(Guid positionId)
         {
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+            var userIdString = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userIdString)) return Challenge();
 
-            // Проверяем что позиция существует и опубликована
+            var currentUserId = Guid.Parse(userIdString);
+
             var position = await _context.Positions
                 .FirstOrDefaultAsync(p => p.Id == positionId && p.IsPublished);
 
             if (position == null)
                 return NotFound();
 
-            // Проверяем что CV ещё не создано
             var existingCv = await _context.Cvs
                 .FirstOrDefaultAsync(cv =>
                     cv.CandidateId == currentUserId &&
                     cv.PositionId == positionId);
 
             if (existingCv != null)
-                return RedirectToAction(nameof(View), new { id = existingCv.Id });
+                return RedirectToAction(nameof(ViewCv), new { id = existingCv.Id });
 
-            // Создаём CV — только связь кандидат + позиция
             var cv = new Cv
             {
                 CandidateId = currentUserId,
@@ -161,54 +166,55 @@ namespace CvManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewCv(Guid id)
         {
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+            var userIdString = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userIdString)) return Challenge();
+
+            var currentUserId = Guid.Parse(userIdString);
             var isRecruiter = User.IsInRole("Recruiter") || User.IsInRole("Administrator");
 
-            // Загружаем CV
             var cv = await _context.Cvs
                 .Include(c => c.Candidate)
                 .Include(c => c.Position)
-                    .ThenInclude(p => p.PositionAttributes)
+                    .ThenInclude(p => p!.PositionAttributes)
                         .ThenInclude(pa => pa.AttributeDefinition)
-                            .ThenInclude(ad => ad.Options)
+                            .ThenInclude(ad => ad!.Options)
                 .Include(c => c.Position)
-                    .ThenInclude(p => p.Tags)
+                    .ThenInclude(p => p!.Tags)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (cv == null)
                 return NotFound();
 
-            // Кандидат может видеть только своё CV
             if (!isRecruiter && cv.CandidateId != currentUserId)
                 return Forbid();
 
-            // Загружаем значения атрибутов кандидата
             var attributeValues = await _context.AttributeValues
                 .Include(av => av.SelectedOption)
                 .Where(av => av.CandidateId == cv.CandidateId)
                 .ToListAsync();
 
-            // Строим ViewModel
             var model = new CvViewModel
             {
                 Id = cv.Id,
-                CandidateFullName = cv.Candidate!.FullName,
-                CandidateEmail = cv.Candidate.Email ?? string.Empty,
-                PositionTitle = cv.Position.Title,
-                PositionDescription = cv.Position.Description,
+                CandidateFullName = cv.Candidate?.FullName ?? "Неизвестный кандидат",
+                CandidateEmail = cv.Candidate?.Email ?? string.Empty,
+                PositionTitle = cv.Position?.Title ?? "Без названия",
+                PositionDescription = cv.Position?.Description,
                 CreatedAt = cv.CreatedAt
             };
 
-            // Атрибуты — подтягиваем живьём из профиля
-            foreach (var pa in cv.Position.PositionAttributes.OrderBy(pa => pa.DisplayOrder))
-            {
-                var attrDef = pa.AttributeDefinition!;
+            // Безопасно обходим атрибуты
+            var positionAttributes = cv.Position?.PositionAttributes?
+                .OrderBy(pa => pa.DisplayOrder) ?? Enumerable.Empty<PositionAttribute>();
 
-                // Ищем значение у кандидата
+            foreach (var pa in positionAttributes)
+            {
+                var attrDef = pa.AttributeDefinition;
+                if (attrDef == null) continue; // Если определения нет, пропускаем
+
                 var value = attributeValues
                     .FirstOrDefault(av => av.AttributeDefinitionId == attrDef.Id);
 
-                // Конвертируем значение в строку для отображения
                 var displayValue = GetDisplayValue(value, attrDef.Type);
 
                 model.Attributes.Add(new CvAttributeViewModel
@@ -222,8 +228,7 @@ namespace CvManagementSystem.Controllers
                 });
             }
 
-            // Проекты — фильтруем по тегам позиции
-            var positionTags = cv.Position.Tags.Select(t => t.Tag).ToList();
+            var positionTags = cv.Position?.Tags?.Select(t => t.Tag).ToList() ?? new List<string>();
 
             var candidateProjects = await _context.Projects
                 .Include(p => p.Tags)
@@ -231,8 +236,6 @@ namespace CvManagementSystem.Controllers
                 .OrderByDescending(p => p.StartDate)
                 .ToListAsync();
 
-            // Фильтруем проекты по тегам позиции
-            // Если у позиции нет тегов — показываем все проекты
             var filteredProjects = new List<Project>();
 
             if (!positionTags.Any())
@@ -243,31 +246,23 @@ namespace CvManagementSystem.Controllers
             {
                 foreach (var project in candidateProjects)
                 {
-                    var projectTags = project.Tags.Select(t => t.Tag).ToList();
-
-                    // Проект подходит если хотя бы один тег совпадает с тегами позиции
-                    var hasMatchingTag = projectTags
-                        .Any(pt => positionTags.Contains(pt));
+                    var projectTags = project.Tags?.Select(t => t.Tag).ToList() ?? new List<string>();
+                    var hasMatchingTag = projectTags.Any(pt => positionTags.Contains(pt));
 
                     if (hasMatchingTag)
                         filteredProjects.Add(project);
                 }
             }
 
-            // Берём максимум 5 проектов (самые свежие)
             foreach (var project in filteredProjects.Take(5))
             {
                 model.Projects.Add(new CvProjectViewModel
                 {
                     Title = project.Title,
                     Description = project.Description,
-                    StartDate = project.StartDate.HasValue
-                        ? project.StartDate.Value.ToString("dd.MM.yyyy")
-                        : null,
-                    EndDate = project.EndDate.HasValue
-                        ? project.EndDate.Value.ToString("dd.MM.yyyy")
-                        : "н.в.",
-                    Tags = project.Tags.Select(t => t.Tag).ToList()
+                    StartDate = project.StartDate?.ToString("dd.MM.yyyy"),
+                    EndDate = project.EndDate?.ToString("dd.MM.yyyy") ?? "н.в.",
+                    Tags = project.Tags?.Select(t => t.Tag).ToList() ?? new List<string>()
                 });
             }
 
@@ -279,13 +274,15 @@ namespace CvManagementSystem.Controllers
         [Authorize(Roles = "Candidate,Administrator")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+            var userIdString = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userIdString)) return Challenge();
 
+            var currentUserId = Guid.Parse(userIdString);
+            var isAdmin = User.IsInRole("Administrator");
             var cv = await _context.Cvs
-                .FirstOrDefaultAsync(c => c.Id == id && c.CandidateId == currentUserId);
+                .FirstOrDefaultAsync(c => c.Id == id && (c.CandidateId == currentUserId || isAdmin));
 
-            if (cv == null)
-                return NotFound();
+            if (cv == null) return NotFound();
 
             _context.Cvs.Remove(cv);
             await _context.SaveChangesAsync();
@@ -293,6 +290,25 @@ namespace CvManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Candidate,Administrator")]
+        public async Task<IActionResult> DeleteMultiple(List<Guid> ids)
+        {
+            if (ids == null || ids.Count == 0)
+                return RedirectToAction(nameof(Index));
+
+            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+            var isAdmin = User.IsInRole("Administrator");
+
+            var cvs = await _context.Cvs
+                .Where(cv => ids.Contains(cv.Id) && (cv.CandidateId == currentUserId || isAdmin))
+                .ToListAsync();
+
+            _context.Cvs.RemoveRange(cvs);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
 
         // GET: /Cv/CreateConfirm — страница подтверждения создания CV
         [HttpGet]
@@ -313,13 +329,11 @@ namespace CvManagementSystem.Controllers
                 Id = position.Id,
                 Title = position.Title,
                 Description = position.Description,
-                Tags = position.Tags.Select(t => t.Tag).ToList(),
-                AttributesCount = position.PositionAttributes.Count
+                Tags = position.Tags?.Select(t => t.Tag).ToList() ?? new List<string>(),
+                AttributesCount = position.PositionAttributes?.Count ?? 0
             });
         }
 
-        // Приватный метод — конвертирует значение атрибута в строку для отображения
-        // Вся логика здесь, в контроллере — View просто показывает строку
         private string? GetDisplayValue(AttributeValue? value, AttributeType type)
         {
             if (value == null) return null;
@@ -331,35 +345,27 @@ namespace CvManagementSystem.Controllers
                     return string.IsNullOrEmpty(value.ValueString) ? null : value.ValueString;
 
                 case AttributeType.Numeric:
-                    return value.ValueNumber.HasValue
-                        ? value.ValueNumber.Value.ToString("G29")
-                        : null;
+                    return value.ValueNumber?.ToString("G29");
 
                 case AttributeType.Date:
-                    return value.ValueDate.HasValue
-                        ? value.ValueDate.Value.ToString("dd.MM.yyyy")
-                        : null;
+                    return value.ValueDate?.ToString("d", System.Globalization.CultureInfo.CurrentCulture);
 
                 case AttributeType.Boolean:
+                    // Используем _L для перевода "Да"/"Нет"
                     return value.ValueBoolean.HasValue
-                        ? (value.ValueBoolean.Value ? "Да" : "Нет")
+                        ? (value.ValueBoolean.Value ? _L["Yes"].Value : _L["No"].Value)
                         : null;
 
                 case AttributeType.Image:
-                    return string.IsNullOrEmpty(value.ValueImageUrl)
-                        ? null
-                        : value.ValueImageUrl;
+                    return string.IsNullOrEmpty(value.ValueImageUrl) ? null : value.ValueImageUrl;
 
                 case AttributeType.Period:
                     if (value.PeriodStart.HasValue || value.PeriodEnd.HasValue)
                     {
-                        var start = value.PeriodStart.HasValue
-                            ? value.PeriodStart.Value.ToString("dd.MM.yyyy")
-                            : "?";
-                        var end = value.PeriodEnd.HasValue
-                            ? value.PeriodEnd.Value.ToString("dd.MM.yyyy")
-                            : "н.в.";
-                        return start + " — " + end;
+                        var start = value.PeriodStart?.ToString("d", System.Globalization.CultureInfo.CurrentCulture) ?? "?";
+                        // Используем _L для перевода "н.в."
+                        var end = value.PeriodEnd?.ToString("d", System.Globalization.CultureInfo.CurrentCulture) ?? _L["PresentTime"].Value;
+                        return $"{start} — {end}";
                     }
                     return null;
 
