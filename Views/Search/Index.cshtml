@@ -1,0 +1,75 @@
+﻿@using CvManagementSystem.ViewModels
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
+@model SearchResultsViewModel
+@{
+    ViewData["Title"] = L["SearchResultsTitle"];
+}
+
+<h2 class="mb-4">@L["SearchResultsTitle"]</h2>
+
+@if (string.IsNullOrWhiteSpace(Model.Query))
+{
+    <div class="alert alert-info">@L["SearchEnterQuery"]</div>
+}
+else if (!Model.HasResults)
+{
+    <div class="alert alert-warning">
+        @L["SearchNoResults"] "<strong>@Model.Query</strong>"
+    </div>
+}
+else
+{
+    <p class="text-muted">
+        @L["SearchResultsFor"] "<strong>@Model.Query</strong>"
+    </p>
+
+    @* Позиции *@
+    @if (Model.Positions.Any())
+    {
+        <h4 class="mt-4">@L["Positions"] (@Model.Positions.Count)</h4>
+        <div class="list-group mb-4">
+            @foreach (var p in Model.Positions)
+            {
+                <a asp-controller="Positions" asp-action="Details" asp-route-id="@p.Id"
+                   class="list-group-item list-group-item-action">
+                    <div class="fw-bold">@p.Title</div>
+                    @if (!string.IsNullOrEmpty(p.Description))
+                    {
+                        <div class="text-muted small">
+                            @(p.Description.Length > 100
+                                ? p.Description.Substring(0, 100) + "..."
+                                : p.Description)
+                        </div>
+                    }
+                    <div class="mt-1">
+                        @foreach (var tag in p.Tags)
+                        {
+                            <span class="badge bg-info text-dark me-1">@tag</span>
+                        }
+                    </div>
+                </a>
+            }
+        </div>
+    }
+
+    @* Атрибуты — только для рекрутеров/админов *@
+    @if (Model.Attributes.Any() &&
+        (User.IsInRole("Recruiter") || User.IsInRole("Administrator")))
+    {
+        <h4 class="mt-4">@L["Attributes"] (@Model.Attributes.Count)</h4>
+        <div class="list-group mb-4">
+            @foreach (var a in Model.Attributes)
+            {
+                <a asp-controller="Attributes" asp-action="Details" asp-route-id="@a.Id"
+                   class="list-group-item list-group-item-action">
+                    <div class="fw-bold">@a.Name</div>
+                    @if (!string.IsNullOrEmpty(a.Description))
+                    {
+                        <div class="text-muted small">@a.Description</div>
+                    }
+                </a>
+            }
+        </div>
+    }
+}

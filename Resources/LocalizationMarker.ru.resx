@@ -888,4 +888,19 @@
   <data name="EmailRow" xml:space="preserve">
     <value>Email</value>
   </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Поиск...</value>
+  </data>
+  <data name="SearchResultsTitle" xml:space="preserve">
+    <value>Результаты поиска</value>
+  </data>
+  <data name="SearchEnterQuery" xml:space="preserve">
+    <value>Введите поисковый запрос</value>
+  </data>
+  <data name="SearchNoResults" xml:space="preserve">
+    <value>Ничего не найдено по запросу</value>
+  </data>
+  <data name="SearchResultsFor" xml:space="preserve">
+    <value>Результаты по запросу</value>
+  </data>
 </root>

@@ -888,4 +888,19 @@
   <data name="EmailRow" xml:space="preserve">
     <value>Email</value>
   </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Search...</value>
+  </data>
+  <data name="SearchResultsTitle" xml:space="preserve">
+    <value>Search Results</value>
+  </data>
+  <data name="SearchEnterQuery" xml:space="preserve">
+    <value>Enter a search query</value>
+  </data>
+  <data name="SearchNoResults" xml:space="preserve">
+    <value>Nothing found for</value>
+  </data>
+  <data name="SearchResultsFor" xml:space="preserve">
+    <value>Results for</value>
+  </data>
 </root>

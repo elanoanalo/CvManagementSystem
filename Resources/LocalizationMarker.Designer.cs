@@ -2167,6 +2167,51 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter a search query.
+        /// </summary>
+        public static string SearchEnterQuery {
+            get {
+                return ResourceManager.GetString("SearchEnterQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nothing found for.
+        /// </summary>
+        public static string SearchNoResults {
+            get {
+                return ResourceManager.GetString("SearchNoResults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search....
+        /// </summary>
+        public static string SearchPlaceholder {
+            get {
+                return ResourceManager.GetString("SearchPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Results for.
+        /// </summary>
+        public static string SearchResultsFor {
+            get {
+                return ResourceManager.GetString("SearchResultsFor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search Results.
+        /// </summary>
+        public static string SearchResultsTitle {
+            get {
+                return ResourceManager.GetString("SearchResultsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Selected: {0}.
         /// </summary>
         public static string SelectedCount {
