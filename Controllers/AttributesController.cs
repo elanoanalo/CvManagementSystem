@@ -21,25 +21,43 @@ namespace CvManagementSystem.Controllers
         }
 
         // GET: /Attributes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(AttributeCategory? category)
         {
-            var attributes = await _context.AttributeDefinitions
+            var query = _context.AttributeDefinitions
                 .Include(a => a.CreatedByUser)
                 .Include(a => a.Options)
-                .OrderByDescending(a => a.CreatedAt)
-                .Select(a => new AttributeListViewModel
+                .AsQueryable();
+
+            // Фильтр по категории если выбрана
+            if (category.HasValue)
+            {
+                query = query.Where(a => a.Category == category.Value);
+            }
+
+            var attributes = await query
+                .OrderBy(a => a.Name)
+                .ToListAsync();
+
+            var result = new List<AttributeListViewModel>();
+            foreach (var a in attributes)
+            {
+                result.Add(new AttributeListViewModel
                 {
                     Id = a.Id,
                     Name = a.Name,
                     Description = a.Description,
                     Type = a.Type,
+                    Category = a.Category,  // ← добавь
                     OptionsCount = a.Options.Count,
-                    CreatedAt = a.CreatedAt,
-                    CreatedByName = a.CreatedByUser!.FullName
-                })
-                .ToListAsync();
+                    CreatedByName = a.CreatedByUser!.FullName,
+                    CreatedAt = a.CreatedAt
+                });
+            }
 
-            return View(attributes);
+            // Передаём текущий фильтр во View чтобы подсветить активную кнопку
+            ViewBag.SelectedCategory = category;
+
+            return View(result);
         }
 
         // GET: /Attributes/Create
@@ -63,6 +81,7 @@ namespace CvManagementSystem.Controllers
                 Name = model.Name,
                 Description = model.Description,
                 Type = model.Type,
+                Category = model.Category,  // ← добавь
                 CreatedByUserId = currentUserId
             };
 
@@ -141,6 +160,7 @@ namespace CvManagementSystem.Controllers
 
             attribute.Name = model.Name;
             attribute.Description = model.Description;
+            attribute.Category = model.Category;  // ← добавь
 
             if (model.Type == AttributeType.Dropdown)
             {
@@ -218,6 +238,7 @@ namespace CvManagementSystem.Controllers
                 Name = attribute.Name,
                 Description = attribute.Description,
                 Type = attribute.Type,
+                Category = attribute.Category,
                 OptionsCount = attribute.Options.Count,
                 CreatedAt = attribute.CreatedAt,
                 CreatedByName = attribute.CreatedByUser!.FullName

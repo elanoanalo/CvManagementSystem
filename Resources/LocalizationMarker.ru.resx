@@ -921,4 +921,31 @@
 	<data name="PhotoUrlPlaceholder">
 		<value>https://res.cloudinary.com/...</value>
 	</data>
+	<data name="CategoryLabel">
+		<value>Категория</value>
+	</data>
+	<data name="AllCategories">
+		<value>Все</value>
+	</data>
+	<data name="AttributeCategory_General">
+		<value>Общее</value>
+	</data>
+	<data name="AttributeCategory_Certification">
+		<value>Сертификация</value>
+	</data>
+	<data name="AttributeCategory_DomainKnowledge">
+		<value>Предметные знания</value>
+	</data>
+	<data name="AttributeCategory_Skill">
+		<value>Навык</value>
+	</data>
+	<data name="AttributeCategory_Language">
+		<value>Язык</value>
+	</data>
+	<data name="AttributeCategory_Education">
+		<value>Образование</value>
+	</data>
+	<data name="AttributeCategory_Experience">
+		<value>Опыт</value>
+	</data>
 </root>

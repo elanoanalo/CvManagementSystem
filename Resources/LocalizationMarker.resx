@@ -921,4 +921,31 @@
 	<data name="PhotoUrlPlaceholder">
 		<value>https://res.cloudinary.com/...</value>
 	</data>
+	<data name="CategoryLabel">
+		<value>Category</value>
+	</data>
+	<data name="AllCategories">
+		<value>All</value>
+	</data>
+	<data name="AttributeCategory_General">
+		<value>General</value>
+	</data>
+	<data name="AttributeCategory_Certification">
+		<value>Certification</value>
+	</data>
+	<data name="AttributeCategory_DomainKnowledge">
+		<value>Domain Knowledge</value>
+	</data>
+	<data name="AttributeCategory_Skill">
+		<value>Skill</value>
+	</data>
+	<data name="AttributeCategory_Language">
+		<value>Language</value>
+	</data>
+	<data name="AttributeCategory_Education">
+		<value>Education</value>
+	</data>
+	<data name="AttributeCategory_Experience">
+		<value>Experience</value>
+	</data>
 </root>

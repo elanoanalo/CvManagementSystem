@@ -151,6 +151,15 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string AllCategories {
+            get {
+                return ResourceManager.GetString("AllCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All positions.
         /// </summary>
         public static string AllPositions {
@@ -183,6 +192,69 @@ namespace CvManagementSystem.Resources {
         public static string AttrAlreadyAddedAlert {
             get {
                 return ResourceManager.GetString("AttrAlreadyAddedAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Certification.
+        /// </summary>
+        public static string AttributeCategory_Certification {
+            get {
+                return ResourceManager.GetString("AttributeCategory_Certification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Domain Knowledge.
+        /// </summary>
+        public static string AttributeCategory_DomainKnowledge {
+            get {
+                return ResourceManager.GetString("AttributeCategory_DomainKnowledge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Education.
+        /// </summary>
+        public static string AttributeCategory_Education {
+            get {
+                return ResourceManager.GetString("AttributeCategory_Education", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Experience.
+        /// </summary>
+        public static string AttributeCategory_Experience {
+            get {
+                return ResourceManager.GetString("AttributeCategory_Experience", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        public static string AttributeCategory_General {
+            get {
+                return ResourceManager.GetString("AttributeCategory_General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string AttributeCategory_Language {
+            get {
+                return ResourceManager.GetString("AttributeCategory_Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skill.
+        /// </summary>
+        public static string AttributeCategory_Skill {
+            get {
+                return ResourceManager.GetString("AttributeCategory_Skill", resourceCulture);
             }
         }
         
@@ -471,6 +543,15 @@ namespace CvManagementSystem.Resources {
         public static string CandidatesStat {
             get {
                 return ResourceManager.GetString("CandidatesStat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category.
+        /// </summary>
+        public static string CategoryLabel {
+            get {
+                return ResourceManager.GetString("CategoryLabel", resourceCulture);
             }
         }
         

@@ -29,6 +29,30 @@ namespace CvManagementSystem.Entities
         Dropdown
     }
 
+    public enum AttributeCategory
+    {
+        [Display(Name = "General")]
+        General,
+
+        [Display(Name = "Certification")]
+        Certification,
+
+        [Display(Name = "Domain Knowledge")]
+        DomainKnowledge,
+
+        [Display(Name = "Skill")]
+        Skill,
+
+        [Display(Name = "Language")]
+        Language,
+
+        [Display(Name = "Education")]
+        Education,
+
+        [Display(Name = "Experience")]
+        Experience
+    }
+
     public class AttributeDefinition
     {
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -57,5 +81,7 @@ namespace CvManagementSystem.Entities
         // Optimistic locking — разберём отдельно чуть позже подробно
         [Timestamp]
         public byte[]? RowVersion { get; set; }
+
+        public AttributeCategory Category { get; set; } = AttributeCategory.General;
     }
 }

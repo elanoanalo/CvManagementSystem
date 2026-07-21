@@ -34,6 +34,10 @@
                 <td>@Model.Name</td>
             </tr>
             <tr>
+                <th>@L["CategoryLabel"]</th>
+                <td><span class="badge bg-primary">@L[$"AttributeCategory_{Model.Category}"]</span></td>
+            </tr>
+            <tr>
                 <th>@L["DescriptionOptional"]</th>
                 <td>@(Model.Description ?? L["EmptyValue"].Value)</td>
             </tr>
