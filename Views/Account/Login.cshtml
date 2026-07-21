@@ -11,6 +11,13 @@
             <div class="card-body p-4">
                 <h2 class="card-title text-center mb-4">@L["LoginTitle"]</h2>
 
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Error"]
+                            </div>
+                    }
+
                 <form asp-action="Login" method="post">
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
@@ -31,6 +38,27 @@
 
                 <div class="text-center mt-3">
                     <a asp-action="Register">@L["NoAccountPrompt"]</a>
+                </div>
+                @* Разделитель *@
+                <div class="text-center my-3">
+                    <span class="text-muted">@L["OrLoginWith"]</span>
+                </div>
+
+                @* Кнопки соц. логина *@
+                <div class="d-grid gap-2">
+                    <form asp-action="ExternalLogin" method="post">
+                        <input type="hidden" name="provider" value="Google" />
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <strong>G</strong> @L["LoginWithGoogle"]
+                        </button>
+                    </form>
+
+                    <form asp-action="ExternalLogin" method="post">
+                        <input type="hidden" name="provider" value="GitHub" />
+                        <button type="submit" class="btn btn-outline-dark w-100">
+                            <strong>⌥</strong> @L["LoginWithGitHub"]
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

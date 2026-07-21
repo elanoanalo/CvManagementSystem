@@ -873,7 +873,19 @@
   <data name="DeleteCvButtonText" xml:space="preserve">
     <value>Удалить CV</value>
   </data>
-	<data name="JsTagDuplicateError" xml:space="preserve">
+  <data name="JsTagDuplicateError" xml:space="preserve">
     <value>Этот тег уже добавлен!</value>
-</data>
+  </data>
+  <data name="OrLoginWith" xml:space="preserve">
+    <value>Или войти через</value>
+  </data>
+  <data name="LoginWithGoogle" xml:space="preserve">
+    <value>Войти через Google</value>
+  </data>
+  <data name="LoginWithGitHub" xml:space="preserve">
+    <value>Войти через GitHub</value>
+  </data>
+  <data name="EmailRow" xml:space="preserve">
+    <value>Email</value>
+  </data>
 </root>

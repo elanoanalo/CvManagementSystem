@@ -961,6 +961,15 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email.
+        /// </summary>
+        public static string EmailRow {
+            get {
+                return ResourceManager.GetString("EmailRow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to N/A.
         /// </summary>
         public static string EmptyValue {
@@ -1254,6 +1263,24 @@ namespace CvManagementSystem.Resources {
         public static string LoginTitle {
             get {
                 return ResourceManager.GetString("LoginTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log in with GitHub.
+        /// </summary>
+        public static string LoginWithGitHub {
+            get {
+                return ResourceManager.GetString("LoginWithGitHub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log in with Google.
+        /// </summary>
+        public static string LoginWithGoogle {
+            get {
+                return ResourceManager.GetString("LoginWithGoogle", resourceCulture);
             }
         }
         
@@ -1623,6 +1650,15 @@ namespace CvManagementSystem.Resources {
         public static string OptionsCountLabel {
             get {
                 return ResourceManager.GetString("OptionsCountLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Or log in with.
+        /// </summary>
+        public static string OrLoginWith {
+            get {
+                return ResourceManager.GetString("OrLoginWith", resourceCulture);
             }
         }
         
