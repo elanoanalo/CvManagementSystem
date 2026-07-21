@@ -1204,6 +1204,15 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This tag has already been added!.
+        /// </summary>
+        public static string JsTagDuplicateError {
+            get {
+                return ResourceManager.GetString("JsTagDuplicateError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tag cannot be longer than 50 characters.
         /// </summary>
         public static string JsTagLengthError {

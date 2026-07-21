@@ -151,8 +151,20 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/tag-input.js"></script>
     <script>
-        var tagCount = @Model.Tags.Count;
+        document.addEventListener('DOMContentLoaded', function () {
+            initTagInput({
+                maxTags: 10,
+                maxTagLength: 50,
+                duplicateMessage: '@Html.Raw(L["JsTagDuplicateError"].Value)',
+                lengthMessage: '@Html.Raw(L["JsTagLengthError"].Value)',
+                maxMessage: '@Html.Raw(L["JsMaxTagsError"].Value)'
+            });
+        });
+    </script>
+
+    <script>
         var attributeCount = @Model.Attributes.Count;
         var addedAttributeIds = [];
 
@@ -167,43 +179,6 @@
             addedAttributeIds.push(card.getAttribute('data-attr-id'));
         });
 
-        // ===== ТЕГИ =====
-
-        function addTag() {
-            var input = document.getElementById('newTagInput');
-            var value = input.value.trim();
-            if (value === '') return;
-
-            var tagsList = document.getElementById('tagsList');
-            var div = document.createElement('div');
-            div.className = 'd-inline-flex align-items-center tag-item';
-            div.innerHTML =
-                '<input type="hidden" name="Tags[' + tagCount + ']" value="' + value + '" />' +
-                '<span class="badge bg-info text-dark me-1">' + value +
-                ' <button type="button" class="btn-close btn-close-white ms-1 remove-tag-btn" style="font-size:0.6rem"></button>' +
-                '</span>';
-
-            tagsList.appendChild(div);
-            tagCount++;
-            input.value = '';
-            input.focus();
-        }
-
-        document.getElementById('addTagBtn').addEventListener('click', addTag);
-
-        document.getElementById('newTagInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addTag();
-            }
-        });
-
-        document.getElementById('tagsList').addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-tag-btn') ||
-                e.target.classList.contains('btn-close')) {
-                e.target.closest('.tag-item').remove();
-            }
-        });
 
         // ===== АТРИБУТЫ =====
 

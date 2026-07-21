@@ -873,4 +873,7 @@
   <data name="DeleteCvButtonText" xml:space="preserve">
     <value>Удалить CV</value>
   </data>
+	<data name="JsTagDuplicateError" xml:space="preserve">
+    <value>Этот тег уже добавлен!</value>
+</data>
 </root>
