@@ -13,6 +13,12 @@ namespace CvManagementSystem.ViewModels
 
         public string Email { get; set; } = string.Empty;
 
+        // === Секция "Обо мне" ===
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Location { get; set; }
+        public string? PhotoUrl { get; set; }
+
         // Атрибуты которые кандидат УЖЕ добавил в профиль
         public List<AttributeValueViewModel> AttributeValues { get; set; } = new();
 

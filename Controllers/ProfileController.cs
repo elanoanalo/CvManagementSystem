@@ -46,7 +46,11 @@ namespace CvManagementSystem.Controllers
             {
                 Id = currentUserId,
                 FullName = user.FullName,
-                Email = user.Email ?? string.Empty
+                Email = user.Email ?? string.Empty,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Location = user.Location,
+                PhotoUrl = user.PhotoUrl
             };
 
             // ID атрибутов которые уже добавлены в профиль
@@ -126,6 +130,29 @@ namespace CvManagementSystem.Controllers
                 return Json(new { success = false, error = "Имя не может быть пустым" });
 
             user.FullName = fullName.Trim();
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true });
+        }
+
+        // POST: /Profile/UpdateMe — сохраняет поля секции "Обо мне"
+        [HttpPost]
+        public async Task<IActionResult> UpdateMe(string? firstName, string? lastName,
+            string? location, string? photoUrl)
+        {
+            var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == currentUserId);
+
+            if (user == null)
+                return Json(new { success = false, error = "Пользователь не найден" });
+
+            user.FirstName = firstName?.Trim();
+            user.LastName = lastName?.Trim();
+            user.Location = location?.Trim();
+            user.PhotoUrl = photoUrl?.Trim();
+
             await _context.SaveChangesAsync();
 
             return Json(new { success = true });

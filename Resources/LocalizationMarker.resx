@@ -903,4 +903,22 @@
   <data name="SearchResultsFor" xml:space="preserve">
     <value>Results for</value>
   </data>
+	<data name="AboutMeSectionTitle">
+		<value>About Me</value>
+	</data>
+	<data name="FirstNameLabel">
+		<value>First Name</value>
+	</data>
+	<data name="LastNameLabel">
+		<value>Last Name</value>
+	</data>
+	<data name="LocationLabel">
+		<value>Location</value>
+	</data>
+	<data name="PhotoUrlLabel">
+		<value>Photo (Cloudinary link)</value>
+	</data>
+	<data name="PhotoUrlPlaceholder">
+		<value>https://res.cloudinary.com/...</value>
+	</data>
 </root>

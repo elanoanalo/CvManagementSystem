@@ -61,6 +61,15 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About Me.
+        /// </summary>
+        public static string AboutMeSectionTitle {
+            get {
+                return ResourceManager.GetString("AboutMeSectionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You do not have permission to view this page..
         /// </summary>
         public static string AccessDeniedMessage {
@@ -1015,6 +1024,15 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to First Name.
+        /// </summary>
+        public static string FirstNameLabel {
+            get {
+                return ResourceManager.GetString("FirstNameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Full Name.
         /// </summary>
         public static string FullNameLabel {
@@ -1231,11 +1249,29 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Last Name.
+        /// </summary>
+        public static string LastNameLabel {
+            get {
+                return ResourceManager.GetString("LastNameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Library Attributes.
         /// </summary>
         public static string LibraryAttributesStat {
             get {
                 return ResourceManager.GetString("LibraryAttributesStat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location.
+        /// </summary>
+        public static string LocationLabel {
+            get {
+                return ResourceManager.GetString("LocationLabel", resourceCulture);
             }
         }
         
@@ -1677,6 +1713,24 @@ namespace CvManagementSystem.Resources {
         public static string PeriodColumn {
             get {
                 return ResourceManager.GetString("PeriodColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Photo (Cloudinary link).
+        /// </summary>
+        public static string PhotoUrlLabel {
+            get {
+                return ResourceManager.GetString("PhotoUrlLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://res.cloudinary.com/....
+        /// </summary>
+        public static string PhotoUrlPlaceholder {
+            get {
+                return ResourceManager.GetString("PhotoUrlPlaceholder", resourceCulture);
             }
         }
         

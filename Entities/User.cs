@@ -16,6 +16,11 @@ namespace CvManagementSystem.Entities
         [MaxLength(200)]
         public string FullName { get; set; } = string.Empty;
 
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Location { get; set; }
+        public string? PhotoUrl { get; set; }
+
         [Required]
         public UserRole Role { get; set; } = UserRole.Candidate;
 

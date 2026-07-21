@@ -903,4 +903,22 @@
   <data name="SearchResultsFor" xml:space="preserve">
     <value>Результаты по запросу</value>
   </data>
+	<data name="AboutMeSectionTitle">
+		<value>Обо мне</value>
+	</data>
+	<data name="FirstNameLabel">
+		<value>Имя</value>
+	</data>
+	<data name="LastNameLabel">
+		<value>Фамилия</value>
+	</data>
+	<data name="LocationLabel">
+		<value>Локация</value>
+	</data>
+	<data name="PhotoUrlLabel">
+		<value>Фото (ссылка Cloudinary)</value>
+	</data>
+	<data name="PhotoUrlPlaceholder">
+		<value>https://res.cloudinary.com/...</value>
+	</data>
 </root>

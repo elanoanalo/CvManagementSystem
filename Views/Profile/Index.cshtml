@@ -52,6 +52,46 @@
     </div>
 </div>
 
+@* === Секция "Обо мне" (встроенные атрибуты, нельзя удалить) === *@
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">@L["AboutMeSectionTitle"]</h5>
+        <span id="meStatus" class="text-muted small"></span>
+
+        <div class="row g-3 mt-1">
+            <div class="col-md-6">
+                <label class="form-label">@L["FirstNameLabel"]</label>
+                <input type="text" id="firstNameInput" class="form-control me-input"
+                       value="@Model.FirstName" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">@L["LastNameLabel"]</label>
+                <input type="text" id="lastNameInput" class="form-control me-input"
+                       value="@Model.LastName" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">@L["LocationLabel"]</label>
+                <input type="text" id="locationInput" class="form-control me-input"
+                       value="@Model.Location" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">@L["PhotoUrlLabel"]</label>
+                <input type="text" id="photoUrlInput" class="form-control me-input"
+                       value="@Model.PhotoUrl"
+                       placeholder="@L["PhotoUrlPlaceholder"]" />
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+        {
+            <div class="mt-3">
+                <img src="@Model.PhotoUrl" id="photoPreview"
+                     class="img-thumbnail" style="max-height:150px" />
+            </div>
+        }
+    </div>
+</div>
+
 @* Атрибуты профиля *@
 <div class="card shadow mb-4">
     <div class="card-body">
@@ -295,6 +335,59 @@ var localization = {
                         });
                 }, 2000);
             });
+
+            // ===== AUTO-SAVE СЕКЦИИ "ОБО МНЕ" =====
+var meTimer = null;
+var meInputs = document.querySelectorAll('.me-input');
+
+meInputs.forEach(function (input) {
+    input.addEventListener('input', function () {
+        var meStatus = document.getElementById('meStatus');
+        meStatus.textContent = '@Html.Raw(L["JsChangesDetected"].Value)';
+        meStatus.className = 'text-warning small';
+
+        if (meTimer) clearTimeout(meTimer);
+
+        meTimer = setTimeout(function () {
+            saveMe();
+        }, 2000);
+    });
+});
+
+function saveMe() {
+    var meStatus = document.getElementById('meStatus');
+    meStatus.textContent = '@Html.Raw(L["JsSaving"].Value)';
+    meStatus.className = 'text-muted small';
+
+    var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    var body = 'firstName=' + encodeURIComponent(document.getElementById('firstNameInput').value) +
+               '&lastName=' + encodeURIComponent(document.getElementById('lastNameInput').value) +
+               '&location=' + encodeURIComponent(document.getElementById('locationInput').value) +
+               '&photoUrl=' + encodeURIComponent(document.getElementById('photoUrlInput').value) +
+               '&__RequestVerificationToken=' + encodeURIComponent(token);
+
+    fetch('/Profile/UpdateMe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (result) {
+        if (result.success) {
+            meStatus.textContent = '@Html.Raw(L["JsSaved"].Value)';
+            meStatus.className = 'text-success small';
+            setTimeout(function () { meStatus.textContent = ''; }, 3000);
+        } else {
+            meStatus.textContent = '@Html.Raw(L["JsError"].Value)';
+            meStatus.className = 'text-danger small';
+        }
+    })
+    .catch(function () {
+        meStatus.textContent = '@Html.Raw(L["JsNetworkError"].Value)';
+        meStatus.className = 'text-danger small';
+    });
+}
 
         // ===== ДОБАВЛЕНИЕ АТРИБУТА =====
 
