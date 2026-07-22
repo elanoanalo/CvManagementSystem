@@ -8,8 +8,11 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Порт для Render (локально возьмёт 8080 по умолчанию)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://+:{port}");
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    builder.WebHost.UseUrls($"http://+:{port}");
+}
 
 // 1. Подключаем базу данных
 builder.Services.AddDbContext<AppDbContext>(options =>
