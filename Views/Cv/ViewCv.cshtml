@@ -25,26 +25,50 @@
 
 <div class="card shadow mb-4">
     <div class="card-body">
-        <h5 class="card-title">@L["CandidateSection"]</h5>
-        <table class="table table-borderless mb-0">
-            <tr>
-                <th style="width:200px">@L["NameRow"]</th>
-                <td>@Model.CandidateFullName</td>
-            </tr>
-            <tr>
-                <th>@L["EmailRow"]</th>
-                <td>@Model.CandidateEmail</td>
-            </tr>
-            <tr>
-                <th>@L["PositionHeader"]</th>
-                <td>@Model.PositionTitle</td>
-            </tr>
-            <tr>
-                <th>@L["CvCreatedRow"]</th>
-                @* Динамический формат даты под язык пользователя *@
-                <td>@Model.CreatedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture)</td>
-            </tr>
-        </table>
+        <div class="d-flex gap-4">
+            @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+            {
+                <div class="flex-shrink-0">
+                    <img src="@Model.PhotoUrl" class="img-thumbnail"
+                         style="width:120px; height:120px; object-fit:cover" />
+                </div>
+            }
+            <div class="flex-grow-1">
+                <h5 class="card-title">@L["CandidateSectionTitle"]</h5>
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th style="width:180px">@L["NameFieldLabel"]</th>
+                        <td>@Model.CandidateFullName</td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.FirstName) || !string.IsNullOrEmpty(Model.LastName))
+                    {
+                        <tr>
+                            <th style="width:180px">@L["FirstNameLabel"] / @L["LastNameLabel"]</th>
+                            <td>@Model.FirstName @Model.LastName</td>
+                        </tr>
+                    }
+                    <tr>
+                        <th>@L["EmailRow"]</th>
+                        <td>@Model.CandidateEmail</td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.Location))
+                    {
+                        <tr>
+                            <th>@L["LocationLabel"]</th>
+                            <td>@Model.Location</td>
+                        </tr>
+                    }
+                    <tr>
+                        <th>@L["PositionRow"]</th>
+                        <td>@Model.PositionTitle</td>
+                    </tr>
+                    <tr>
+                        <th>@L["CvCreatedRow"]</th>
+                        <td>@Model.CreatedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -88,7 +112,7 @@
                                          class="img-thumbnail"
                                          style="max-height:100px" />
                                 }
-                                @if (attr.HasValue)
+                                else if (attr.HasValue)
                                 {
                                     @attr.DisplayValue
                                 }

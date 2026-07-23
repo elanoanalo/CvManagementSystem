@@ -27,6 +27,11 @@ namespace CvManagementSystem.ViewModels
 
         // Проекты — фильтруются по тегам позиции
         public List<CvProjectViewModel> Projects { get; set; } = new();
+
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Location { get; set; }
+        public string? PhotoUrl { get; set; }
     }
 
     // Один атрибут в CV

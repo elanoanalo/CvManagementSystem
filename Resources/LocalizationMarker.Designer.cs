@@ -1897,6 +1897,15 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Position.
+        /// </summary>
+        public static string PositionRow {
+            get {
+                return ResourceManager.GetString("PositionRow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Positions.
         /// </summary>
         public static string Positions {

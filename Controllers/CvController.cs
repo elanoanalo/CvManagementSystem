@@ -200,7 +200,11 @@ namespace CvManagementSystem.Controllers
                 CandidateEmail = cv.Candidate?.Email ?? string.Empty,
                 PositionTitle = cv.Position?.Title ?? "Без названия",
                 PositionDescription = cv.Position?.Description,
-                CreatedAt = cv.CreatedAt
+                CreatedAt = cv.CreatedAt,
+                FirstName = cv.Candidate?.FirstName,
+                LastName = cv.Candidate?.LastName,
+                Location = cv.Candidate?.Location,
+                PhotoUrl = cv.Candidate?.PhotoUrl
             };
 
             // Безопасно обходим атрибуты

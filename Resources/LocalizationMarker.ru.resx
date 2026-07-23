@@ -903,61 +903,64 @@
   <data name="SearchResultsFor" xml:space="preserve">
     <value>Результаты по запросу</value>
   </data>
-	<data name="AboutMeSectionTitle">
-		<value>Обо мне</value>
-	</data>
-	<data name="FirstNameLabel">
-		<value>Имя</value>
-	</data>
-	<data name="LastNameLabel">
-		<value>Фамилия</value>
-	</data>
-	<data name="LocationLabel">
-		<value>Локация</value>
-	</data>
-	<data name="PhotoUrlLabel">
-		<value>Фото (ссылка Cloudinary)</value>
-	</data>
-	<data name="PhotoUrlPlaceholder">
-		<value>https://res.cloudinary.com/...</value>
-	</data>
-	<data name="CategoryLabel">
-		<value>Категория</value>
-	</data>
-	<data name="AllCategories">
-		<value>Все</value>
-	</data>
-	<data name="AttributeCategory_General">
-		<value>Общее</value>
-	</data>
-	<data name="AttributeCategory_Certification">
-		<value>Сертификация</value>
-	</data>
-	<data name="AttributeCategory_DomainKnowledge">
-		<value>Предметные знания</value>
-	</data>
-	<data name="AttributeCategory_Skill">
-		<value>Навык</value>
-	</data>
-	<data name="AttributeCategory_Language">
-		<value>Язык</value>
-	</data>
-	<data name="AttributeCategory_Education">
-		<value>Образование</value>
-	</data>
-	<data name="AttributeCategory_Experience">
-		<value>Опыт</value>
-	</data>
-	<data name="ConcurrencyConflictPosition" xml:space="preserve">
-  <value>Эта позиция была изменена другим пользователем, пока вы редактировали. Перезагрузите страницу и попробуйте снова.</value>
-</data>
-	<data name="ConcurrencyConflictAttribute" xml:space="preserve">
-  <value>Этот атрибут был изменён другим пользователем, пока вы редактировали. Перезагрузите страницу и попробуйте снова.</value>
-</data>
-	<data name="MaxProjectsLabel" xml:space="preserve">
-  <value>Макс. проектов в CV</value>
-</data>
-	<data name="MaxProjectsHint" xml:space="preserve">
-  <value>Сколько проектов включать в сгенерированное CV</value>
-</data>
+  <data name="AboutMeSectionTitle" xml:space="preserve">
+    <value>Обо мне</value>
+  </data>
+  <data name="FirstNameLabel" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="LastNameLabel" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Локация</value>
+  </data>
+  <data name="PhotoUrlLabel" xml:space="preserve">
+    <value>Фото (ссылка Cloudinary)</value>
+  </data>
+  <data name="PhotoUrlPlaceholder" xml:space="preserve">
+    <value>https://res.cloudinary.com/...</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Категория</value>
+  </data>
+  <data name="AllCategories" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="AttributeCategory_General" xml:space="preserve">
+    <value>Общее</value>
+  </data>
+  <data name="AttributeCategory_Certification" xml:space="preserve">
+    <value>Сертификация</value>
+  </data>
+  <data name="AttributeCategory_DomainKnowledge" xml:space="preserve">
+    <value>Предметные знания</value>
+  </data>
+  <data name="AttributeCategory_Skill" xml:space="preserve">
+    <value>Навык</value>
+  </data>
+  <data name="AttributeCategory_Language" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="AttributeCategory_Education" xml:space="preserve">
+    <value>Образование</value>
+  </data>
+  <data name="AttributeCategory_Experience" xml:space="preserve">
+    <value>Опыт</value>
+  </data>
+  <data name="ConcurrencyConflictPosition" xml:space="preserve">
+    <value>Эта позиция была изменена другим пользователем, пока вы редактировали. Перезагрузите страницу и попробуйте снова.</value>
+  </data>
+  <data name="ConcurrencyConflictAttribute" xml:space="preserve">
+    <value>Этот атрибут был изменён другим пользователем, пока вы редактировали. Перезагрузите страницу и попробуйте снова.</value>
+  </data>
+  <data name="MaxProjectsLabel" xml:space="preserve">
+    <value>Макс. проектов в CV</value>
+  </data>
+  <data name="MaxProjectsHint" xml:space="preserve">
+    <value>Сколько проектов включать в сгенерированное CV</value>
+  </data>
+  <data name="PositionRow" xml:space="preserve">
+    <value>Позиция</value>
+  </data>
 </root>

@@ -903,61 +903,64 @@
   <data name="SearchResultsFor" xml:space="preserve">
     <value>Results for</value>
   </data>
-	<data name="AboutMeSectionTitle">
-		<value>About Me</value>
-	</data>
-	<data name="FirstNameLabel">
-		<value>First Name</value>
-	</data>
-	<data name="LastNameLabel">
-		<value>Last Name</value>
-	</data>
-	<data name="LocationLabel">
-		<value>Location</value>
-	</data>
-	<data name="PhotoUrlLabel">
-		<value>Photo (Cloudinary link)</value>
-	</data>
-	<data name="PhotoUrlPlaceholder">
-		<value>https://res.cloudinary.com/...</value>
-	</data>
-	<data name="CategoryLabel">
-		<value>Category</value>
-	</data>
-	<data name="AllCategories">
-		<value>All</value>
-	</data>
-	<data name="AttributeCategory_General">
-		<value>General</value>
-	</data>
-	<data name="AttributeCategory_Certification">
-		<value>Certification</value>
-	</data>
-	<data name="AttributeCategory_DomainKnowledge">
-		<value>Domain Knowledge</value>
-	</data>
-	<data name="AttributeCategory_Skill">
-		<value>Skill</value>
-	</data>
-	<data name="AttributeCategory_Language">
-		<value>Language</value>
-	</data>
-	<data name="AttributeCategory_Education">
-		<value>Education</value>
-	</data>
-	<data name="AttributeCategory_Experience">
-		<value>Experience</value>
-	</data>
-	<data name="ConcurrencyConflictPosition" xml:space="preserve">
-  <value>This position was modified by another user while you were editing. Please reload the page and try again.</value>
-</data>
-	<data name="ConcurrencyConflictAttribute" xml:space="preserve">
-  <value>This attribute was modified by another user while you were editing. Please reload the page and try again.</value>
-</data>
-	<data name="MaxProjectsLabel" xml:space="preserve">
-  <value>Max projects in CV</value>
-</data>
-	<data name="MaxProjectsHint" xml:space="preserve">
-  <value>How many projects to include in the generated CV</value>
-</data>
+  <data name="AboutMeSectionTitle" xml:space="preserve">
+    <value>About Me</value>
+  </data>
+  <data name="FirstNameLabel" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="LastNameLabel" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="PhotoUrlLabel" xml:space="preserve">
+    <value>Photo (Cloudinary link)</value>
+  </data>
+  <data name="PhotoUrlPlaceholder" xml:space="preserve">
+    <value>https://res.cloudinary.com/...</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="AllCategories" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="AttributeCategory_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="AttributeCategory_Certification" xml:space="preserve">
+    <value>Certification</value>
+  </data>
+  <data name="AttributeCategory_DomainKnowledge" xml:space="preserve">
+    <value>Domain Knowledge</value>
+  </data>
+  <data name="AttributeCategory_Skill" xml:space="preserve">
+    <value>Skill</value>
+  </data>
+  <data name="AttributeCategory_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="AttributeCategory_Education" xml:space="preserve">
+    <value>Education</value>
+  </data>
+  <data name="AttributeCategory_Experience" xml:space="preserve">
+    <value>Experience</value>
+  </data>
+  <data name="ConcurrencyConflictPosition" xml:space="preserve">
+    <value>This position was modified by another user while you were editing. Please reload the page and try again.</value>
+  </data>
+  <data name="ConcurrencyConflictAttribute" xml:space="preserve">
+    <value>This attribute was modified by another user while you were editing. Please reload the page and try again.</value>
+  </data>
+  <data name="MaxProjectsLabel" xml:space="preserve">
+    <value>Max projects in CV</value>
+  </data>
+  <data name="MaxProjectsHint" xml:space="preserve">
+    <value>How many projects to include in the generated CV</value>
+  </data>
+  <data name="PositionRow" xml:space="preserve">
+    <value>Position</value>
+  </data>
 </root>
