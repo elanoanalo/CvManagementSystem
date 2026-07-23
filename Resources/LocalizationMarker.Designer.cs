@@ -1852,6 +1852,15 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Popular Positions.
+        /// </summary>
+        public static string PopularPositionsHeader {
+            get {
+                return ResourceManager.GetString("PopularPositionsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Popular tags.
         /// </summary>
         public static string PopularTags {

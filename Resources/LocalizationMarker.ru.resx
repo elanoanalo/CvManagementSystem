@@ -412,7 +412,7 @@
     <value>Нет подходящих проектов.</value>
   </data>
   <data name="AddProjectLink" xml:space="preserve">
-    <value>Добавить проект →</value>
+    <value>Популярные позиции</value>
   </data>
   <data name="PresentTime" xml:space="preserve">
     <value>н.в.</value>
@@ -962,5 +962,8 @@
   </data>
   <data name="PositionRow" xml:space="preserve">
     <value>Позиция</value>
+  </data>
+  <data name="PopularPositionsHeader" xml:space="preserve">
+    <value>Популярные позиции</value>
   </data>
 </root>

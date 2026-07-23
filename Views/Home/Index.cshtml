@@ -67,9 +67,10 @@
     </div>
 </div>
 
-<div class="row g-4">
+<div class="row g-4 mb-4">
+
     <div class="col-md-6">
-        <div class="card shadow">
+        <div class="card shadow h-100">
             <div class="card-body">
                 <h5 class="card-title mb-3">@L["RecentPositionsHeader"]</h5>
                 @if (ViewBag.RecentPositions.Count == 0)
@@ -112,6 +113,40 @@
     </div>
 
     <div class="col-md-6">
+        <div class="card shadow h-100">
+            <div class="card-body">
+                <h5 class="card-title mb-3">@L["PopularPositionsHeader"]</h5>
+                @if (ViewBag.PopularPositions.Count == 0)
+                {
+                    <p class="text-muted">@L["NoPositionsYet"]</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var position in ViewBag.PopularPositions)
+                        {
+                            <li class="list-group-item px-0 d-flex justify-content-between align-items-center gap-2">
+                                <a asp-controller="Positions"
+                                   asp-action="Details"
+                                   asp-route-id="@position.Id"
+                                   class="text-decoration-none fw-bold">
+                                    @position.Title
+                                </a>
+                                <span class="badge bg-success rounded-pill flex-shrink-0">
+                                    @position.Cvs.Count CV
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
+    <div class="col-12">
         <div class="card shadow">
             <div class="card-body">
                 <h5 class="card-title mb-3">@L["PopularTagsHeader"]</h5>
@@ -121,7 +156,7 @@
                 }
                 else
                 {
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
                         @foreach (var tagItem in ViewBag.PositionTags)
                         {
                             var fontSize = tagItem.Count == 1 ? "0.8rem" :

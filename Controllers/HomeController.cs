@@ -60,6 +60,16 @@ namespace CvManagementSystem.Controllers
             ViewBag.PositionTags = positionTags;
             ViewBag.RecentPositions = recentPositions;
 
+            var popularPositions = await _context.Positions
+    .Where(p => p.IsPublished)
+    .Include(p => p.Tags)
+    .Include(p => p.Cvs)
+    .OrderByDescending(p => p.Cvs.Count)
+    .Take(5)
+    .ToListAsync();
+
+            ViewBag.PopularPositions = popularPositions;
+
             return View();
         }
 
