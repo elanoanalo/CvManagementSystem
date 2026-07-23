@@ -21,8 +21,7 @@ namespace CvManagementSystem.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [Timestamp]
-        public byte[]? RowVersion { get; set; }
+        public int MaxProjectsInCv { get; set; } = 3;
 
         // Навигационные свойства — связи "один-ко-многим"
         public List<PositionAttribute> PositionAttributes { get; set; } = new();

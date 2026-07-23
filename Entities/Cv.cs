@@ -16,11 +16,5 @@ namespace CvManagementSystem.Entities
         public Position? Position { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        [Timestamp]
-        public byte[]? RowVersion { get; set; }
-
-        // Навигационные свойства для будущих фич (discussions/likes)
-        public List<CvComment> Comments { get; set; } = new();
     }
 }

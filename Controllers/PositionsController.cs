@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace CvManagementSystem.Controllers
 {
@@ -12,22 +13,22 @@ namespace CvManagementSystem.Controllers
     {
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IStringLocalizer<LocalizationMarker> _localizer;
 
-        public PositionsController(AppDbContext context, UserManager<User> userManager)
+        public PositionsController(AppDbContext context, UserManager<User> userManager, IStringLocalizer<LocalizationMarker> localizer)
         {
             _context = context;
             _userManager = userManager;
+            _localizer = localizer;
         }
 
         // GET: /Positions — доступно всем
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            // Проверяем роль ПЕРЕД запросом к БД
             var isRecruiterOrAdmin = User.IsInRole("Recruiter") ||
                                      User.IsInRole("Administrator");
 
-            // AsQueryable() — создаём "заготовку" запроса, но НЕ выполняем его ещё
             var query = _context.Positions
                 .Include(p => p.CreatedByUser)
                 .Include(p => p.PositionAttributes)
@@ -35,14 +36,11 @@ namespace CvManagementSystem.Controllers
                 .Include(p => p.Cvs)
                 .AsQueryable();
 
-            // Незалогиненные и кандидаты видят только опубликованные
-            // Рекрутеры и админы видят все (включая черновики)
             if (!isRecruiterOrAdmin)
             {
                 query = query.Where(p => p.IsPublished);
             }
 
-            // ТОЛЬКО ЗДЕСЬ запрос реально уходит в базу
             var positions = await query
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
@@ -107,6 +105,15 @@ namespace CvManagementSystem.Controllers
                 })
                 .ToList();
 
+            if (User.IsInRole("Candidate"))
+            {
+                var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+                var existingCv = await _context.Cvs
+                    .FirstOrDefaultAsync(cv => cv.CandidateId == currentUserId && cv.PositionId == id);
+
+                ViewBag.ExistingCvId = existingCv?.Id;
+            }
+
             return View(model);
         }
 
@@ -138,7 +145,9 @@ namespace CvManagementSystem.Controllers
                 Title = model.Title,
                 Description = model.Description,
                 IsPublished = model.IsPublished,
+                MaxProjectsInCv = model.MaxProjectsInCv,
                 CreatedByUserId = currentUserId
+
             };
 
             _context.Positions.Add(position);
@@ -191,11 +200,9 @@ namespace CvManagementSystem.Controllers
                 Title = position.Title,
                 Description = position.Description,
                 IsPublished = position.IsPublished,
+                MaxProjectsInCv = position.MaxProjectsInCv,
                 Tags = position.Tags.Select(t => t.Tag).ToList(),
-                // Конвертируем byte[] в Base64 строку для передачи через форму
-                RowVersion = position.RowVersion != null
-                    ? Convert.ToBase64String(position.RowVersion)
-                    : null
+                RowVersion = (uint)_context.Entry(position).Property("xmin").CurrentValue!
             };
 
             foreach (var pa in position.PositionAttributes.OrderBy(pa => pa.DisplayOrder))
@@ -233,15 +240,12 @@ namespace CvManagementSystem.Controllers
             if (position == null)
                 return NotFound();
 
-            // Optimistic Locking — проверяем версию записи
-            if (!string.IsNullOrEmpty(model.RowVersion))
-            {
-                position.RowVersion = Convert.FromBase64String(model.RowVersion);
-            }
+            _context.Entry(position).Property("xmin").OriginalValue = model.RowVersion;
 
             position.Title = model.Title;
             position.Description = model.Description;
             position.IsPublished = model.IsPublished;
+            position.MaxProjectsInCv = model.MaxProjectsInCv;
 
             _context.PositionTags.RemoveRange(position.Tags);
 
@@ -277,17 +281,15 @@ namespace CvManagementSystem.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                // Кто-то другой изменил эту запись пока мы редактировали
                 ModelState.AddModelError(string.Empty,
-                    "Эта позиция была изменена другим пользователем пока вы редактировали. " +
-                    "Пожалуйста, перезагрузите страницу и попробуйте снова.");
+                    _localizer["ConcurrencyConflictPosition"]);
 
                 await ReloadAvailableAttributes(model);
                 return View(model);
             }
         }
 
-        // GET: /Positions/Duplicate/id — открывает форму создания с данными оригинала
+        // GET: /Positions/Duplicate/id
         [Authorize(Roles = "Recruiter,Administrator")]
         [HttpGet]
         public async Task<IActionResult> Duplicate(Guid id)
@@ -301,17 +303,15 @@ namespace CvManagementSystem.Controllers
             if (position == null)
                 return NotFound();
 
-            // Готовим модель для формы Create — с данными оригинала, но БЕЗ сохранения в базу
             var model = new PositionFormViewModel
             {
-                // Id НЕ задаём — это новая позиция, не редактирование
                 Title = position.Title + " (копия)",
                 Description = position.Description,
-                IsPublished = false, // копия всегда черновик
+                IsPublished = false,
+                MaxProjectsInCv = position.MaxProjectsInCv,
                 Tags = position.Tags.Select(t => t.Tag).ToList()
             };
 
-            // Копируем привязанные атрибуты
             foreach (var pa in position.PositionAttributes.OrderBy(pa => pa.DisplayOrder))
             {
                 model.Attributes.Add(new PositionAttributeViewModel
@@ -324,11 +324,8 @@ namespace CvManagementSystem.Controllers
                 });
             }
 
-            // Загружаем список доступных атрибутов для формы
             await ReloadAvailableAttributes(model);
 
-            // Возвращаем ПРЕДСТАВЛЕНИЕ Create (не Duplicate!) с заполненной моделью
-            // Пользователь увидит форму создания с данными. Ничего пока не в базе.
             return View("Create", model);
         }
 
@@ -415,7 +412,6 @@ namespace CvManagementSystem.Controllers
             return View(result);
         }
 
-        // Приватный метод — загружает список атрибутов для формы
         private async Task ReloadAvailableAttributes(PositionFormViewModel model)
         {
             model.AvailableAttributes.Clear();

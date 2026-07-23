@@ -78,10 +78,6 @@ namespace CvManagementSystem.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Optimistic locking — разберём отдельно чуть позже подробно
-        [Timestamp]
-        public byte[]? RowVersion { get; set; }
-
         public AttributeCategory Category { get; set; } = AttributeCategory.General;
     }
 }

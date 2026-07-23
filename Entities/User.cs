@@ -37,7 +37,6 @@ namespace CvManagementSystem.Entities
         public List<AttributeValue> AttributeValues { get; set; } = new();
         public List<Position> CreatedPositions { get; set; } = new();
         public List<Cv> Cvs { get; set; } = new();
-        public List<CvComment> Comments { get; set; } = new();
         public List<Project> Projects { get; set; } = new();
     }
 }

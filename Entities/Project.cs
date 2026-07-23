@@ -22,9 +22,6 @@ namespace CvManagementSystem.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [Timestamp]
-        public byte[]? RowVersion { get; set; }
-
         // Теги проекта (Python, Backend, Data Engineering...)
         public List<ProjectTag> Tags { get; set; } = new();
     }

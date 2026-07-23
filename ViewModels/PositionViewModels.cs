@@ -26,7 +26,9 @@ namespace CvManagementSystem.ViewModels
         public List<AttributeSelectionViewModel> AvailableAttributes { get; set; } = new();
 
         // Для Optimistic Locking — версия записи
-        public string? RowVersion { get; set; }
+        public uint RowVersion { get; set; }
+
+        public int MaxProjectsInCv { get; set; } = 3;
     }
 
     public class PositionAttributeViewModel

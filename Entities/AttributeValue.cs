@@ -35,8 +35,5 @@ namespace CvManagementSystem.Entities
         public AttributeOption? SelectedOption { get; set; }
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
-        [Timestamp]
-        public byte[]? RowVersion { get; set; }
     }
 }

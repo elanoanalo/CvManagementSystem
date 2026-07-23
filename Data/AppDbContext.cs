@@ -18,7 +18,6 @@ namespace CvManagementSystem.Data
         public DbSet<PositionTag> PositionTags { get; set; }
         public DbSet<PositionAttribute> PositionAttributes { get; set; }
         public DbSet<Cv> Cvs { get; set; }
-        public DbSet<CvComment> CvComments { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectTag> ProjectTags { get; set; }
 
@@ -26,36 +25,27 @@ namespace CvManagementSystem.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Составной уникальный индекс для PositionAttribute
             modelBuilder.Entity<PositionAttribute>()
                 .HasIndex(pa => new { pa.PositionId, pa.AttributeDefinitionId })
                 .IsUnique();
 
-            // Составной уникальный индекс для AttributeValue
             modelBuilder.Entity<AttributeValue>()
                 .HasIndex(av => new { av.CandidateId, av.AttributeDefinitionId })
                 .IsUnique();
 
-            // Настройка RowVersion для Optimistic Locking
-            modelBuilder.Entity<AttributeDefinition>()
-                .Property(a => a.RowVersion)
-                .IsRowVersion();
-
             modelBuilder.Entity<Position>()
-                .Property(p => p.RowVersion)
-                .IsRowVersion();
+                .Property<uint>("xmin")
+                .HasColumnName("xmin")
+                .HasColumnType("xid")
+                .ValueGeneratedOnAddOrUpdate()
+                .IsConcurrencyToken();
 
-            modelBuilder.Entity<AttributeValue>()
-                .Property(av => av.RowVersion)
-                .IsRowVersion();
-
-            modelBuilder.Entity<Cv>()
-                .Property(cv => cv.RowVersion)
-                .IsRowVersion();
-
-            modelBuilder.Entity<Project>()
-                .Property(p => p.RowVersion)
-                .IsRowVersion();
+            modelBuilder.Entity<AttributeDefinition>()
+                .Property<uint>("xmin")
+                .HasColumnName("xmin")
+                .HasColumnType("xid")
+                .ValueGeneratedOnAddOrUpdate()
+                .IsConcurrencyToken();
         }
     }
 }

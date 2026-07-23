@@ -556,6 +556,24 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This attribute was modified by another user while you were editing. Please reload the page and try again..
+        /// </summary>
+        public static string ConcurrencyConflictAttribute {
+            get {
+                return ResourceManager.GetString("ConcurrencyConflictAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This position was modified by another user while you were editing. Please reload the page and try again..
+        /// </summary>
+        public static string ConcurrencyConflictPosition {
+            get {
+                return ResourceManager.GetString("ConcurrencyConflictPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirm Password.
         /// </summary>
         public static string ConfirmPasswordLabel {

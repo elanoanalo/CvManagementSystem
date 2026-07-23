@@ -24,7 +24,7 @@ namespace CvManagementSystem.ViewModels
         public string? NewOption { get; set; }
 
         // Для Optimistic Locking
-        public string? RowVersion { get; set; }
+        public uint RowVersion { get; set; }
 
         public AttributeCategory Category { get; set; } = AttributeCategory.General;
     }

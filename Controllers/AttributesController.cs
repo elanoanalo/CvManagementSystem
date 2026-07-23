@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace CvManagementSystem.Controllers
 {
@@ -13,11 +14,13 @@ namespace CvManagementSystem.Controllers
     {
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IStringLocalizer<LocalizationMarker> _localizer;
 
-        public AttributesController(AppDbContext context, UserManager<User> userManager)
+        public AttributesController(AppDbContext context, UserManager<User> userManager, IStringLocalizer<LocalizationMarker> localizer)
         {
             _context = context;
             _userManager = userManager;
+            _localizer = localizer;
         }
 
         // GET: /Attributes
@@ -28,7 +31,6 @@ namespace CvManagementSystem.Controllers
                 .Include(a => a.Options)
                 .AsQueryable();
 
-            // Фильтр по категории если выбрана
             if (category.HasValue)
             {
                 query = query.Where(a => a.Category == category.Value);
@@ -47,14 +49,13 @@ namespace CvManagementSystem.Controllers
                     Name = a.Name,
                     Description = a.Description,
                     Type = a.Type,
-                    Category = a.Category,  // ← добавь
+                    Category = a.Category,
                     OptionsCount = a.Options.Count,
                     CreatedByName = a.CreatedByUser!.FullName,
                     CreatedAt = a.CreatedAt
                 });
             }
 
-            // Передаём текущий фильтр во View чтобы подсветить активную кнопку
             ViewBag.SelectedCategory = category;
 
             return View(result);
@@ -81,19 +82,17 @@ namespace CvManagementSystem.Controllers
                 Name = model.Name,
                 Description = model.Description,
                 Type = model.Type,
-                Category = model.Category,  // ← добавь
+                Category = model.Category,
                 CreatedByUserId = currentUserId
             };
 
             _context.AttributeDefinitions.Add(attribute);
 
-            // Если тип Dropdown — добавляем варианты
             if (model.Type == AttributeType.Dropdown)
             {
                 int order = 0;
                 foreach (var option in model.Options)
                 {
-                    // Пропускаем пустые строки
                     if (string.IsNullOrWhiteSpace(option))
                         continue;
 
@@ -107,7 +106,6 @@ namespace CvManagementSystem.Controllers
                     order++;
                 }
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -129,11 +127,9 @@ namespace CvManagementSystem.Controllers
                 Name = attribute.Name,
                 Description = attribute.Description,
                 Type = attribute.Type,
+                Category = attribute.Category,
                 Options = attribute.Options.Select(o => o.Value).ToList(),
-                // Конвертируем byte[] в Base64 для передачи через форму
-                RowVersion = attribute.RowVersion != null
-                    ? Convert.ToBase64String(attribute.RowVersion)
-                    : null
+                RowVersion = (uint)_context.Entry(attribute).Property("xmin").CurrentValue!
             };
 
             return View(model);
@@ -153,14 +149,11 @@ namespace CvManagementSystem.Controllers
             if (attribute == null)
                 return NotFound();
 
-            if (!string.IsNullOrEmpty(model.RowVersion))
-            {
-                attribute.RowVersion = Convert.FromBase64String(model.RowVersion);
-            }
+            _context.Entry(attribute).Property("xmin").OriginalValue = model.RowVersion;
 
             attribute.Name = model.Name;
             attribute.Description = model.Description;
-            attribute.Category = model.Category;  // ← добавь
+            attribute.Category = model.Category;
 
             if (model.Type == AttributeType.Dropdown)
             {
@@ -214,8 +207,7 @@ namespace CvManagementSystem.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 ModelState.AddModelError(string.Empty,
-                    "Этот атрибут был изменён другим пользователем пока вы редактировали. " +
-                    "Пожалуйста, перезагрузите страницу и попробуйте снова.");
+                    _localizer["ConcurrencyConflictAttribute"]);
                 return View(model);
             }
         }

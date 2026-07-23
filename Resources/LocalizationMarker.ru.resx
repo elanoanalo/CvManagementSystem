@@ -948,4 +948,10 @@
 	<data name="AttributeCategory_Experience">
 		<value>Опыт</value>
 	</data>
+	<data name="ConcurrencyConflictPosition" xml:space="preserve">
+  <value>Эта позиция была изменена другим пользователем, пока вы редактировали. Перезагрузите страницу и попробуйте снова.</value>
+</data>
+	<data name="ConcurrencyConflictAttribute" xml:space="preserve">
+  <value>Этот атрибут был изменён другим пользователем, пока вы редактировали. Перезагрузите страницу и попробуйте снова.</value>
+</data>
 </root>
