@@ -58,7 +58,7 @@ namespace CvManagementSystem.Controllers
 
                 if (!positionTags.Any())
                 {
-                    projectsCount = Math.Min(allProjects.Count, 5);
+                    projectsCount = Math.Min(allProjects.Count, cv.Position?.MaxProjectsInCv ?? 3);
                 }
                 else
                 {
@@ -69,7 +69,7 @@ namespace CvManagementSystem.Controllers
                         var hasMatch = projectTags.Any(pt => positionTags.Contains(pt));
                         if (hasMatch) projectsCount++;
                     }
-                    projectsCount = Math.Min(projectsCount, 5);
+                    projectsCount = Math.Min(projectsCount, cv.Position?.MaxProjectsInCv ?? 3);
                 }
 
                 result.Add(new CvListViewModel
@@ -254,7 +254,7 @@ namespace CvManagementSystem.Controllers
                 }
             }
 
-            foreach (var project in filteredProjects.Take(5))
+            foreach (var project in filteredProjects.Take(cv.Position?.MaxProjectsInCv ?? 3))
             {
                 model.Projects.Add(new CvProjectViewModel
                 {

@@ -954,4 +954,10 @@
 	<data name="ConcurrencyConflictAttribute" xml:space="preserve">
   <value>Этот атрибут был изменён другим пользователем, пока вы редактировали. Перезагрузите страницу и попробуйте снова.</value>
 </data>
+	<data name="MaxProjectsLabel" xml:space="preserve">
+  <value>Макс. проектов в CV</value>
+</data>
+	<data name="MaxProjectsHint" xml:space="preserve">
+  <value>Сколько проектов включать в сгенерированное CV</value>
+</data>
 </root>

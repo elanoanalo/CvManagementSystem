@@ -954,4 +954,10 @@
 	<data name="ConcurrencyConflictAttribute" xml:space="preserve">
   <value>This attribute was modified by another user while you were editing. Please reload the page and try again.</value>
 </data>
+	<data name="MaxProjectsLabel" xml:space="preserve">
+  <value>Max projects in CV</value>
+</data>
+	<data name="MaxProjectsHint" xml:space="preserve">
+  <value>How many projects to include in the generated CV</value>
+</data>
 </root>

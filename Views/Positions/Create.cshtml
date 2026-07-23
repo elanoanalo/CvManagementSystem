@@ -139,6 +139,13 @@
                         </div>
                     </div>
 
+                    <div class="mb-3">
+                        <label asp-for="MaxProjectsInCv" class="form-label">@L["MaxProjectsLabel"]</label>
+                        <input asp-for="MaxProjectsInCv" type="number" min="0" max="20"
+                               class="form-control" style="max-width:150px" />
+                        <small class="text-muted d-block">@L["MaxProjectsHint"]</small>
+                    </div>
+
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">@L["CreateButton"]</button>
                         <a asp-action="Index" class="btn btn-outline-secondary">@L["CancelButton"]</a>

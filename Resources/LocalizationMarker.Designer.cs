@@ -1447,6 +1447,24 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to How many projects to include in the generated CV.
+        /// </summary>
+        public static string MaxProjectsHint {
+            get {
+                return ResourceManager.GetString("MaxProjectsHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max projects in CV.
+        /// </summary>
+        public static string MaxProjectsLabel {
+            get {
+                return ResourceManager.GetString("MaxProjectsLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to My Attributes.
         /// </summary>
         public static string MyAttributesSectionTitle {
