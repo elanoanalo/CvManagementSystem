@@ -51,7 +51,7 @@ else
                     <input type="checkbox" id="selectAll" class="form-check-input" />
                 </th>
                 <th>@L["NameLabel"]</th>
-                <th>@L["CategoryLabel"]</th> <!-- ДОБАВЛЕНО СЮДА -->
+                <th>@L["CategoryLabel"]</th>
                 <th>@L["DescriptionOptional"]</th>
                 <th>@L["AttributeTypeLabel"]</th>
                 <th>@L["OptionsCountLabel"]</th>
@@ -76,7 +76,7 @@ else
                             @item.Name
                         </a>
                     </td>
-                    <td> <!-- ДОБАВЛЕНО СЮДА -->
+                    <td> 
                         <span class="badge bg-primary">@L[$"AttributeCategory_{item.Category}"]</span>
                     </td>
                     <td>@(item.Description ?? L["EmptyValue"].Value)</td>

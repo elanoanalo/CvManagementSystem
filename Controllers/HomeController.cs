@@ -15,8 +15,6 @@ namespace CvManagementSystem.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Загружаем всю статистику ОДНИМ запросом каждую
-            // Не используем запросы внутри циклов — всё параллельно!
             var totalPositions = await _context.Positions
                 .CountAsync(p => p.IsPublished);
 
@@ -35,7 +33,6 @@ namespace CvManagementSystem.Controllers
 
             var totalAttributes = await _context.AttributeDefinitions.CountAsync();
 
-            // Топ тегов позиций — tag cloud
             var positionTags = await _context.PositionTags
                 .GroupBy(t => t.Tag)
                 .Select(g => new { Tag = g.Key, Count = g.Count() })
@@ -43,7 +40,6 @@ namespace CvManagementSystem.Controllers
                 .Take(20)
                 .ToListAsync();
 
-            // Последние 5 опубликованных позиций
             var recentPositions = await _context.Positions
                 .Where(p => p.IsPublished)
                 .Include(p => p.Tags)

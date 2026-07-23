@@ -16,16 +16,12 @@ namespace CvManagementSystem.ViewModels
 
         public bool IsPublished { get; set; } = false;
 
-        // Теги позиции (Python, Backend, Remote и т.д.)
         public List<string> Tags { get; set; } = new();
 
-        // Атрибуты привязанные к этой позиции
         public List<PositionAttributeViewModel> Attributes { get; set; } = new();
 
-        // Все доступные атрибуты из библиотеки (для выбора)
         public List<AttributeSelectionViewModel> AvailableAttributes { get; set; } = new();
 
-        // Для Optimistic Locking — версия записи
         public uint RowVersion { get; set; }
 
         public int MaxProjectsInCv { get; set; } = 3;

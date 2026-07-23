@@ -22,19 +22,15 @@ namespace CvManagementSystem.Services
 
         public async Task ChangeUserRoleAsync(User user, UserRole newRole)
         {
-            // Шаг 1 — убираем все текущие роли Identity
             var currentRoles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, currentRoles);
 
-            // Шаг 2 — создаём новую роль если её нет
             var newRoleName = newRole.ToString();
             if (!await _roleManager.RoleExistsAsync(newRoleName))
                 await _roleManager.CreateAsync(new IdentityRole<Guid>(newRoleName));
 
-            // Шаг 3 — добавляем новую роль Identity
             await _userManager.AddToRoleAsync(user, newRoleName);
 
-            // Шаг 4 — обновляем наш enum в таблице AspNetUsers
             user.Role = newRole;
             await _context.SaveChangesAsync();
         }

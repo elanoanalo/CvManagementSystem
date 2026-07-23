@@ -1,0 +1,183 @@
+﻿@using CvManagementSystem.ViewModels
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
+@model AdminUserDetailsViewModel
+@{
+    ViewData["Title"] = Model.FullName;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>@Model.FullName</h2>
+    <div class="d-flex gap-2 align-items-center">
+        <span class="badge bg-secondary">@L["ReadOnlyNotice"]</span>
+        <a asp-action="Index" class="btn btn-outline-secondary">@L["BackButton"]</a>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="d-flex gap-4">
+            @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+            {
+                <img src="@Model.PhotoUrl" class="img-thumbnail flex-shrink-0"
+                     style="width:120px; height:120px; object-fit:cover" />
+            }
+            <div class="flex-grow-1">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th style="width:180px">@L["NameLabel"]</th>
+                        <td>@Model.FullName</td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.FirstName) || !string.IsNullOrEmpty(Model.LastName))
+                    {
+                        <tr>
+                            <th>@L["FirstNameLabel"] / @L["LastNameLabel"]</th>
+                            <td>@Model.FirstName @Model.LastName</td>
+                        </tr>
+                    }
+                    <tr>
+                        <th>Email</th>
+                        <td>@Model.Email</td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.Location))
+                    {
+                        <tr>
+                            <th>@L["LocationLabel"]</th>
+                            <td>@Model.Location</td>
+                        </tr>
+                    }
+                    <tr>
+                        <th>@L["RoleColumn"]</th>
+                        <td><span class="badge bg-primary">@L[$"UserRole_{Model.Role}"]</span></td>
+                    </tr>
+                    <tr>
+                        <th>@L["CreatedAtLabel"]</th>
+                        <td>@Model.CreatedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">@L["MyAttributesSectionTitle"] (@Model.Attributes.Count)</h5>
+        @if (!Model.Attributes.Any())
+        {
+            <p class="text-muted mb-0">@L["EmptyValue"]</p>
+        }
+        else
+        {
+            <table class="table table-sm">
+                <tbody>
+                    @foreach (var a in Model.Attributes)
+                    {
+                        <tr>
+                            <th style="width:250px">
+                                @a.Name
+                                <span class="badge bg-secondary ms-1">@L[$"AttributeType_{a.Type}"]</span>
+                            </th>
+                            <td>
+                                @if (a.Type == CvManagementSystem.Entities.AttributeType.Image
+                                     && !string.IsNullOrEmpty(a.DisplayValue))
+                                {
+                                    <img src="@a.DisplayValue" class="img-thumbnail" style="max-height:80px" />
+                                }
+                                else if (!string.IsNullOrEmpty(a.DisplayValue))
+                                {
+                                    @a.DisplayValue
+                                }
+                                else
+                                {
+                                    <span class="text-muted">@L["EmptyValue"]</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">@L["MyProjectsSectionTitle"] (@Model.Projects.Count)</h5>
+        @if (!Model.Projects.Any())
+        {
+            <p class="text-muted mb-0">@L["EmptyValue"]</p>
+        }
+        else
+        {
+            foreach (var p in Model.Projects)
+            {
+                <div class="border-start border-primary border-3 ps-3 mb-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>@p.Title</strong>
+                        <span class="text-muted small">@p.StartDate — @(p.EndDate ?? "...")</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(p.Description))
+                    {
+                        <div class="text-muted small">@p.Description</div>
+                    }
+                    <div class="mt-1">
+                        @foreach (var tag in p.Tags)
+                        {
+                            <span class="badge bg-info text-dark me-1">@tag</span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">@L["MyCvsTitle"] (@Model.Cvs.Count)</h5>
+        @if (!Model.Cvs.Any())
+        {
+            <p class="text-muted mb-0">@L["EmptyValue"]</p>
+        }
+        else
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var c in Model.Cvs)
+                {
+                    <li class="list-group-item px-0 d-flex justify-content-between">
+                        <a asp-controller="Cv" asp-action="ViewCv" asp-route-id="@c.Id"
+                           class="text-decoration-none">@c.PositionTitle</a>
+                        <span class="text-muted small">@c.CreatedAt.ToString("dd.MM.yyyy")</span>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
+
+@if (Model.CreatedPositions.Any())
+{
+    <div class="card shadow">
+        <div class="card-body">
+            <h5 class="card-title mb-3">@L["PositionsIndexTitle"] (@Model.CreatedPositions.Count)</h5>
+            <ul class="list-group list-group-flush">
+                @foreach (var p in Model.CreatedPositions)
+                {
+                    <li class="list-group-item px-0 d-flex justify-content-between">
+                        <a asp-controller="Positions" asp-action="Details" asp-route-id="@p.Id"
+                           class="text-decoration-none">@p.Title</a>
+                        @if (p.IsPublished)
+                        {
+                            <span class="badge bg-success">@L["PublishedState"]</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">@L["DraftState"]</span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}

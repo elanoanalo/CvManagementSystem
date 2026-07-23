@@ -11,7 +11,6 @@
     <div class="d-flex gap-2">
         @if (User.IsInRole("Candidate") || User.IsInRole("Administrator"))
         {
-            @* Безопасное экранирование строки для JavaScript confirm *@
             <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
                   onsubmit="return confirm(@Json.Serialize(L["DeleteCvConfirm"].Value))">
                 <button type="submit" class="btn btn-outline-danger btn-sm">

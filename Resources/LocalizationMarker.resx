@@ -964,4 +964,10 @@
     <value>Position</value>
   </data>
 	<data name="PopularPositionsHeader" xml:space="preserve"><value>Popular Positions</value></data>
+<data name="AdminNavLink" xml:space="preserve"><value>Administration</value></data>
+<data name="AdminUsersTitle" xml:space="preserve"><value>All Users</value></data>
+<data name="RoleColumn" xml:space="preserve"><value>Role</value></data>
+<data name="ReadOnlyNotice" xml:space="preserve"><value>Read-only</value></data>
+	<data name="OpenMyCvBtn" xml:space="preserve"><value>Open my CV</value></data>
+	<data name="CreateCvForPositionBtn" xml:space="preserve"><value>Create CV for this position</value></data>
 </root>

@@ -110,7 +110,6 @@ else
             var confirmMsg = '@Html.Raw(L["DeleteConfirmBulk"].Value)'.replace('{0}', selected.length);
             if (!confirm(confirmMsg)) return;
 
-            // Одна форма со всеми ID
             var form = document.createElement('form');
             form.method = 'post';
             form.action = '/Cv/DeleteMultiple';

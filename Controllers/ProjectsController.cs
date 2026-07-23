@@ -78,7 +78,6 @@ namespace CvManagementSystem.Controllers
                 Description = model.Description
             };
 
-            // Конвертируем даты из строк
             if (!string.IsNullOrEmpty(model.StartDate) &&
                 DateTime.TryParse(model.StartDate, out var startDate))
             {
@@ -91,7 +90,6 @@ namespace CvManagementSystem.Controllers
                 project.EndDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
             }
 
-            // Валидация дат
             if (project.StartDate.HasValue && project.EndDate.HasValue &&
                 project.StartDate > project.EndDate)
             {
@@ -102,7 +100,6 @@ namespace CvManagementSystem.Controllers
 
             _context.Projects.Add(project);
 
-            // Добавляем теги
             foreach (var tag in model.Tags)
             {
                 if (string.IsNullOrWhiteSpace(tag))
@@ -190,7 +187,6 @@ namespace CvManagementSystem.Controllers
                 return View(model);
             }
 
-            // Пересоздаём теги
             _context.ProjectTags.RemoveRange(project.Tags);
 
             foreach (var tag in model.Tags)
@@ -217,7 +213,6 @@ namespace CvManagementSystem.Controllers
 
             var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
 
-            // Только свои проекты (security by ownership)
             var projects = await _context.Projects
                 .Include(p => p.Tags)
                 .Where(p => ids.Contains(p.Id) && p.CandidateId == currentUserId)

@@ -39,12 +39,10 @@
                 <div class="text-center mt-3">
                     <a asp-action="Register">@L["NoAccountPrompt"]</a>
                 </div>
-                @* Разделитель *@
                 <div class="text-center my-3">
                     <span class="text-muted">@L["OrLoginWith"]</span>
                 </div>
 
-                @* Кнопки соц. логина *@
                 <div class="d-grid gap-2">
                     <form asp-action="ExternalLogin" method="post">
                         <input type="hidden" name="provider" value="Google" />

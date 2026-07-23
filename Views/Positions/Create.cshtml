@@ -1,5 +1,4 @@
-﻿@using CvManagementSystem.Entities
-@using Microsoft.Extensions.Localization
+﻿@using Microsoft.Extensions.Localization
 @inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @model CvManagementSystem.ViewModels.PositionFormViewModel
 @{
@@ -31,7 +30,6 @@
                                   rows="3"></textarea>
                     </div>
 
-                    @* Теги — при дубликате приходят уже заполненными *@
                     <div class="mb-4">
                         <label class="form-label">@L["TagsLabel"]</label>
                         <div id="tagsList" class="mb-2 d-flex flex-wrap gap-2">
@@ -61,7 +59,6 @@
                         </div>
                     </div>
 
-                    @* Атрибуты позиции *@
                     <div class="mb-4">
                         <label class="form-label">@L["PositionAttributesLabel"]</label>
                         <p class="text-muted small">
@@ -69,7 +66,6 @@
                         </p>
 
                         <div id="selectedAttributes" class="mb-3">
-                            @* При дубликате — уже выбранные атрибуты *@
                             @for (int i = 0; i < Model.Attributes.Count; i++)
                             {
                                 var attr = Model.Attributes[i];
@@ -159,10 +155,8 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
-    @* Общий файл логики тегов — подключается ОТДЕЛЬНЫМ тегом *@
     <script src="~/js/tag-input.js"></script>
 
-    @* ===== ТЕГИ (через общий tag-input.js) ===== *@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             initTagInput({
@@ -176,7 +170,6 @@
     </script>
 
     <script>
-        // Переводы для JS (для атрибутов и публикации)
         var i18n = {
             required: '@Html.Raw(L["RequiredAttributeBadge"].Value)',
             remove: '@Html.Raw(L["RemoveAttributeBtn"].Value)',
@@ -194,7 +187,7 @@
             addedAttributeIds.push(card.getAttribute('data-attr-id'));
         });
 
-        // ===== АТРИБУТЫ =====
+        // АТРИБУТЫ
 
         function addAttribute(id, name, typeName) {
             if (addedAttributeIds.indexOf(id) !== -1) {
@@ -243,7 +236,7 @@
             }
         });
 
-        // ===== ПУБЛИКАЦИЯ =====
+        // ПУБЛИКАЦИЯ
 
         var publishSwitch = document.getElementById('isPublishedSwitch');
         var publishLabel = document.getElementById('publishLabel');

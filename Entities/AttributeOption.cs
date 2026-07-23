@@ -9,7 +9,6 @@ namespace CvManagementSystem.Entities
         [Required]
         public Guid AttributeDefinitionId { get; set; }
 
-        // Навигационное свойство — к какому атрибуту относится этот вариант
         public AttributeDefinition? AttributeDefinition { get; set; }
 
         [Required]

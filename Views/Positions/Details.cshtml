@@ -26,6 +26,23 @@
                 <button type="submit" class="btn btn-danger">@L["DeleteBtn"]</button>
             </form>
         }
+        @if (User.IsInRole("Candidate"))
+        {
+            @if (ViewBag.ExistingCvId != null)
+            {
+                <a asp-controller="Cv" asp-action="ViewCv" asp-route-id="@ViewBag.ExistingCvId"
+                   class="btn btn-success">
+                    @L["OpenMyCvBtn"]
+                </a>
+            }
+            else if (Model.IsPublished)
+            {
+                <a asp-controller="Cv" asp-action="CreateConfirm" asp-route-positionId="@Model.Id"
+                   class="btn btn-primary">
+                    @L["CreateCvForPositionBtn"]
+                </a>
+            }
+        }
         <a asp-action="Index" class="btn btn-outline-secondary">@L["CancelButton"]</a>
     </div>
 </div>
@@ -103,7 +120,6 @@
                             <li class="list-group-item px-0">
                                 <div class="d-flex align-items-center gap-2">
                                     <span>@attr.Name</span>
-                                    @* Локализуем тип атрибута *@
                                     <span class="badge bg-secondary">@L[$"AttributeType_{attr.Type}"]</span>
                                     @if (attr.IsRequired)
                                     {

@@ -1,0 +1,54 @@
+﻿@using CvManagementSystem.ViewModels
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
+@model IEnumerable<AdminUserListViewModel>
+@{
+    ViewData["Title"] = L["AdminUsersTitle"];
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>@L["AdminUsersTitle"]</h2>
+    <span class="badge bg-secondary">@L["ReadOnlyNotice"]</span>
+</div>
+
+<table class="table table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>@L["NameLabel"]</th>
+            <th>Email</th>
+            <th>@L["RoleColumn"]</th>
+            <th>@L["AttributesHeader"]</th>
+            <th>@L["ProjectsHeader"]</th>
+            <th>@L["CvsCountColumn"]</th>
+            <th>@L["PositionsIndexTitle"]</th>
+            <th>@L["CreatedAtLabel"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr class="clickable-row"
+                data-href="@Url.Action("UserDetails", new { id = u.Id })">
+                <td class="fw-bold">@u.FullName</td>
+                <td>@u.Email</td>
+                <td><span class="badge bg-primary">@L[$"UserRole_{u.Role}"]</span></td>
+                <td>@u.FilledAttributesCount</td>
+                <td>@u.ProjectsCount</td>
+                <td>@u.CvsCount</td>
+                <td>@u.PositionsCount</td>
+                <td>@u.CreatedAt.ToString("dd.MM.yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.clickable-row').forEach(function (row) {
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function () {
+                window.location.href = this.getAttribute('data-href');
+            });
+        });
+    </script>
+}

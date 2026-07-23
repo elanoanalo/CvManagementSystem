@@ -2,7 +2,6 @@
 
 namespace CvManagementSystem.ViewModels
 {
-    // Список CV кандидата
     public class CvListViewModel
     {
         public Guid Id { get; set; }
@@ -12,7 +11,6 @@ namespace CvManagementSystem.ViewModels
         public int ProjectsCount { get; set; }
     }
 
-    // Полное CV — то что видит рекрутер или кандидат
     public class CvViewModel
     {
         public Guid Id { get; set; }
@@ -22,10 +20,8 @@ namespace CvManagementSystem.ViewModels
         public string? PositionDescription { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        // Атрибуты — подтягиваются живьём из профиля
         public List<CvAttributeViewModel> Attributes { get; set; } = new();
 
-        // Проекты — фильтруются по тегам позиции
         public List<CvProjectViewModel> Projects { get; set; } = new();
 
         public string? FirstName { get; set; }
@@ -34,20 +30,16 @@ namespace CvManagementSystem.ViewModels
         public string? PhotoUrl { get; set; }
     }
 
-    // Один атрибут в CV
     public class CvAttributeViewModel
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public AttributeType Type { get; set; }
         public bool IsRequired { get; set; }
-
-        // Отображаемое значение — одна строка для любого типа
         public string? DisplayValue { get; set; }
         public bool HasValue { get; set; }
     }
 
-    // Один проект в CV
     public class CvProjectViewModel
     {
         public string Title { get; set; } = string.Empty;
@@ -57,7 +49,6 @@ namespace CvManagementSystem.ViewModels
         public List<string> Tags { get; set; } = new();
     }
 
-    // Список позиций для кандидата
     public class PositionForCandidateViewModel
     {
         public Guid Id { get; set; }

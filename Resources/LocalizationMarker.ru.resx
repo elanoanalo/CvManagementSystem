@@ -966,4 +966,10 @@
   <data name="PopularPositionsHeader" xml:space="preserve">
     <value>Популярные позиции</value>
   </data>
+	<data name="AdminNavLink" xml:space="preserve"><value>Администрирование</value></data>
+	<data name="AdminUsersTitle" xml:space="preserve"><value>Все пользователи</value></data>
+	<data name="RoleColumn" xml:space="preserve"><value>Роль</value></data>
+	<data name="ReadOnlyNotice" xml:space="preserve"><value>Только просмотр</value></data>
+	<data name="OpenMyCvBtn" xml:space="preserve"><value>Открыть моё CV</value></data>
+	<data name="CreateCvForPositionBtn" xml:space="preserve"><value>Создать CV для этой позиции</value></data>
 </root>

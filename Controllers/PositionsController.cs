@@ -22,7 +22,7 @@ namespace CvManagementSystem.Controllers
             _localizer = localizer;
         }
 
-        // GET: /Positions — доступно всем
+        // GET: /Positions
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
@@ -66,7 +66,7 @@ namespace CvManagementSystem.Controllers
             return View(result);
         }
 
-        // GET: /Positions/Details/id — доступно всем
+        // GET: /Positions/Details/id
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
@@ -114,10 +114,19 @@ namespace CvManagementSystem.Controllers
                 ViewBag.ExistingCvId = existingCv?.Id;
             }
 
+            if (User.IsInRole("Candidate"))
+            {
+                var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
+                var existingCv = await _context.Cvs
+                    .FirstOrDefaultAsync(cv => cv.CandidateId == currentUserId && cv.PositionId == id);
+
+                ViewBag.ExistingCvId = existingCv?.Id;
+            }
+
             return View(model);
         }
 
-        // GET: /Positions/Create — только рекрутерам
+        // GET: /Positions/Create
         [Authorize(Roles = "Recruiter,Administrator")]
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -127,7 +136,7 @@ namespace CvManagementSystem.Controllers
             return View(model);
         }
 
-        // POST: /Positions/Create — только рекрутерам
+        // POST: /Positions/Create
         [Authorize(Roles = "Recruiter,Administrator")]
         [HttpPost]
         public async Task<IActionResult> Create(PositionFormViewModel model)
@@ -180,7 +189,7 @@ namespace CvManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Positions/Edit/id — только рекрутерам
+        // GET: /Positions/Edit/id
         [Authorize(Roles = "Recruiter,Administrator")]
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
@@ -221,7 +230,7 @@ namespace CvManagementSystem.Controllers
             return View(model);
         }
 
-        // POST: /Positions/Edit/id — только рекрутерам
+        // POST: /Positions/Edit/id
         [Authorize(Roles = "Recruiter,Administrator")]
         [HttpPost]
         public async Task<IActionResult> Edit(Guid id, PositionFormViewModel model)
@@ -329,7 +338,7 @@ namespace CvManagementSystem.Controllers
             return View("Create", model);
         }
 
-        // POST: /Positions/Delete/id — только рекрутерам
+        // POST: /Positions/Delete/id
         [Authorize(Roles = "Recruiter,Administrator")]
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
@@ -375,7 +384,7 @@ namespace CvManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Positions/Candidates/id — только рекрутерам
+        // GET: /Positions/Candidates/id
         [Authorize(Roles = "Recruiter,Administrator")]
         [HttpGet]
         public async Task<IActionResult> Candidates(Guid id)

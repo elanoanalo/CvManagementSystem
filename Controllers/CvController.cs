@@ -23,7 +23,7 @@ namespace CvManagementSystem.Controllers
             _L = localizer;
         }
 
-        // GET: /Cv — список CV кандидата
+        // GET: /Cv
         [Authorize(Roles = "Candidate,Administrator")]
         public async Task<IActionResult> Index()
         {
@@ -49,7 +49,6 @@ namespace CvManagementSystem.Controllers
 
             foreach (var cv in cvs)
             {
-                // Защита от null, если Position вдруг не загрузился
                 var positionTags = cv.Position?.Tags?
                     .Select(t => t.Tag)
                     .ToList() ?? new List<string>();
@@ -84,7 +83,7 @@ namespace CvManagementSystem.Controllers
             return View(result);
         }
 
-        // GET: /Cv/Positions — список позиций для кандидата
+        // GET: /Cv/Positions 
         [Authorize(Roles = "Candidate,Administrator")]
         public async Task<IActionResult> Positions()
         {
@@ -126,7 +125,7 @@ namespace CvManagementSystem.Controllers
             return View(result);
         }
 
-        // POST: /Cv/Create — создаём CV для позиции
+        // POST: /Cv/Create
         [HttpPost]
         [Authorize(Roles = "Candidate,Administrator")]
         public async Task<IActionResult> Create(Guid positionId)
@@ -162,7 +161,7 @@ namespace CvManagementSystem.Controllers
             return RedirectToAction(nameof(ViewCv), new { id = cv.Id });
         }
 
-        // GET: /Cv/View/id — просмотр CV
+        // GET: /Cv/View/id
         [HttpGet]
         public async Task<IActionResult> ViewCv(Guid id)
         {
@@ -207,14 +206,13 @@ namespace CvManagementSystem.Controllers
                 PhotoUrl = cv.Candidate?.PhotoUrl
             };
 
-            // Безопасно обходим атрибуты
             var positionAttributes = cv.Position?.PositionAttributes?
                 .OrderBy(pa => pa.DisplayOrder) ?? Enumerable.Empty<PositionAttribute>();
 
             foreach (var pa in positionAttributes)
             {
                 var attrDef = pa.AttributeDefinition;
-                if (attrDef == null) continue; // Если определения нет, пропускаем
+                if (attrDef == null) continue;
 
                 var value = attributeValues
                     .FirstOrDefault(av => av.AttributeDefinitionId == attrDef.Id);
@@ -314,7 +312,7 @@ namespace CvManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Cv/CreateConfirm — страница подтверждения создания CV
+        // GET: /Cv/CreateConfirm 
         [HttpGet]
         [Authorize(Roles = "Candidate,Administrator")]
         public async Task<IActionResult> CreateConfirm(Guid positionId)
@@ -355,7 +353,6 @@ namespace CvManagementSystem.Controllers
                     return value.ValueDate?.ToString("d", System.Globalization.CultureInfo.CurrentCulture);
 
                 case AttributeType.Boolean:
-                    // Используем _L для перевода "Да"/"Нет"
                     return value.ValueBoolean.HasValue
                         ? (value.ValueBoolean.Value ? _L["Yes"].Value : _L["No"].Value)
                         : null;
@@ -367,7 +364,6 @@ namespace CvManagementSystem.Controllers
                     if (value.PeriodStart.HasValue || value.PeriodEnd.HasValue)
                     {
                         var start = value.PeriodStart?.ToString("d", System.Globalization.CultureInfo.CurrentCulture) ?? "?";
-                        // Используем _L для перевода "н.в."
                         var end = value.PeriodEnd?.ToString("d", System.Globalization.CultureInfo.CurrentCulture) ?? _L["PresentTime"].Value;
                         return $"{start} — {end}";
                     }

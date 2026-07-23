@@ -151,6 +151,24 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Administration.
+        /// </summary>
+        public static string AdminNavLink {
+            get {
+                return ResourceManager.GetString("AdminNavLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Users.
+        /// </summary>
+        public static string AdminUsersTitle {
+            get {
+                return ResourceManager.GetString("AdminUsersTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         public static string AllCategories {
@@ -615,6 +633,15 @@ namespace CvManagementSystem.Resources {
         public static string CreateCvForPosition {
             get {
                 return ResourceManager.GetString("CreateCvForPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create CV for this position.
+        /// </summary>
+        public static string CreateCvForPositionBtn {
+            get {
+                return ResourceManager.GetString("CreateCvForPositionBtn", resourceCulture);
             }
         }
         
@@ -1780,6 +1807,15 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open my CV.
+        /// </summary>
+        public static string OpenMyCvBtn {
+            get {
+                return ResourceManager.GetString("OpenMyCvBtn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open positions.
         /// </summary>
         public static string OpenPositions {
@@ -2194,6 +2230,15 @@ namespace CvManagementSystem.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Read-only.
+        /// </summary>
+        public static string ReadOnlyNotice {
+            get {
+                return ResourceManager.GetString("ReadOnlyNotice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ready to start?.
         /// </summary>
         public static string ReadyToStart {
@@ -2334,6 +2379,15 @@ namespace CvManagementSystem.Resources {
         public static string RequiredBadge {
             get {
                 return ResourceManager.GetString("RequiredBadge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Role.
+        /// </summary>
+        public static string RoleColumn {
+            get {
+                return ResourceManager.GetString("RoleColumn", resourceCulture);
             }
         }
         

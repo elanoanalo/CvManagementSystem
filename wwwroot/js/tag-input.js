@@ -1,13 +1,4 @@
-﻿// ===== ОБЩАЯ ЛОГИКА ДЛЯ ТЕГОВ =====
-// Используется в Positions/Create, Positions/Edit, Projects/Create, Projects/Edit
-//
-// Как подключить на странице:
-// 1. Убедись что есть элементы с такими ID:
-//    - #tagsList        — контейнер куда добавляются теги
-//    - #newTagInput      — поле ввода нового тега
-//    - #addTagBtn         — кнопка "Добавить тег"
-// 2. Подключи скрипт: <script src="~/js/tag-input.js"></script>
-// 3. Вызови initTagInput() после загрузки страницы
+﻿// ОБЩАЯ ЛОГИКА ДЛЯ ТЕГОВ
 
 function initTagInput(options) {
     options = options || {};
@@ -21,19 +12,15 @@ function initTagInput(options) {
     var newTagInput = document.getElementById('newTagInput');
     var addTagBtn = document.getElementById('addTagBtn');
 
-    if (!tagsList || !newTagInput) return; // страница без тегов — выходим
+    if (!tagsList || !newTagInput) return;
 
-    // Собираем текущие теги (без учёта регистра) — для проверки дублей
     function getExistingTagValues() {
         return Array.from(tagsList.querySelectorAll('.badge'))
             .map(function (el) {
-                // Берём только текст, без крестика удаления внутри badge
                 return el.childNodes[0].textContent.trim().toLowerCase();
             });
     }
 
-    // Пересчитываем name="Tags[i]" у всех оставшихся тегов —
-    // гарантирует последовательные индексы без "дырок"
     function reindexTags() {
         var inputs = tagsList.querySelectorAll('input[type="hidden"]');
         inputs.forEach(function (input, index) {
@@ -56,7 +43,6 @@ function initTagInput(options) {
             return;
         }
 
-        // Проверка на дубликат
         if (getExistingTagValues().includes(value.toLowerCase())) {
             alert(duplicateMessage);
             return;
@@ -71,7 +57,7 @@ function initTagInput(options) {
             '</span>';
 
         tagsList.appendChild(div);
-        reindexTags(); // сразу пересчитываем индексы после добавления
+        reindexTags();
 
         newTagInput.value = '';
         newTagInput.focus();
@@ -88,16 +74,14 @@ function initTagInput(options) {
         }
     });
 
-    // Удаление тега — делегирование событий + переиндексация
     tagsList.addEventListener('click', function (e) {
         if (e.target.classList.contains('remove-tag-btn') ||
             e.target.classList.contains('btn-close')) {
             e.target.closest('.tag-item').remove();
-            reindexTags(); // пересчитываем индексы после удаления
+            reindexTags();
         }
     });
 
-    // На всякий случай — переиндексация прямо перед отправкой формы
     var form = tagsList.closest('form');
     if (form) {
         form.addEventListener('submit', reindexTags);

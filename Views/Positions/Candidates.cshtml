@@ -3,7 +3,6 @@
 @inject IStringLocalizer<CvManagementSystem.LocalizationMarker> L
 @model IEnumerable<CvListViewModel>
 @{
-    // Используем форматирование через локализатор напрямую
     ViewData["Title"] = L["CandidatesCvsTitle", ViewBag.PositionTitle];
 }
 
@@ -39,7 +38,6 @@ else
                     style="cursor: pointer;"
                     data-href="@Url.Action("ViewCv", "Cv", new { id = cv.Id })">
                     <td class="fw-bold">@cv.PositionTitle</td>
-                    @* Используем 'g' для динамической локализации даты/времени *@
                     <td>@cv.CreatedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture)</td>
                 </tr>
             }

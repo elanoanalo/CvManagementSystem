@@ -24,7 +24,6 @@ else
         @L["SearchResultsFor"] "<strong>@Model.Query</strong>"
     </p>
 
-    @* Позиции *@
     @if (Model.Positions.Any())
     {
         <h4 class="mt-4">@L["Positions"] (@Model.Positions.Count)</h4>
@@ -53,7 +52,6 @@ else
         </div>
     }
 
-    @* Атрибуты — только для рекрутеров/админов *@
     @if (Model.Attributes.Any() &&
         (User.IsInRole("Recruiter") || User.IsInRole("Administrator")))
     {

@@ -5,8 +5,6 @@
         public string Query { get; set; } = string.Empty;
         public List<SearchPositionItem> Positions { get; set; } = new();
         public List<SearchAttributeItem> Attributes { get; set; } = new();
-
-        // Есть ли вообще результаты
         public bool HasResults => Positions.Any() || Attributes.Any();
     }
 

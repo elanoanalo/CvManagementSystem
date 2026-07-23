@@ -17,13 +17,10 @@ namespace CvManagementSystem.ViewModels
         [Required(ErrorMessage = "Выберите тип атрибута")]
         public AttributeType Type { get; set; } = AttributeType.String;
 
-        // Варианты для Dropdown — заполняется только если Type == Dropdown
         public List<string> Options { get; set; } = new();
 
-        // Это поле для новых вариантов которые вводит пользователь
         public string? NewOption { get; set; }
 
-        // Для Optimistic Locking
         public uint RowVersion { get; set; }
 
         public AttributeCategory Category { get; set; } = AttributeCategory.General;

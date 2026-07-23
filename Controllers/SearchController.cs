@@ -25,11 +25,10 @@ namespace CvManagementSystem.Controllers
             if (string.IsNullOrWhiteSpace(query))
                 return View(model);
 
-            // Язык для морфологии
             var currentLang = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
             var config = currentLang == "ru" ? "russian" : "english";
 
-            // === ПОЗИЦИИ ===
+            // ПОЗИЦИИ
             var positions = await _context.Positions
                 .Include(p => p.Tags)
                 .Where(p => p.IsPublished &&
@@ -50,7 +49,7 @@ namespace CvManagementSystem.Controllers
                 });
             }
 
-            // === АТРИБУТЫ ===
+            // АТРИБУТЫ
             var attributes = await _context.AttributeDefinitions
                 .Where(a =>
                     EF.Functions.ToTsVector(config, a.Name + " " + (a.Description ?? ""))

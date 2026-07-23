@@ -31,13 +31,11 @@ namespace CvManagementSystem.Controllers
             if (user == null)
                 return NotFound();
 
-            // Загружаем все атрибуты из библиотеки
             var allAttributes = await _context.AttributeDefinitions
                 .Include(a => a.Options.OrderBy(o => o.DisplayOrder))
                 .OrderBy(a => a.Name)
                 .ToListAsync();
 
-            // Загружаем только заполненные значения этого кандидата
             var existingValues = await _context.AttributeValues
                 .Where(av => av.CandidateId == currentUserId)
                 .ToListAsync();
@@ -53,21 +51,17 @@ namespace CvManagementSystem.Controllers
                 PhotoUrl = user.PhotoUrl
             };
 
-            // ID атрибутов которые уже добавлены в профиль
             var addedAttributeIds = existingValues
                 .Select(av => av.AttributeDefinitionId)
                 .ToHashSet();
 
-            // Заполняем только добавленные атрибуты
             foreach (var attribute in allAttributes)
             {
                 var existingValue = existingValues
                     .FirstOrDefault(av => av.AttributeDefinitionId == attribute.Id);
 
-                // Пропускаем атрибуты которые не добавлены в профиль
                 if (existingValue == null)
                 {
-                    // Добавляем в список "доступных для добавления"
                     model.AvailableToAdd.Add(new AvailableAttributeViewModel
                     {
                         Id = attribute.Id,
@@ -77,7 +71,6 @@ namespace CvManagementSystem.Controllers
                     continue;
                 }
 
-                // Атрибут добавлен — создаём ViewModel с его значением
                 var attributeViewModel = new AttributeValueViewModel
                 {
                     AttributeDefinitionId = attribute.Id,
@@ -95,7 +88,6 @@ namespace CvManagementSystem.Controllers
                     SelectedOptionId = existingValue.SelectedOptionId
                 };
 
-                // Для Dropdown добавляем варианты
                 if (attribute.Type == AttributeType.Dropdown)
                 {
                     foreach (var option in attribute.Options)
@@ -135,7 +127,7 @@ namespace CvManagementSystem.Controllers
             return Json(new { success = true });
         }
 
-        // POST: /Profile/UpdateMe — сохраняет поля секции "Обо мне"
+        // POST: /Profile/UpdateMe
         [HttpPost]
         public async Task<IActionResult> UpdateMe(string? firstName, string? lastName,
             string? location, string? photoUrl)
@@ -164,14 +156,12 @@ namespace CvManagementSystem.Controllers
         {
             var currentUserId = Guid.Parse(_userManager.GetUserId(User)!);
 
-            // Проверяем что атрибут существует
             var attribute = await _context.AttributeDefinitions
                 .FirstOrDefaultAsync(a => a.Id == attributeDefinitionId);
 
             if (attribute == null)
                 return Json(new { success = false, error = "Атрибут не найден" });
 
-            // Проверяем что атрибут ещё не добавлен
             var existing = await _context.AttributeValues
                 .FirstOrDefaultAsync(av =>
                     av.CandidateId == currentUserId &&
@@ -180,7 +170,6 @@ namespace CvManagementSystem.Controllers
             if (existing != null)
                 return Json(new { success = false, error = "Атрибут уже добавлен" });
 
-            // Создаём пустую запись — атрибут добавлен но не заполнен
             var newValue = new AttributeValue
             {
                 CandidateId = currentUserId,
@@ -235,7 +224,6 @@ namespace CvManagementSystem.Controllers
                 _context.AttributeValues.Add(existingValue);
             }
 
-            // Очищаем все поля
             existingValue.ValueString = null;
             existingValue.ValueNumber = null;
             existingValue.ValueDate = null;
@@ -245,7 +233,6 @@ namespace CvManagementSystem.Controllers
             existingValue.PeriodEnd = null;
             existingValue.SelectedOptionId = null;
 
-            // Заполняем нужное поле
             switch (model.AttributeType)
             {
                 case AttributeType.String:

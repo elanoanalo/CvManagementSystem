@@ -22,7 +22,6 @@
 }
 else if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
 {
-    @* Таблица С чекбоксами — только для рекрутеров *@
     <div class="mb-2 d-flex gap-2 align-items-center" style="height:36px">
         <button type="button"
                 id="deleteSelectedBtn"
@@ -86,7 +85,6 @@ else if (User.IsInRole("Recruiter") || User.IsInRole("Administrator"))
 }
 else
 {
-    @* Простая таблица БЕЗ чекбоксов — для кандидатов и незалогиненных *@
     <table class="table table-hover">
         <thead class="table-dark">
             <tr>
@@ -167,7 +165,6 @@ else
             var confirmMsg = '@Html.Raw(L["DeleteConfirmBulkPositions"].Value)'.replace('{0}', selected.length);
             if (!confirm(confirmMsg)) return;
 
-            // Одна форма со всеми ID — отправляется один раз
             var form = document.createElement('form');
             form.method = 'post';
             form.action = '/Positions/DeleteMultiple';

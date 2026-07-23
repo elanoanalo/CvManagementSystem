@@ -14,24 +14,23 @@ namespace CvManagementSystem.Entities
         public Guid AttributeDefinitionId { get; set; }
         public AttributeDefinition? AttributeDefinition { get; set; }
 
-        // --- Типизированные колонки под разные AttributeType ---
 
         [MaxLength(2000)]
-        public string? ValueString { get; set; }       // для String и Text
+        public string? ValueString { get; set; }       
 
-        public decimal? ValueNumber { get; set; }       // для Numeric
+        public decimal? ValueNumber { get; set; }      
 
-        public DateTime? ValueDate { get; set; }         // для Date
+        public DateTime? ValueDate { get; set; }        
 
-        public bool? ValueBoolean { get; set; }          // для Boolean
+        public bool? ValueBoolean { get; set; }      
 
         [MaxLength(500)]
-        public string? ValueImageUrl { get; set; }        // для Image (ссылка на облако!)
+        public string? ValueImageUrl { get; set; }        
 
-        public DateTime? PeriodStart { get; set; }         // для Period
-        public DateTime? PeriodEnd { get; set; }            // для Period
+        public DateTime? PeriodStart { get; set; }      
+        public DateTime? PeriodEnd { get; set; }        
 
-        public Guid? SelectedOptionId { get; set; }          // для Dropdown
+        public Guid? SelectedOptionId { get; set; }       
         public AttributeOption? SelectedOption { get; set; }
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

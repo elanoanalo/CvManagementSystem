@@ -38,7 +38,6 @@
                                 disabled
                                 asp-items="@(Enum.GetValues<AttributeType>().Select(t => new SelectListItem { Value = ((int)t).ToString(), Text = L[$"AttributeType_{t}"] }))">
                         </select>
-                        @* Скрытое поле — disabled поля не отправляются, поэтому дублируем значение *@
                         <input type="hidden" asp-for="Type" />
                         <small class="text-muted">
                             @L["TypeChangeWarning"]

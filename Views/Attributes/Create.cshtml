@@ -43,7 +43,6 @@
 
 
 
-                    @* Блок вариантов — показывается только для Dropdown *@
                     <div id="optionsBlock" style="display:none">
                         <div class="card bg-light mb-3">
                             <div class="card-body">
@@ -53,7 +52,6 @@
                                 </p>
 
                                 <div id="optionsList">
-                                    @* Варианты добавляются через JS *@
                                 </div>
 
                                 <div class="input-group mt-2">
@@ -97,7 +95,6 @@
         var optionsBlock = document.getElementById('optionsBlock');
 
         typeSelect.addEventListener('change', function() {
-            // Razor подставит реальное числовое значение Dropdown из Enum
             var dropdownValue = "@Json.Serialize((int)AttributeType.Dropdown)";
             if (this.value === dropdownValue) {
                 optionsBlock.style.display = 'block';

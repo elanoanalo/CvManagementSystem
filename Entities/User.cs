@@ -32,7 +32,7 @@ namespace CvManagementSystem.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Навигационные свойства
+
         public List<AttributeDefinition> CreatedAttributeDefinitions { get; set; } = new();
         public List<AttributeValue> AttributeValues { get; set; } = new();
         public List<Position> CreatedPositions { get; set; } = new();

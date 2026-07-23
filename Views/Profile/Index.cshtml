@@ -26,7 +26,6 @@
     <h2>@L["ProfileHeader"]</h2>
 </div>
 
-@* Основная информация *@
 <div class="card shadow mb-4">
     <div class="card-body">
         <h5 class="card-title">@L["MainInfoSectionTitle"]</h5>
@@ -52,7 +51,6 @@
     </div>
 </div>
 
-@* === Секция "Обо мне" (встроенные атрибуты, нельзя удалить) === *@
 <div class="card shadow mb-4">
     <div class="card-body">
         <h5 class="card-title mb-3">@L["AboutMeSectionTitle"]</h5>
@@ -92,13 +90,11 @@
     </div>
 </div>
 
-@* Атрибуты профиля *@
 <div class="card shadow mb-4">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="card-title mb-0">@L["MyAttributesSectionTitle"]</h5>
 
-            @* Кнопка добавления атрибута *@
             @if (Model.AvailableToAdd.Any())
             {
                 <div class="dropdown">
@@ -263,7 +259,6 @@
     </div>
 </div>
 
-@* Ссылка на проекты *@
 <div class="card shadow mt-4">
     <div class="card-body d-flex justify-content-between align-items-center">
         <div>
@@ -284,8 +279,6 @@
     <script>
         var saveTimers = {};
 
-        // Передаем локализованные строки из C# в контекст JS, чтобы не хардкодить их в скриптах
-// Передаем локализованные строки из C# в контекст JS в формате JSON
 var localization = {
     jsChangesDetected: @Json.Serialize(L["JsChangesDetected"].Value),
     jsSaving: @Json.Serialize(L["JsSaving"].Value),
@@ -297,7 +290,7 @@ var localization = {
     jsNetworkError: '✗ ' + @Json.Serialize(L["JsNetworkError"].Value)
 };
 
-        // ===== СОХРАНЕНИЕ ИМЕНИ =====
+        // СОХРАНЕНИЕ ИМЕНИ
 
         var nameTimer = null;
         document.getElementById('fullNameInput')
@@ -336,7 +329,7 @@ var localization = {
                 }, 2000);
             });
 
-            // ===== AUTO-SAVE СЕКЦИИ "ОБО МНЕ" =====
+            // AUTO-SAVE СЕКЦИИ ОБО МНЕ
 var meTimer = null;
 var meInputs = document.querySelectorAll('.me-input');
 
@@ -389,7 +382,7 @@ function saveMe() {
     });
 }
 
-        // ===== ДОБАВЛЕНИЕ АТРИБУТА =====
+        // ДОБАВЛЕНИЕ АТРИБУТА
 
         document.querySelectorAll('.dropdown-item[data-attr-id]')
             .forEach(function(btn) {
@@ -415,7 +408,7 @@ function saveMe() {
                 });
             });
 
-        // ===== УДАЛЕНИЕ АТРИБУТА =====
+        // УДАЛЕНИЕ АТРИБУТА
 
         document.querySelectorAll('.remove-attr-btn')
             .forEach(function(btn) {
@@ -423,7 +416,6 @@ function saveMe() {
                     var attrId = this.getAttribute('data-attr-id');
                     var attrName = this.getAttribute('data-attr-name');
 
-                    // Используем замену плейсхолдера для динамического имени в JS
                     var confirmMessage = localization.jsRemoveConfirm.replace('{0}', attrName);
                     if (!confirm(confirmMessage))
                         return;
@@ -446,7 +438,7 @@ function saveMe() {
                 });
             });
 
-        // ===== AUTO-SAVE АТРИБУТОВ =====
+        // AUTO-SAVE АТРИБУТОВ
 
         function saveAttribute(row) {
             var attributeId = row.getAttribute('data-attribute-id');

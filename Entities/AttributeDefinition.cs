@@ -70,10 +70,8 @@ namespace CvManagementSystem.Entities
         [Required]
         public Guid CreatedByUserId { get; set; }
 
-        // Навигационное свойство — связь с User, который создал атрибут
         public User? CreatedByUser { get; set; }
 
-        // Навигационное свойство — список вариантов выбора (только для Dropdown)
         public List<AttributeOption> Options { get; set; } = new();
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

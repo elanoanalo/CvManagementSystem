@@ -30,7 +30,6 @@
                                   rows="3"></textarea>
                     </div>
 
-                    @* Теги *@
                     <div class="mb-4">
                         <label class="form-label">@L["TagsLabel"]</label>
                         <div id="tagsList" class="mb-2 d-flex flex-wrap gap-2">
@@ -63,7 +62,6 @@
                         </div>
                     </div>
 
-                    @* Атрибуты *@
                     <div class="mb-4">
                         <label class="form-label">@L["PositionAttributesLabel"]</label>
 
@@ -120,7 +118,6 @@
                         </div>
                     </div>
 
-                    @* Статус публикации *@
                     <div class="mb-3">
                         <label class="form-label">@L["PublicationStatusLabel"]</label>
                         <div class="d-flex align-items-center gap-3 p-3 border rounded">
@@ -181,13 +178,12 @@
         var draftDesc = '@Html.Raw(L["DraftDescription"].Value)';
         var alreadyAddedMsg = '@Html.Raw(L["JsAttributeAlreadyAdded"].Value)';
 
-        // Заполняем уже добавленные атрибуты
         document.querySelectorAll('.attr-card').forEach(function(card) {
             addedAttributeIds.push(card.getAttribute('data-attr-id'));
         });
 
 
-        // ===== АТРИБУТЫ =====
+        // АТРИБУТЫ
 
         function addAttribute(id, name, type) {
             if (addedAttributeIds.indexOf(id) !== -1) {
@@ -237,7 +233,7 @@
             }
         });
 
-        // ===== ПЕРЕКЛЮЧАТЕЛЬ ПУБЛИКАЦИИ =====
+        // ПЕРЕКЛЮЧАТЕЛЬ ПУБЛИКАЦИИ
 
         var publishSwitch = document.getElementById('isPublishedSwitch');
         var publishLabelEl = document.getElementById('publishLabel');

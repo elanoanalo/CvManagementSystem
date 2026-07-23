@@ -22,7 +22,6 @@ namespace CvManagementSystem.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Теги проекта (Python, Backend, Data Engineering...)
         public List<ProjectTag> Tags { get; set; } = new();
     }
 

@@ -23,7 +23,6 @@ namespace CvManagementSystem.Entities
 
         public int MaxProjectsInCv { get; set; } = 3;
 
-        // Навигационные свойства — связи "один-ко-многим"
         public List<PositionAttribute> PositionAttributes { get; set; } = new();
         public List<PositionTag> Tags { get; set; } = new();
         public List<Cv> Cvs { get; set; } = new();
